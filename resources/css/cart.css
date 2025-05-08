@@ -1,0 +1,665 @@
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-top: 100px;
+}
+
+.cart-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cart-section {
+    flex: 2;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+textarea {
+    resize: vertical;
+    width: 100%;
+    max-width: 100%;
+}
+
+.details-section {
+    flex: 1;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.cart-section h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Style untuk tabel keranjang */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 5px;
+    text-align: left;
+}
+
+.price {
+    text-align: left;
+}
+
+th {
+    border-bottom: 3px solid #7d93ba;
+}
+
+td {
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    text-align: left;
+}
+
+td .items {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+td p {
+    margin-left: 10px;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-control button {
+    background-color: #7d93ba;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.quantity-control button:hover {
+    background-color: #2980b9;
+}
+
+.quantity-control input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin: 0 5px;
+}
+
+/* Tombol perbarui keranjang */
+.update-cart-btn {
+    margin-top: 10px;
+}
+
+.update-cart-btn button {
+    background-color: #7d93ba;
+    padding: 8px;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    border: none;
+}
+
+.update-cart-btn button:hover {
+    background-color: #2980b9;
+}
+
+.warning-message {
+    background-color: #ffc107;
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ff9800;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.order-history h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.order-history ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-history li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-history .information {
+    display: flex;
+    text-align: center;
+}
+
+ul li a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.form-section h3 {
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-group .info {
+    font-size: 12px;
+    color: #777;
+}
+
+.form-group .info {
+    position: relative;
+    max-width: 100%;
+    background-color: #fff;
+    padding: 1.125em 1.5em;
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3),
+        0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
+}
+
+.form-group .info::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 100%;
+    left: 1.5em;
+    border: 0.75rem solid transparent;
+    border-top: none;
+    border-bottom-color: #fff;
+    filter: drop-shadow(0 -0.0625rem 0.0625rem rgba(0, 0, 0, 0.1));
+}
+
+.shipping-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shipping-options label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: box-shadow 0.3s ease;
+}
+
+.shipping-options input[type="radio"] {
+    display: none;
+}
+
+.shipping-options input[type="radio"]:checked + label {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-color: #333;
+}
+
+.shipping-options img {
+    width: 100px;
+    min-height: 35px;
+    max-height: 35px;
+    padding: 5px;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+.pay-btn {
+    background-color: #7d93ba;
+    color: #fff;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.pay-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Overlay Css */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.overlay-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 300px;
+}
+
+.overlay-content p {
+    color: #4a4a4a;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-confirm {
+    background-color: #e57373;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background-color: #7d93ba;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-confirm:hover {
+    background-color: #d65b5b;
+}
+
+.btn-cancel:hover {
+    background-color: #66789a;
+}
+
+/* Media queries untuk tampilan tablet */
+@media screen and (max-width: 1024px) {
+    .cart-container {
+        flex-direction: column;
+    }
+
+    .cart-section,
+    .details-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .quantity-control {
+        display: inline-block;
+    }
+
+    .warning-message {
+        font-size: 14px;
+    }
+
+    .pay-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+/* Media queries untuk tampilan mobile */
+@media screen and (max-width: 768px) {
+    .cart-container {
+        flex-direction: column;
+    }
+
+    .cart-section,
+    .details-section {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .cart-section h1 {
+        font-size: 18px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    table tbody td {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    table tbody td:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Menambahkan label untuk setiap baris di tampilan mobile */
+    table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        text-transform: capitalize;
+    }
+
+    .items {
+        display: flex;
+        align-items: center;
+    }
+
+    .items img {
+        margin-right: 10px;
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+    }
+
+    .quantity-control {
+        display: flex;
+        width: 100%;
+    }
+
+    .quantity-control button {
+        padding: 5px 10px;
+    }
+
+    .quantity-control input {
+        width: 40px;
+        text-align: center;
+    }
+
+    /* Tombol perbarui keranjang */
+    .update-cart-btn button {
+        font-size: 14px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .pay-btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .order-history li {
+        padding: 5px 0;
+    }
+
+    .order-history .information {
+        font-size: 12px;
+    }
+}
+
+/* Validasi */
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+    border-color: red;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+.form-control {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.success-message {
+    color: #28a745;
+    font-size: 14px;
+    margin-top: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: rgba(40, 167, 69, 0.1);
+    animation: fadeIn 0.3s ease-in;
+    display: none;
+}
+
+.shipping-form {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.helper-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: -2px;
+}
+
+.btn-check-shipping {
+    width: 100%;
+    padding: 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-check-shipping:hover {
+    background-color: #45a049;
+}
+
+.shipping-results {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.shipping-option {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.shipping-option:last-child {
+    border-bottom: none;
+}
+
+.shipping-option input[type="radio"] {
+    margin-top: 3px;
+    margin-right: 12px;
+}
+
+.shipping-info {
+    flex: 1;
+}
+
+.service-name {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.shipping-price {
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.shipping-eta {
+    color: #666;
+    font-size: 13px;
+}
+
+select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+/* Loading state untuk select */
+.select-loading {
+    position: relative;
+}
+
+.select-loading::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #4caf50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: translateY(-50%) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .shipping-form {
+        padding: 16px;
+    }
+}

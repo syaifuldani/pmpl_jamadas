@@ -1,0 +1,143 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to top,  #8da6d1 5%, transparent 100%);
+    background-attachment: fixed;
+}
+
+.promotion-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 20px;
+    padding: 0 50px;
+}
+
+.promotion-text {
+    max-width: 40%;
+    margin-left: 5%;
+}
+
+.promotion-text h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.promotion-text a {
+    color: #00A2FF;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.promotion-text .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.promotion-text .nav-buttons a {
+    font-size: 1.2rem;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.promotion-text .nav-buttons a:hover {
+    text-decoration: underline;
+}
+
+.promotion-images {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 30%;
+}
+
+.promotion-images img {
+    width: 100%;
+    margin-right: 10px;
+}
+
+.promotion-images .row {
+    display: flex;
+
+}
+
+.promotion-images .col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* CSS responsif */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .promotion-section {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .promotion-text {
+        max-width: 100%;
+        text-align: left;
+        font-size: 0.9rem; 
+    }
+
+    .promotion-text h2 {
+        font-size: 1.5rem; 
+    }
+
+    .promotion-text .nav-buttons {
+        justify-content: space-between; 
+    }
+
+    .promotion-images {
+        max-width: 40%;
+    }
+
+    .promotion-images img {
+        width: 100%;
+        height: auto;
+    }
+
+    .promotion-images .row {
+        gap: 10px;
+    }
+}
+
+/* Responsive design for mobile (max-width: 767px) */
+@media (max-width: 767px) {
+    .promotion-section {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .promotion-text {
+        max-width: 100%;
+        text-align: center;
+        font-size: 0.8rem; 
+    }
+
+    .promotion-text h2 {
+        font-size: 1.3rem; 
+    }
+
+    .promotion-text .nav-buttons {
+        justify-content: center;
+        gap: 10px; 
+    }
+
+    .promotion-images {
+        gap: 10px;
+        width: 100%;
+    }
+
+    .promotion-images .row {
+        flex-direction: column; 
+        gap: 10px;
+    }
+
+    .promotion-images img {
+        width: 100%;
+        height: auto;
+    }
+}
