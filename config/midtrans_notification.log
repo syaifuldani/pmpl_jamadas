@@ -1,0 +1,152 @@
+[21-Dec-2024 08:36:32 Europe/Berlin] Received raw input: 
+[21-Dec-2024 08:36:32 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:36:32 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:36:32 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:36:32 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:18
+[21-Dec-2024 08:36:32 Europe/Berlin] Notification Error: The ServerKey/ClientKey is null, You need to set the server-key from Config. Please double-check Config and ServerKey key. You can check from the Midtrans Dashboard. See https://docs.midtrans.com/en/midtrans-account/overview?id=retrieving-api-access-keys for the details or contact support at support@midtrans.com if you have any questions.
+[21-Dec-2024 08:36:32 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', NULL, false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', NULL, false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(18): Midtrans\Notification->__construct()
+#4 {main}
+[21-Dec-2024 08:38:17 Europe/Berlin] Received raw input: 
+[21-Dec-2024 08:38:17 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:38:17 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:38:17 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:38:17 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:18
+[21-Dec-2024 08:38:17 Europe/Berlin] Notification Error: The ServerKey/ClientKey is null, You need to set the server-key from Config. Please double-check Config and ServerKey key. You can check from the Midtrans Dashboard. See https://docs.midtrans.com/en/midtrans-account/overview?id=retrieving-api-access-keys for the details or contact support at support@midtrans.com if you have any questions.
+[21-Dec-2024 08:38:17 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', NULL, false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', NULL, false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(18): Midtrans\Notification->__construct()
+#4 {main}
+[21-Dec-2024 08:38:21 Europe/Berlin] Received raw input: 
+[21-Dec-2024 08:38:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:38:21 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:38:21 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:38:21 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:18
+[21-Dec-2024 08:38:21 Europe/Berlin] Notification Error: The ServerKey/ClientKey is null, You need to set the server-key from Config. Please double-check Config and ServerKey key. You can check from the Midtrans Dashboard. See https://docs.midtrans.com/en/midtrans-account/overview?id=retrieving-api-access-keys for the details or contact support at support@midtrans.com if you have any questions.
+[21-Dec-2024 08:38:21 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', NULL, false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', NULL, false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(18): Midtrans\Notification->__construct()
+#4 {main}
+[21-Dec-2024 08:41:17 Europe/Berlin] Received raw input: 
+[21-Dec-2024 08:41:17 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:41:17 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:41:17 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:41:17 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:39
+[21-Dec-2024 08:41:18 Europe/Berlin] Notification Error: Midtrans API is returning API error. HTTP status code: 404 API response: <!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+
+    <!-- Responsive viewport declaration -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Cross compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Midtrans</title>
+    <meta name="description" content=""/>
+
+    <link rel="stylesheet" href="//v2/assets/css/all.css"/>
+
+</head>
+<body>
+<div class="container">
+    <div class="center desc"><p>404</p></div>
+    <div class="center click"><h3>
+        <a href="#">&#45; Ups &#45;</a>
+    </h3></div>
+</div>
+<footer>
+    <p class="center">&copy; <script>document.write(new Date().getFullYear())</script> PT Midtrans. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
+
+[21-Dec-2024 08:41:18 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', 'SB-Mid-server-_...', false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', 'SB-Mid-server-_...', false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(39): Midtrans\Notification->__construct()
+#4 {main}
+[21-Dec-2024 08:42:00 Europe/Berlin] Received raw input: 
+[21-Dec-2024 08:42:00 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:42:00 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:42:00 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:42:00 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:35
+[21-Dec-2024 08:42:00 Europe/Berlin] Notification Error: Midtrans API is returning API error. HTTP status code: 404 API response: <!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+
+    <!-- Responsive viewport declaration -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Cross compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Midtrans</title>
+    <meta name="description" content=""/>
+
+    <link rel="stylesheet" href="//v2/assets/css/all.css"/>
+
+</head>
+<body>
+<div class="container">
+    <div class="center desc"><p>404</p></div>
+    <div class="center click"><h3>
+        <a href="#">&#45; Ups &#45;</a>
+    </h3></div>
+</div>
+<footer>
+    <p class="center">&copy; <script>document.write(new Date().getFullYear())</script> PT Midtrans. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
+
+[21-Dec-2024 08:42:00 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', 'SB-Mid-server-_...', false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', 'SB-Mid-server-_...', false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(35): Midtrans\Notification->__construct()
+#4 {main}
+[21-Dec-2024 08:45:34 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php on line 26
+[21-Dec-2024 08:45:34 Europe/Berlin] PHP Stack trace:
+[21-Dec-2024 08:45:34 Europe/Berlin] PHP   1. {main}() C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:0
+[21-Dec-2024 08:45:34 Europe/Berlin] PHP   2. Midtrans\Notification->__construct($input_source = *uninitialized*) C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php:32
+[21-Dec-2024 08:45:34 Europe/Berlin] Notification Error: Midtrans API is returning API error. HTTP status code: 404 API response: <!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+
+    <!-- Responsive viewport declaration -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Cross compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Midtrans</title>
+    <meta name="description" content=""/>
+
+    <link rel="stylesheet" href="//v2/assets/css/all.css"/>
+
+</head>
+<body>
+<div class="container">
+    <div class="center desc"><p>404</p></div>
+    <div class="center click"><h3>
+        <a href="#">&#45; Ups &#45;</a>
+    </h3></div>
+</div>
+<footer>
+    <p class="center">&copy; <script>document.write(new Date().getFullYear())</script> PT Midtrans. All Rights Reserved</p>
+</footer>
+
+</body>
+</html>
+
+[21-Dec-2024 08:45:34 Europe/Berlin] Stack trace: #0 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\ApiRequestor.php(25): Midtrans\ApiRequestor::remoteCall('https://api.san...', 'SB-Mid-server-_...', false, 'GET')
+#1 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Transaction.php(25): Midtrans\ApiRequestor::get('https://api.san...', 'SB-Mid-server-_...', false)
+#2 C:\xampp\htdocs\ppl_cetak_undangan\vendor\midtrans\midtrans-php\Midtrans\Notification.php(26): Midtrans\Transaction::status(NULL)
+#3 C:\xampp\htdocs\ppl_cetak_undangan\config\notification.php(32): Midtrans\Notification->__construct()
+#4 {main}
