@@ -25,7 +25,7 @@ if (isset($_POST['query'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas.jpg" type="image/png">
     <link rel="stylesheet" href="../resources/css/dashboard.css">
     <link rel="stylesheet" href="../resources/css/navbar.css">
 </head>
@@ -37,21 +37,16 @@ if (isset($_POST['query'])) {
             <?php include 'layout/cusmrLayout/navbar.php'; ?>
         </nav>
         <!-- Menampilkan hasil pencarian -->
-        <div id="navbarSearchResults" class="search-results">
-            <!-- Hasil pencarian akan ditampilkan di sini -->
-        </div>
+        <div id="navbarSearchResults" class="search-results"></div>
 
         <!-- Hero Section -->
         <section class="hero animate-slide-left">
-            <h1 class="animate-fade-in animate-delay-1">Selamat datang di layanan Cetak Undangan Online kami!</h1>
+            <h1 class="animate-fade-in animate-delay-1">Selamat datang di layanan Jamu Madura Online!</h1>
             <p class="animate-fade-in animate-delay-2">
-                Kami menyediakan berbagai template undangan yang siap Anda pilih sesuai dengan acara spesial Anda.
-                Mulai dari undangan pernikahan yang elegan, undangan khitanan yang penuh makna, walimatul ursy yang
-                istimewa,
-                hingga undangan untuk acara tahlil dan kirim doa yang khusyuk, serta undangan ulang tahun yang meriah.
-                Pilih desain favorit Anda, tambahkan detail acara, dan biarkan kami mencetak serta mengirimkannya
-                langsung ke alamat Anda.
-                Proses mudah, hasil memukau!
+                Kami menyediakan berbagai pilihan jamu Madura asli yang siap Anda pesan untuk menjaga kesehatan dan kebugaran Anda.
+                Mulai dari jamu untuk vitalitas, kecantikan, hingga kesehatan harian, semua terbuat dari bahan alami pilihan khas Madura.
+                Pilih produk favorit Anda, tambahkan ke keranjang, dan biarkan kami mengirimkannya langsung ke alamat Anda.
+                Proses mudah, hasil menyehatkan!
             </p>
         </section>
 
@@ -59,94 +54,89 @@ if (isset($_POST['query'])) {
         <div class="section-search">
             <section class="search animate-slide-right">
                 <h2 class="animate-fade-in animate-delay-1">
-                    Temukan Beragam Desain Undangan Elegan
+                    Temukan Beragam Jamu Madura Asli & Berkualitas
                 </h2>
                 <p class="animate-fade-in animate-delay-2">
-                    Pesan Sekarang, Kami Kirimkan ke Alamat Anda
-                </p>
+                    Pesan Sekarang, Jamu Madura Siap Dikirim ke Rumah Anda
+                <!-- </p>
                 <form action="" method="POST" class="search-input animate-slide-right animate-delay-3">
                     <label><img src="../resources/img/icons/search.png" alt=""></label>
-                    <input type="text" id="contentSearchBox" name="query" placeholder="Cari undanganMu"
+                    <input type="text" id="contentSearchBox" name="query" placeholder="Cari Jamu Madura Anda"
                         value="<?= isset($_POST['query']) ? htmlspecialchars($_POST['query']) : '' ?>">
                 </form>
                 <div id="contentSearchResults" class="search-results animate-slide-bottom animate-delay-4">
-                    <!-- Hasil pencarian dari konten index -->
-                </div>
+                </div> -->
             </section>
             <div class="image animate-slide-left animate-delay-3">
-                <img src="../resources/img/homeimg/promotion01.jpg" alt="">
+                <img src="../resources/img/introduction/image6.png" alt="Jamu Madura">
             </div>
         </div>
 
         <!-- Product Section -->
         <section class="products animate-slide-bottom">
             <h2 class="animate-fade-in animate-delay-1">
-                Pesan Undangan Menakjubkan dengan Mudah!
+                Pesan Jamu Madura Asli dengan Mudah!
             </h2>
             <div class="product-grid">
                 <div class="product-card-dsbrd animate-slide-top animate-delay-2">
-                    <a href="undangan_pernikahan.php">
-                        <img src="../resources/img/homeimg/pernikahan.jpg" alt="Undangan Pernikahan">
-                        <p>Undangan Pernikahan</p>
+                    <a href="jamu_vitalitas.php">
+                        <img src="../resources/img/homeimg/jamu_vitalitas.jpeg" alt="Jamu Vitalitas">
+                        <p>Jamu Vitalitas</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-3">
-                    <a href="undangan_khitanan.php">
-                        <img src="../resources/img/homeimg/khitanan.jpeg" alt="Undangan Khitan">
-                        <p>Undangan Khitanan</p>
+                    <a href="jamu_kecantikan.php">
+                        <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Jamu Kecantikan">
+                        <p>Jamu Kecantikan</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-4">
-                    <a href="undangan_walimatul.php">
-                        <img src="../resources/img/homeimg/walimatul.jpg" alt="Undangan Walimah">
-                        <p>Undangan Walimatul</p>
+                    <a href="jamu_kesehatan.php">
+                        <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Jamu Kewanitaan">
+                        <p>Jamu Kewanitaan</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-5">
-                    <a href="undangan_tahlilkirimdoa.php">
-                        <img src="../resources/img/homeimg/tahlilkirimdoa.jpg" alt="Undangan Tahlil & Doa">
-                        <p>Undangan Tahlil & Doa</p>
+                    <a href="jamu_herbal.php">
+                        <img src="../resources/img/homeimg/jamu_pelangsing.jpg" alt="Jamu Pelangsing">
+                        <p>Jamu Pelangsing</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-6">
-                    <a href="undangan_ulangtahun.php">
-                        <img src="../resources/img/homeimg/ulangtahun.jpeg" alt="Undangan Ulang Tahun">
-                        <p>Undangan Ulang Tahun</p>
+                    <a href="jamu_lainnya.php">
+                        <img src="../resources/img/homeimg/jamu_lainnya.jpeg" alt="Jamu Lainnya">
+                        <p>Jamu Lainnya</p>
                     </a>
                 </div>
             </div>
         </section>
 
-
         <div class="layout-wrapper animate-slide-right animate-delay-3">
             <div class="instructions">
                 <div class="step animate-slide-left animate-delay-1">
-                    <img src="../resources/img/icons/checkaction.png" alt="Pilih Undangan" class="icon">
+                    <img src="../resources/img/icons/checkaction.png" alt="Pilih Jamu" class="icon">
                     <div class="text">
-                        <h3>Pilih Undangan</h3>
-                        <p>Mulai Pesanan Anda dengan Langkah Mudah! Pilih desain undangan yang sesuai dengan acara Anda
-                            dari berbagai template yang kami sediakan.</p>
+                        <h3>Pilih Jamu</h3>
+                        <p>Mulai pesanan Anda dengan memilih jamu Madura yang sesuai kebutuhan dari berbagai produk asli yang kami sediakan.</p>
                     </div>
                 </div>
                 <div class="step animate-slide-left animate-delay-1">
-                    <img src="../resources/img/icons/cartaction.png" alt="Tambahkan ke Keranjang Belanja" class="icon">
+                    <img src="../resources/img/icons/cartaction.png" alt="Tambahkan ke Keranjang" class="icon">
                     <div class="text">
-                        <h3>Tambahkan ke Keranjang Belanja</h3>
-                        <p>Isi semua detail penting, seperti nama, tanggal acara, dan pesan khusus yang ingin
-                            dicantumkan di undangan. Jangan lupa untuk memasukkan alamat pengiriman.</p>
+                        <h3>Tambahkan ke Keranjang</h3>
+                        <p>Isi detail pemesanan, seperti jumlah, alamat pengiriman, dan catatan khusus jika ada. Pastikan data Anda benar sebelum checkout.</p>
                     </div>
                 </div>
                 <div class="step animate-slide-left animate-delay-1">
                     <img src="../resources/img/icons/payaction.png" alt="Pilih Metode Pembayaran" class="icon">
                     <div class="text">
                         <h3>Pilih Metode Pembayaran</h3>
-                        <p>Pilih berbagai metode pembayaran yang Anda inginkan dan tunggu pesanan Anda sampai sesuai
-                            alamat tujuan.</p>
+                        <p>Pilih metode pembayaran yang Anda inginkan dan tunggu jamu Madura pesanan Anda sampai di rumah.</p>
                     </div>
                 </div>
             </div>
             <div class="preview slide-in-bottom">
-                <img src="../resources/img/homeimg/promotion02.jpg" alt="Preview Undangan" class="preview-image">
+                <img src="../resources/img/introduction/image2.png" alt="Preview Jamu Madura" class="preview-image">
             </div>
         </div>
     </div>
