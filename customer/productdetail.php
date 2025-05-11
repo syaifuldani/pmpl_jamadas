@@ -205,6 +205,46 @@ $products = getRandomProducts(2);
                     <h3>Ulasan Produk</h3>
                     <hr color="black">
                 </div>
+
+                <!-- Form Ulasan -->
+                <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="review-form">
+                    <h4>Tulis Ulasan</h4>
+                    <form action="add_review.php" method="POST">
+                        <input type="hidden" name="product_id" value="<?= $product_id ?>">
+                        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+                        
+                        <div class="rating-input">
+                            <label>Rating:</label>
+                            <div class="stars">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="review-text">
+                            <label for="review">Ulasan Anda:</label>
+                            <textarea name="review" id="review" rows="4" required 
+                                placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-review">Kirim Ulasan</button>
+                    </form>
+                </div>
+                <?php else: ?>
+                <div class="login-prompt">
+                    <p>Silakan <a href="login.php">login</a> untuk memberikan ulasan.</p>
+                </div>
+                <?php endif; ?>
+
                 <div class="reviews">
                     <div class="review-item">
                         <p><strong>John Doe</strong> - ⭐⭐⭐⭐⭐</p>
