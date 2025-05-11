@@ -1,20 +1,20 @@
 <div class="footer-container">
     <div class="footer-section">
-        <h2>Cetak Undangan</h2>
+        <h2>Cari Jamu Anda</h2>
         <ul>
             <li>
-                <a href="">
-                    <img src="../resources/img/icons/media.png" alt="Pernikahan"> Undangan Pernikahan
+                <a href="#">
+                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kewanitaan"> Jamu Kewanitaan
                 </a>
             </li>
             <li>
-                <a href="">
-                    <img src="../resources/img/icons/media.png" alt="Khitanan"> Undangan Khitanan
+                <a href="#">
+                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kesehatan dan Vitalitas"> Jamu Kesehatan dan Vitalitas
                 </a>
             </li>
             <li>
-                <a href="">
-                    <img src="../resources/img/icons/media.png" alt="Ulang Tahun"> Undangan Ulang Tahun
+                <a href="#">
+                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kecantikan"> Jamu Kecantikan
                 </a>
             </li>
         </ul>
@@ -26,13 +26,13 @@
             <li>
                 <!-- Link ke Instagram -->
                 <a href="https://www.instagram.com/photostice_" target="_blank">
-                    <img src="../resources/img/icons/instagram.png" alt="Instagram"> PleeArt.
+                    <img src="../resources/img/icons/instagram.png" alt="Instagram"> JamadasOfficial.
                 </a>
             </li>
             <li>
                 <!-- Link ke Twitter -->
                 <a href="https://twitter.com/plee_art" target="_blank">
-                    <img src="../resources/img/icons/twitter.png" alt="Twitter"> PleeArt.
+                    <img src="../resources/img/icons/twitter.png" alt="Twitter"> JamadasOfficial.
                 </a>
             </li>
             <li>
@@ -49,7 +49,7 @@
         <ul>
             <li>
                 <a href="services/ulasan_website.php">
-                    <p><img src="../resources/img/icons/pencil.png" alt="Ulasan">Beri ulasan untuk PleeArt.</p>
+                    <p><img src="../resources/img/icons/pencil.png" alt="Ulasan">Beri ulasan untuk JAMADAS.</p>
                 </a>
             </li>
             <li>
@@ -64,5 +64,5 @@
     <a href="services/aboutus.php">
         <p>Tentang Kami &raquo;</p>
     </a>
-    <p>&copy; 2024 by Plee.Art. All rights reserved.</p>
+    <p>&copy; 2024 by JAMADAS. All rights reserved.</p>
 </div>

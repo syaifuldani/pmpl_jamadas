@@ -10,7 +10,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to right, #7D93BA 5%, transparent 80%);
+    background: #f3f3f3;
 }
 
 .container {
@@ -28,7 +28,7 @@ body {
     top: -40px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #7D93BA;
+    background-color: #77dd77;
     border-radius: 50%;
     border: 3px solid white;
     padding: 10px;
@@ -39,11 +39,15 @@ body {
 
 .image-section img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .form-section h2 {
     margin-top: 30px;
-    color: #7D93BA;
+    color: #77dd77;
 }
 
 .form-group {
@@ -53,7 +57,7 @@ body {
 
 .form-group label {
     font-size: 0.9em;
-    color: #7D93BA;
+    color: #77dd77;
 }
 
 .form-group input {
@@ -67,7 +71,7 @@ body {
 
 .form-group input:focus {
     outline: none;
-    border-color: #7D93BA;
+    border-color: #77dd77;
 }
 
 .error-message {
@@ -80,7 +84,7 @@ body {
 button {
     width: 100%;
     padding: 10px;
-    background-color: #7D93BA;
+    background-color: #77dd77;
     color: white;
     border: none;
     border-radius: 5px;
@@ -90,7 +94,7 @@ button {
 }
 
 button:hover {
-    background-color: #6b82a2;
+    background-color: #6eca6e;
 }
 
 .footer {
@@ -101,7 +105,7 @@ button:hover {
 
 .footer p {
     margin-top: 15px;
-    color: #7D93BA;
+    color: #77dd77;
 }
 
 .footer p a {

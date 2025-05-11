@@ -1,45 +1,61 @@
 $(document).ready(function () {
-    // Live search untuk navbar
-    $('#navbarSearchBox').on('keyup', function () {
-        var query = $(this).val(); // Ambil input pencarian navbar
+    let searchTimeout;
+    const searchBox = $('#navbarSearchBox');
+    const searchResults = $('#navbarSearchResults');
+
+    // Fungsi untuk menampilkan hasil pencarian
+    function showSearchResults(query) {
         if (query.length > 0) {
             $.ajax({
-                url: '', // Mengirim ke halaman yang sama
+                url: window.location.href,
                 method: 'POST',
                 data: { query: query },
-                success: function (response) {
-                    $('#navbarSearchResults').html(response).fadeIn();
+                beforeSend: function() {
+                    searchResults.html('<div class="search-loading">Mencari</div>').show();
                 },
+                success: function (response) {
+                    if (response.trim() === '') {
+                        searchResults.html('<div class="search-result-item no-results">Tidak ada produk yang ditemukan</div>').show();
+                    } else {
+                        searchResults.html(response).show();
+                    }
+                },
+                error: function() {
+                    searchResults.html('<div class="search-result-item no-results">Terjadi kesalahan saat mencari</div>').show();
+                }
             });
         } else {
-            $('#navbarSearchResults').empty().fadeOut();
+            searchResults.empty().hide();
+        }
+    }
+
+    // Event handler untuk input pencarian
+    searchBox.on('keyup', function () {
+        clearTimeout(searchTimeout);
+        const query = $(this).val().trim();
+        
+        searchTimeout = setTimeout(function() {
+            showSearchResults(query);
+        }, 300);
+    });
+
+    // Event handler untuk fokus pada search box
+    searchBox.on('focus', function() {
+        const query = $(this).val().trim();
+        if (query.length > 0) {
+            showSearchResults(query);
         }
     });
 
-    // Live search untuk konten index
-    $('#contentSearchBox').on('keyup', function () {
-        var query = $(this).val(); // Ambil input pencarian konten index
-        if (query.length > 0) {
-            $.ajax({
-                url: '', // Mengirim ke halaman yang sama
-                method: 'POST',
-                data: { query: query },
-                success: function (response) {
-                    $('#contentSearchResults').html(response).fadeIn();
-                },
-            });
-        } else {
-            $('#contentSearchResults').empty().fadeOut();
-        }
-    });
-
-    // Sembunyikan hasil pencarian jika klik di luar
+    // Event handler untuk klik di luar area pencarian
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('#navbarSearchBox, #navbarSearchResults').length) {
-            $('#navbarSearchResults').fadeOut();
+        if (!$(e.target).closest('.search-bar').length) {
+            searchResults.hide();
         }
-        if (!$(e.target).closest('#contentSearchBox, #contentSearchResults').length) {
-            $('#contentSearchResults').fadeOut();
-        }
+    });
+
+    // Event handler untuk klik pada hasil pencarian
+    $(document).on('click', '.search-result-item a', function() {
+        searchResults.hide();
     });
 });

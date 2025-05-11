@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <div class="image-section">
-            <img src="../resources/img/icons/pleart.png" alt="Postcard">
+            <img src="../resources/img/icons/jamadas.jpg" alt="Postcard">
         </div>
         <div class="form-section">
             <h2>Register</h2>

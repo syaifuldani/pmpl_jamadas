@@ -90,25 +90,31 @@ function loginCustomer($data)
 
     // Lanjutkan hanya jika tidak ada error pada email
     if (empty($errors)) {
-        // Query untuk memeriksa user di database
-        $sql = "SELECT * FROM users WHERE email = :email";
-        $stmt = $GLOBALS['db']->prepare($sql);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            // Query untuk memeriksa user di database
+            $sql = "SELECT * FROM users WHERE email = :email";
+            $stmt = $GLOBALS['db']->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Jika user ditemukan dan password cocok
-        if ($user && password_verify($password, $user['password'])) {
-            // Buat session
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_name'] = $user['nama_lengkap'];
-            $_SESSION['user_profile'] = $user['profile_image'];
-            header("Location: dashboard.php"); // Redirect ke halaman dashboard
-            exit();
-        } else {
-            // Jika user tidak ditemukan atau password salah
-            $errors['login'] = 'Email atau password salah!';
+            // Jika user ditemukan dan password cocok
+            if ($user && password_verify($password, $user['password'])) {
+                // Buat session
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_name'] = $user['nama_lengkap'];
+                $_SESSION['user_profile'] = $user['profile_image'];
+                
+                // Redirect ke halaman dashboard
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                // Jika user tidak ditemukan atau password salah
+                $errors['login'] = 'Email atau password salah!';
+            }
+        } catch (PDOException $e) {
+            $errors['login'] = 'Terjadi kesalahan saat login. Silakan coba lagi.';
         }
     }
 
@@ -472,7 +478,7 @@ function searchProducts($searchTerm)
     $searchResults = [];
 
     // Mencari produk berdasarkan nama produk
-    $stmt = $db->prepare("SELECT product_id, nama_produk, kategori, gambar_satu FROM products WHERE nama_produk LIKE :searchTerm");
+    $stmt = $db->prepare("SELECT product_id, nama_produk, kategori, harga_produk, gambar_satu FROM products WHERE nama_produk LIKE :searchTerm");
     $stmt->bindValue(':searchTerm', '%' . $searchTerm . '%', PDO::PARAM_STR);
     $stmt->execute();
 
@@ -486,16 +492,19 @@ function searchProducts($searchTerm)
             foreach ($searchResults as $product) {
                 // Mengonversi gambar biner menjadi format base64
                 $base64Image = base64_encode($product['gambar_satu']);
-                echo '<a href="productdetail.php?id=' . $product['product_id'] . '" class="search-item">';
-                echo '<img src="data:image/jpeg;base64,' . $base64Image . '" alt="Produk">';
-                echo '<label>';
-                echo '<p>' . $product['nama_produk'] . '</p>';
-                echo '<p class="kategori"> Kategori Undangan : ' . $product['kategori'] . '</p>';
-                echo '</label>';
+                echo '<div class="search-result-item">';
+                echo '<a href="productdetail.php?id=' . $product['product_id'] . '">';
+                echo '<img src="data:image/jpeg;base64,' . $base64Image . '" alt="' . $product['nama_produk'] . '">';
+                echo '<div class="search-item-details">';
+                echo '<h4>' . $product['nama_produk'] . '</h4>';
+                echo '<span class="kategori">' . $product['kategori'] . '</span>';
+                echo '<p class="harga">Rp ' . number_format($product['harga_produk'], 0, ',', '.') . '</p>';
+                echo '</div>';
                 echo '</a>';
+                echo '</div>';
             }
         } else {
-            echo '<p>Undangan Tidak Ditemukan</p>';
+            echo '<div class="search-result-item no-results">Produk tidak ditemukan</div>';
         }
         exit;
     }

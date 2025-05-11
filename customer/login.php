@@ -15,14 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Postcard Register Form</title>
-    <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas.jpg" type="image/png">
     <link rel="stylesheet" href="../resources/css/loginregis.css">
 </head>
 
 <body>
     <div class="container">
         <div class="image-section">
-            <img src="../resources/img/icons/pleart.png" alt="Postcard">
+            <img src="../resources/img/icons/jamadas.jpg" alt="Postcard">
         </div>
         <div class="form-section">
             <h2>Login</h2>
