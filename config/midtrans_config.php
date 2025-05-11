@@ -352,9 +352,10 @@ class PaymentHandler
             $current_status = $stmt->fetchColumn();
 
             // Get order data dengan shipment dalam satu query
-            $sql = "SELECT o.*, s.biaya_ongkir, s.ekspedisi 
+            $sql = "SELECT o.*, s.biaya_ongkir, s.ekspedisi, u.email 
                 FROM orders o 
                 LEFT JOIN shipments s ON o.order_id = s.order_id 
+                LEFT JOIN users u ON o.user_id = u.user_id
                 WHERE o.order_id = ? AND o.user_id = ?";
 
             $stmt = $this->db->prepare($sql);
@@ -447,7 +448,7 @@ class PaymentHandler
                 'item_details' => $item_details,
                 'customer_details' => [
                     'first_name' => $order['nama_penerima'],
-                    // 'email' => $data['email'] ?? '',
+                    'email' => $order['email'],
                     'phone' => $order['nomor_penerima'],
                     'billing_address' => [
                         'first_name' => $order['nama_penerima'],

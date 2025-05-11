@@ -91,7 +91,7 @@ require_once '../config/function.php';
                 <ul class="dropdown-menu">
                     <!-- Add user info (name and email) here -->
                     <li class="user-info">
-                        <strong><?= $_SESSION['user_name']; ?></strong><br>
+                        <strong><?= $_SESSION['user_name']; ?></strong>
                         <small><?= $_SESSION['user_email']; ?></small>
                     </li>
 
@@ -123,7 +123,7 @@ require_once '../config/function.php';
                 if (!empty($cartItems)) {
                     // Tampilkan setiap item di keranjang
                     foreach ($cartItems as $item) {
-            ?>
+                        ?>
                         <div class="cart-item">
                             <img src="<?= $item['gambar_satu'] ?>" alt="Product" class="cart-item-image">
                             <div class="item-details">
@@ -132,7 +132,7 @@ require_once '../config/function.php';
                                 <p class="item-price">Rp. <?= number_format($item['harga_produk'], 2, ',', '.') ?></p>
                             </div>
                         </div>
-            <?php
+                        <?php
                     }
 
                     // Menghitung total harga
@@ -159,7 +159,7 @@ require_once '../config/function.php';
             <?php if (isset($_SESSION['user_id'])): ?>
                 <?php if (!empty($cartItems)): ?>
                     <a href="cart.php" class="cart-btn active">
-                        Check Out 
+                        Check Out
                     </a>
                 <?php else: ?>
                     <span class="cart-btn disabled" style="cursor: not-allowed; opacity: 0.6;">
@@ -193,13 +193,13 @@ require_once '../config/function.php';
         }
 
         // Event listener pada tombol keranjang
-        cartButton.addEventListener('click', function(event) {
+        cartButton.addEventListener('click', function (event) {
             event.preventDefault(); // Mencegah link agar tidak langsung mengarahkan ke URL lain
             toggleCartDropdown(); // Memanggil fungsi untuk menampilkan atau menyembunyikan dropdown
         });
 
         // Event listener untuk menutup dropdown jika klik di luar area dropdown
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             if (!cartButton.contains(event.target) && !cartDropdown.contains(event.target)) {
                 cartDropdown.style.display = 'none'; // Sembunyikan dropdown
             }
@@ -219,14 +219,14 @@ require_once '../config/function.php';
         }
 
         // Event listener pada profile photo
-        profileToggle.addEventListener('click', function(event) {
+        profileToggle.addEventListener('click', function (event) {
             event.preventDefault();
             event.stopPropagation();
             toggleProfileDropdown();
         });
 
         // Event listener untuk menutup profile dropdown jika klik di luar
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             if (!profileToggle.contains(event.target) && !profileDropdown.contains(event.target)) {
                 profileDropdown.style.display = 'none';
             }

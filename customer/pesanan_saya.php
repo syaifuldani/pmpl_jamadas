@@ -42,6 +42,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 $userId = $_SESSION['user_id'];
 $orders = getOrdersByID($userId);
+$CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId);
 // var_dump($userId);
 // var_dump($orders);
 
@@ -245,7 +246,7 @@ $orders = getOrdersByID($userId);
     <!-- Tambahkan di bagian head -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="../resources/js/LihatDetailPesananCust.js"></script>
-    <script src="../resources/js/Order.js"></script>
+    <script src="../resources/js/ExistingOrder.js"></script>
     <script src="../resources/js/CetakNota.js"></script>
 
 </body>
