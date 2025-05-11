@@ -256,12 +256,19 @@ document.addEventListener("DOMContentLoaded", function () {
             </tfoot>
         </table>
         <div class="action-buttons">
-            <button id="printNota" class="btn-print" onclick="generateNota('${
-                order.order_id
-            }')">
+        ${
+            ["settlement", "processing", "shipped", "delivered"].includes(
+                order.transaction_status
+            )
+                ? `
+            <button id="printNota" class="btn-print" onclick="generateNota('${order.order_id}')">
                 <i class="fas fa-print"></i> Cetak Nota
             </button>
+            `
+                : ""
+        }
         </div>
+        
     </div>
 `;
         } catch (error) {

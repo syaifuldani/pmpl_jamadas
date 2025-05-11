@@ -36,51 +36,8 @@ class PaymentHandler {
     initializeEventListeners() {
         if (this.form && this.payButton) {
             this.payButton.addEventListener("click", (e) =>
-                this.handlePayment(e)
+                this.handleExistingOrder(e)
             );
-        }
-    }
-
-    async handlePayment(e) {
-        e.preventDefault();
-
-        try {
-            // Validasi form sebelum submit
-            if (!this.validateForm()) {
-                return;
-            }
-
-            // Update UI - menunjukkan loading state
-            this.setLoadingState(true);
-
-            // Ambil form data
-            const formData = new FormData(this.form);
-
-            // Debug: Log form data
-            this.logFormData(formData);
-
-            // Kirim ke backend
-            const response = await fetch("../config/process_payment.php", {
-                method: "POST",
-                body: formData,
-            });
-
-            // Debug: Log response status
-            // console.log("Response status:", response.status);
-
-            const text = await response.text();
-            // console.log("Raw response:", text);
-
-            if (!response.ok) {
-                throw new Error(text || "Server error");
-            }
-
-            await this.handlePaymentResponse(text);
-        } catch (error) {
-            console.error("Error:", error);
-            this.showError(error.message);
-        } finally {
-            this.setLoadingState(false);
         }
     }
 
@@ -117,6 +74,52 @@ class PaymentHandler {
         return true;
     }
 
+    async handleExistingOrder() {
+        try {
+            if (!this.orderId || !this.payButton) {
+                throw new Error("Invalid order configuration");
+            }
+
+            this.setLoadingState(true);
+
+            const response = await fetch(
+                "../config/process_existing_payment.php",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        order_id: this.orderId,
+                    }),
+                }
+            );
+
+            const text = await response.text();
+
+            try {
+                const data = JSON.parse(text);
+                if (data.status === "error") {
+                    throw new Error(data.message);
+                }
+                if (data.snap_token) {
+                    // Simpan orderId ke sessionStorage untuk digunakan nanti
+                    sessionStorage.setItem("currentOrderId", this.orderId);
+                    await this.initiateMidtransPayment(data.snap_token);
+                } else {
+                    throw new Error("Invalid server response");
+                }
+            } catch (e) {
+                throw new Error(text || "Failed to process server response");
+            }
+        } catch (error) {
+            // console.error("Payment Error:", error);
+            // this.displayError(error.message);
+        } finally {
+            this.setLoadingState(false);
+        }
+    }
+
     async handlePaymentResponse(text) {
         try {
             // Coba parse sebagai JSON
@@ -146,7 +149,7 @@ class PaymentHandler {
             window.snap.pay(snapToken, {
                 onSuccess: async (result) => {
                     try {
-                        // console.log("Payment success with result:", result);
+                        console.log("Payment success with result:", result);
 
                         // Jika ini existing order (dari halaman pesanan_saya)
                         if (this.isExistingOrder) {

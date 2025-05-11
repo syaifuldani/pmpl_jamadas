@@ -1006,6 +1006,35 @@ function updateStatusByOrderId($orderID, $newStatus)
     }
 }
 
+function CheckTransactionPendingOver24Hours($id)
+{
+    global $db;
+
+    // Query untuk memeriksa transaksi yang sudah lebih dari 24 jam
+    $sql = "SELECT order_id FROM orders WHERE user_id = :user_id AND transaction_status = 'pending' AND TIMESTAMPDIFF(HOUR, created_at, NOW()) > 24";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Hitung jumlah baris yang terpengaruh
+    $pendingTransaction = $stmt->rowCount();
+
+    if ($pendingTransaction > 0) {
+        $update_query = "UPDATE orders SET transaction_status = 'cancelled' WHERE user_id = :user_id AND transaction_status ='pending'AND TIMESTAMPDIFF(HOUR, created_at, NOW()) > 24";
+
+        $update_stmt = $db->prepare($update_query);
+        $update_stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
+        // Eksekusi query untuk mengupdate status transaksi
+        $update_stmt->execute();
+
+        $updateTransactions = $update_stmt->rowCount(); // Menghitung jumlah transaksi yang diupdate
+    } else {
+        $updateTransactions = 0; // Tidak ada transaksi yang diupdate
+    }
+    return $updateTransactions; // Mengembalikan jumlah transaksi yang diupdate
+}
+
 function updateResi($orderID, $nomor_resi)
 {
     try {
@@ -1085,8 +1114,6 @@ function getPenjualanChart()
 
     return $data;
 }
-
-
 
 // Fungsi untuk menghitung jumlah pemesanan
 function getTotalPemesanan()
