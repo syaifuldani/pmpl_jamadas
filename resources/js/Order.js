@@ -90,8 +90,8 @@ class PaymentHandler {
             "namapenerima",
             "notelppenerima",
             "alamatpenerima",
-            "tanggalacara",
-            "lokasiacara",
+            // "tanggalacara",
+            // "lokasiacara",
         ];
 
         for (const field of requiredFields) {

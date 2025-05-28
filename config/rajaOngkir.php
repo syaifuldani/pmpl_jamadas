@@ -10,8 +10,8 @@ class RajaOngkir
     private $baseUrl = "https://api.rajaongkir.com/starter/";
 
     // Tambahkan konstanta untuk origin
-    private const ORIGIN_CITY = '289'; // Kabupaten Mojokerto
-    private const ORIGIN_CITY_NAME = 'Kabupaten Mojokerto';
+    private const ORIGIN_CITY = '31'; // Kabupaten Mojokerto
+    private const ORIGIN_CITY_NAME = 'Bangkalan';
     private const ORIGIN_PROVINCE = '11'; // Jawa Timur
 
     // Fungsi untuk get origin info
