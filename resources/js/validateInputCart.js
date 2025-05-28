@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         isValid = validateTanggalAcara(form.tanggalacara) && isValid;
         isValid = validateLokasiAcara(form.lokasiacara) && isValid;
-        isValid = validateKeterangan(form.keterangan_order) && isValid;
+        // isValid = validateKeterangan(form.keterangan_order) && isValid;
         isValid = validateNamaPenerima(form.namapenerima) && isValid;
         isValid = validateEmail(form.email) && isValid;
         isValid = validateKelurahan(form.kelurahan) && isValid;
@@ -138,18 +138,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validasi keterangan order
-    function validateKeterangan(input) {
-        if (!input.value.trim()) {
-            showError(input, "Keterangan tambahan harus diisi");
-            return false;
-        }
-        if (input.value.length < 10) {
-            showError(input, "Keterangan minimal 10 karakter");
-            return false;
-        }
-        removeError(input);
-        return true;
-    }
+    // function validateKeterangan(input) {
+    //     if (!input.value.trim()) {
+    //         showError(input, "Keterangan tambahan harus diisi");
+    //         return false;
+    //     }
+    //     if (input.value.length < 10) {
+    //         showError(input, "Keterangan minimal 10 karakter");
+    //         return false;
+    //     }
+    //     removeError(input);
+    //     return true;
+    // }
 
     // Validasi nama penerima
     function validateNamaPenerima(input) {

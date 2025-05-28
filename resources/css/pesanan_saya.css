@@ -166,6 +166,7 @@
 
 .btn-pay,
 .btn-receive,
+.btn-reviews,
 .btn-details {
     padding: 8px 16px;
     border: none;
@@ -190,12 +191,18 @@
     color: #374151;
 }
 
+.btn-reviews {
+    background: #f3f4f6;
+    color: bal;
+}
+
 .btn-pay:hover,
 .btn-receive:hover {
     opacity: 0.9;
 }
 
-.btn-details:hover {
+.btn-details:hover,
+.btn-reviews:hover {
     background: #e5e7eb;
 }
 

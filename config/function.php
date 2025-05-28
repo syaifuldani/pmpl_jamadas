@@ -105,7 +105,7 @@ function loginCustomer($data)
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_name'] = $user['nama_lengkap'];
                 $_SESSION['user_profile'] = $user['profile_image'];
-                
+
                 // Redirect ke halaman dashboard
                 header("Location: dashboard.php");
                 exit();
@@ -914,10 +914,10 @@ function getStatusLabel($status)
 {
     $labels = [
         'pending' => 'Menunggu Pembayaran',
-        'paid' => 'Sudah Dibayar',
+        'settlement' => 'Sudah Dibayar',
         'processing' => 'Sedang Dikemas',
         'shipped' => 'Dalam Pengiriman',
-        'completed' => 'Selesai',
+        'delivered' => 'Selesai',
         'cancelled' => 'Dibatalkan'
     ];
 
