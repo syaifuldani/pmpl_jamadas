@@ -34,7 +34,7 @@ if (isset($_POST['query'])) {
   <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
   <link rel="stylesheet" href="../resources/css/dashboard.css">
   <link rel="stylesheet" href="../resources/css/navbar.css">
-  <link rel="stylesheet" href="../resources/css/chatbot.css">
+  <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
 
 <body>
@@ -153,35 +153,166 @@ if (isset($_POST['query'])) {
     <?php include 'layout/cusmrLayout/footer.php'; ?>
   </footer>
   </div>
+<!-- Chatbot -->
+<div class="chat-toggle">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
+</div>
 
-  <!-- Chatbot -->
-  <div class="chatbot-container">
-    <div class="chatbot-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" viewBox="0 0 16 16">
-        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-        <path d="M4.146 4.146a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708L5.5 6.207l-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708zm5.5 0a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708zM8 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-      </svg>
+<div class="chat-container">
+    <div class="chat-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
+        <h3>Asisten Jamu</h3>
     </div>
-    <div class="chatbot-popup">
-      <div class="chatbot-header">
-        <h3>Asisten Undangan</h3>
-        <button class="close-chatbot">&times;</button>
-      </div>
-      <div class="chatbot-messages">
-        <!-- Pesan-pesan akan ditampilkan di sini -->
-      </div>
-      <div class="chatbot-input">
-        <input type="text" placeholder="Ketik pesan Anda di sini...">
-        <button class="send-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="m15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
-          </svg>
-        </button>
-      </div>
+    <div class="chat-box"></div>
+    <div class="chat-input">
+        <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
+        <button onclick="sendMessage()">Kirim</button>
     </div>
-  </div>
+</div>
 
+<style>
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.chat-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #77dd77;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.chat-popup {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.chat-header {
+    background: #77dd77;
+    color: white;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-messages {
+    height: 300px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.chat-input {
+    padding: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 5px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chat-input button {
+    padding: 8px 15px;
+    background: #77dd77;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bot-message {
+    background:rgb(4, 255, 42);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    background:rgb(0, 254, 0);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+</style>
+
+<script>
+function toggleChat() {
+    const popup = document.getElementById('chatPopup');
+    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
+    input.value = '';
+
+    // Kirim pesan ke server
+    fetch('../config/process_chat.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `message=${encodeURIComponent(message)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
+    });
+}
+
+document.getElementById('messageInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+document.getElementById('chatButton').addEventListener('click', toggleChat);
+</script>
   <script src="../resources/js/burgersidebar.js"></script>
   <script src="../resources/js/livesearch.js"></script>
-  <script src="../resources/js/chatbot.js"></script>
+  <script src="../resources/js/chat.js"></script>
 </body>

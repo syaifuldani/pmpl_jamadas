@@ -2,7 +2,7 @@
 
 // config.php
 $host = 'localhost';
-$dbname = 'pleeartdb';
+$dbname = 'jamadas_new';
 $username = 'root';  // Atur sesuai dengan konfigurasi database Anda
 $password = '';      // Atur sesuai dengan password database Anda
 
