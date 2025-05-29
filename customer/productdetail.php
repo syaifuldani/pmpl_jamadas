@@ -77,6 +77,7 @@ $products = getRandomProducts(2);
     <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
     <link rel="stylesheet" href="../resources/css/navbar.css">
     <link rel="stylesheet" href="../resources/css/productdetail.css">
+    <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
 
 <body>
@@ -295,6 +296,6 @@ $products = getRandomProducts(2);
         <?php endif; ?>
     </script>
     <script src="../resources/js/burgersidebar.js"></script>
+    <script src="../resources/js/chat.js"></script>
 </body>
-
 </html>
