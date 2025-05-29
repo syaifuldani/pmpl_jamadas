@@ -205,7 +205,7 @@ if (isset($_POST['query'])) {
 
                     <!-- Form untuk payment -->
                     <div class="warning-message">
-                        Lengkapi Data Undangan dan Data Pengiriman Anda!!
+                        Lengkapi Data Pengiriman Anda!!
                     </div>
 
                     <form id="payment-form" action="" method="POST">
@@ -218,22 +218,12 @@ if (isset($_POST['query'])) {
                             <!-- Tambahkan hidden input untuk snap token -->
                             <input type="hidden" name="snap_token" id="snap-token">
                             <div class="form-group">
-                                <h3>Data Undangan</h3>
-                                <input type="date" name="tanggalacara" placeholder="Tanggal dan Waktu Acara">
-                                <input type="text" name="lokasiacara" placeholder="Tempat/Lokasi Acara">
+                                <h3>Keterangan Tambahan</h3>
+                                <!-- <input type="date" name="tanggalacara" placeholder="Tanggal dan Waktu Acara">
+                                <input type="text" name="lokasiacara" placeholder="Tempat/Lokasi Acara"> -->
                                 <textarea name="keterangan_order" placeholder="Keterangan Tambahan"></textarea>
                                 <p class="info">
-                                    Tuliskan keterangan tambahan seperti nama orang tua dan calon mempelai, teks
-                                    doa,
-                                    nama
-                                    yang dirayakan, tema acara, atau pesan/informasi penting lainnya sesuai dengan
-                                    acara
-                                    pernikahan, khitan, walimatul ursy, tahlil, kirim doa, atau ulang tahun.<br><br>
-
-                                    Contoh : <br>
-                                    Nama : John Doe <br>
-                                    Teks Doa: "Semoga diberikan keberkahan dan keselamatan dunia akhirat." <br>
-                                    Dst.
+                                    Tuliskan keterangan tambahan anda!!. (Apabila ada)
                                 </p>
                             </div>
                             <div class="shipping-form">
