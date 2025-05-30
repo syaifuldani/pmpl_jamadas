@@ -169,6 +169,33 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                                     Pesanan Diterima
                                 </button>
                             <?php endif; ?>
+                            <?php if ($order['transaction_status'] == 'delivered'): ?>
+                                <?php
+                                // Check if user has already reviewed this product
+                                $hasReviewed = false;
+                                try {
+                                    if (isset($GLOBALS['db'])) {
+                                        $db = $GLOBALS['db'];
+                                        $checkStmt = $db->prepare("SELECT reviews_id FROM reviews WHERE product_id = :product_id AND user_id = :user_id");
+                                        $checkStmt->bindParam(':product_id', $order['items'][0]['product_id'], PDO::PARAM_INT);
+                                        $checkStmt->bindParam(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+                                        $checkStmt->execute();
+                                        $hasReviewed = $checkStmt->rowCount() > 0;
+                                    }
+                                } catch (Exception $e) {
+                                    error_log("Error checking review status: " . $e->getMessage());
+                                }
+
+                                if ($hasReviewed): ?>
+                                    <a href="productdetail.php?id=<?= htmlspecialchars($order['items'][0]['product_id']) ?>" class="btn-review view-review">
+                                        Lihat Ulasan
+                                    </a>
+                                <?php else: ?>
+                                    <button class="btn-review" onclick="openReviewModal('<?= $order['order_id'] ?>', '<?= $order['items'][0]['product_id'] ?>')" type="button">
+                                        Berikan Ulasan
+                                    </button>
+                                <?php endif; ?>
+                            <?php endif; ?>
                             <button class="btn-details"
                                 onclick="viewOrderDetails('<?= htmlspecialchars($order['order_id']) ?>')">Lihat
                                 Detail</button>
@@ -185,6 +212,44 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                     <div id="orderDetailContent">
                         <!-- Content will be loaded here -->
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Modal -->
+        <div id="reviewModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeReviewModal()">&times;</span>
+                <div class="modal-body">
+                    <h2>Berikan Ulasan</h2>
+                    <form id="reviewForm" onsubmit="submitReview(event)">
+                        <input type="hidden" id="reviewOrderId" name="order_id">
+                        <input type="hidden" id="reviewProductId" name="product_id">
+
+                        <div class="rating-input">
+                            <label>Rating:</label>
+                            <div class="stars">
+                                <input type="radio" id="star1" name="rating" value="1" required>
+                                <label for="star1">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star5" name="rating" value="5">
+                                <label for="star5">★</label>
+                            </div>
+                        </div>
+
+                        <div class="review-text">
+                            <label for="reviewComment">Ulasan Anda:</label>
+                            <textarea name="comment" id="reviewComment" rows="4" required
+                                placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-review">Kirim Ulasan</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -216,9 +281,9 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                 formData.append('status', 'delivered');
 
                 fetch('../config/updateStatusAfterDelivered.php', {
-                    method: 'POST',
-                    body: formData
-                })
+                        method: 'POST',
+                        body: formData
+                    })
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'success') {
@@ -240,6 +305,98 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                     });
             }
             return false;
+        }
+
+        // Review Modal Functions
+        function openReviewModal(orderId, productId) {
+            const modal = document.getElementById('reviewModal');
+            document.getElementById('reviewOrderId').value = orderId;
+            document.getElementById('reviewProductId').value = productId;
+            modal.style.display = "block";
+        }
+
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            modal.style.display = "none";
+            document.getElementById('reviewForm').reset();
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            // Debug log the form data
+            console.log('Submitting review with data:');
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
+            const submitButton = event.target.querySelector('.submit-review');
+            const originalButtonText = submitButton.textContent;
+
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+
+            fetch('../config/submit_review.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(async response => {
+                    // Log the raw response
+                    const responseText = await response.text();
+                    console.log('Raw server response:', responseText);
+
+                    // Try to parse as JSON
+                    try {
+                        return JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('Failed to parse server response as JSON:', e);
+                        throw new Error('Invalid server response: ' + responseText);
+                    }
+                })
+                .then(data => {
+                    console.log('Parsed server response:', data);
+
+                    if (data.status === 'success') {
+                        showAlert('Ulasan berhasil dikirim', 'success');
+                        closeReviewModal();
+
+                        // Change the review button to a link
+                        const reviewBtn = document.querySelector(`button[onclick="openReviewModal('${formData.get('order_id')}', '${formData.get('product_id')}')"]`);
+                        if (reviewBtn) {
+                            const productId = formData.get('product_id');
+                            const newLink = document.createElement('a');
+                            newLink.href = `productdetail.php?id=${productId}`;
+                            newLink.className = 'btn-review view-review';
+                            newLink.textContent = 'Lihat Ulasan';
+                            reviewBtn.parentNode.replaceChild(newLink, reviewBtn);
+                        }
+                    } else {
+                        // Show the specific error message from the server
+                        const errorMessage = data.message || data.debug_message || 'Gagal mengirim ulasan';
+                        showAlert(errorMessage, 'error');
+                        console.error('Server error:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error details:', error);
+                    showAlert('Terjadi kesalahan saat mengirim ulasan: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('reviewModal');
+            if (event.target == modal) {
+                closeReviewModal();
+            }
         }
     </script>
     <!-- Tambahkan di bagian head -->

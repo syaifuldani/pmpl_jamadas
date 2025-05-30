@@ -65,6 +65,41 @@ if (is_null($product_id)) {
 
 $product = getProductDetails($product_id);
 $products = getRandomProducts(2);
+
+// Get reviews for this product
+$reviews = [];
+$average_rating = 0;
+try {
+    if (isset($GLOBALS['db'])) {
+        $db = $GLOBALS['db'];
+        error_log("Fetching reviews for product ID: " . $product_id);
+
+        $stmt = $db->prepare("
+            SELECT r.*, u.nama_lengkap, r.created_at as review_date
+            FROM reviews r 
+            JOIN users u ON r.user_id = u.user_id 
+            WHERE r.product_id = :product_id 
+            ORDER BY r.created_at DESC
+        ");
+
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        error_log("Found " . count($reviews) . " reviews for product ID: " . $product_id);
+    } else {
+        error_log("Database connection not available in productdetail.php");
+    }
+
+    // Calculate average rating
+    if (!empty($reviews)) {
+        $total_rating = array_sum(array_column($reviews, 'rating'));
+        $average_rating = round($total_rating / count($reviews), 1);
+    }
+} catch (Exception $e) {
+    error_log("Error fetching reviews: " . $e->getMessage());
+    $reviews = [];
+}
 ?>
 
 <!DOCTYPE html>
@@ -169,7 +204,7 @@ $products = getRandomProducts(2);
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                                    ?>
+                            ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
@@ -187,7 +222,7 @@ $products = getRandomProducts(2);
                                             <p>Lihat Detail</p>
                                         </a>
                                     </div>
-                                    <?php
+                                <?php
                                 endforeach;
                             else:
                                 ?>
@@ -204,57 +239,63 @@ $products = getRandomProducts(2);
             <div class="reviews-product">
                 <div class="header">
                     <h3>Ulasan Produk</h3>
+                    <?php if (!empty($reviews)): ?>
+                        <div class="average-rating">
+                            <div class="rating-number"><?= $average_rating ?></div>
+                            <div class="rating-stars">
+                                <?php
+                                // Display full stars
+                                for ($i = 1; $i <= floor($average_rating); $i++) {
+                                    echo '<span class="star filled">★</span>';
+                                }
+                                // Display half star if needed
+                                if ($average_rating - floor($average_rating) >= 0.5) {
+                                    echo '<span class="star half">★</span>';
+                                }
+                                // Display empty stars
+                                for ($i = ceil($average_rating); $i < 5; $i++) {
+                                    echo '<span class="star">☆</span>';
+                                }
+                                ?>
+                            </div>
+                            <div class="rating-count"><?= count($reviews) ?> ulasan</div>
+                        </div>
+                    <?php endif; ?>
                     <hr color="black">
                 </div>
 
-                <!-- Form Ulasan -->
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <div class="review-form">
-                        <h4>Tulis Ulasan</h4>
-                        <form action="add_review.php" method="POST">
-                            <input type="hidden" name="product_id" value="<?= $product_id ?>">
-                            <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
-
-                            <div class="rating-input">
-                                <label>Rating:</label>
-                                <div class="stars">
-                                    <input type="radio" id="star5" name="rating" value="5" required>
-                                    <label for="star5">★</label>
-                                    <input type="radio" id="star4" name="rating" value="4">
-                                    <label for="star4">★</label>
-                                    <input type="radio" id="star3" name="rating" value="3">
-                                    <label for="star3">★</label>
-                                    <input type="radio" id="star2" name="rating" value="2">
-                                    <label for="star2">★</label>
-                                    <input type="radio" id="star1" name="rating" value="1">
-                                    <label for="star1">★</label>
-                                </div>
-                            </div>
-
-                            <div class="review-text">
-                                <label for="review">Ulasan Anda:</label>
-                                <textarea name="review" id="review" rows="4" required
-                                    placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
-                            </div>
-
-                            <button type="submit" class="submit-review">Kirim Ulasan</button>
-                        </form>
-                    </div>
-                <?php else: ?>
-                    <div class="login-prompt">
-                        <p>Silakan <a href="login.php">login</a> untuk memberikan ulasan.</p>
-                    </div>
-                <?php endif; ?>
-
                 <div class="reviews">
-                    <div class="review-item">
-                        <p><strong>John Doe</strong> - ⭐⭐⭐⭐⭐</p>
-                        <p>Produk yang sangat bagus dan sesuai dengan deskripsi. Pengiriman cepat!</p>
-                    </div>
-                    <div class="review-item">
-                        <p><strong>Jane Smith</strong> - ⭐⭐⭐⭐</p>
-                        <p>Kualitas produk oke, namun packaging bisa lebih baik lagi.</p>
-                    </div>
+                    <?php if (empty($reviews)): ?>
+                        <p class="no-reviews">Belum ada ulasan untuk produk ini.</p>
+                    <?php else: ?>
+                        <?php foreach ($reviews as $review): ?>
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-info">
+                                        <strong><?= htmlspecialchars($review['nama_lengkap']) ?></strong>
+                                        <div class="review-date">
+                                            <?= date('d F Y', strtotime($review['review_date'])) ?>
+                                        </div>
+                                    </div>
+                                    <div class="review-rating">
+                                        <?php
+                                        // Display stars based on rating
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            if ($i <= $review['rating']) {
+                                                echo '<span class="star filled">★</span>';
+                                            } else {
+                                                echo '<span class="star">☆</span>';
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                                <p class="review-comment">
+                                    <?= nl2br(htmlspecialchars($review['comment'])) ?>
+                                </p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -298,4 +339,226 @@ $products = getRandomProducts(2);
     <script src="../resources/js/burgersidebar.js"></script>
     <script src="../resources/js/chat.js"></script>
 </body>
+
 </html>
+
+<style>
+    /* Add these styles to your existing CSS */
+    .reviews {
+        margin-top: 20px;
+    }
+
+    .review-item {
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .review-item p {
+        margin: 5px 0;
+    }
+
+    .review-date {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .review-comment {
+        margin-top: 10px;
+        line-height: 1.4;
+    }
+
+    .no-reviews {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    .reviews-product {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .average-rating {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 15px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .rating-number {
+        font-size: 48px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 2px;
+    }
+
+    .rating-count {
+        color: #666;
+        font-size: 14px;
+        margin-left: auto;
+    }
+
+    .star {
+        color: #ddd;
+        font-size: 24px;
+    }
+
+    .star.filled {
+        color: #ffd700;
+    }
+
+    .star.half {
+        color: #ffd700;
+        position: relative;
+    }
+
+    .star.half::after {
+        content: '☆';
+        position: absolute;
+        left: 0;
+        color: #ddd;
+        width: 50%;
+        overflow: hidden;
+    }
+
+    .review-item {
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+    }
+
+    .review-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .reviewer-info {
+        flex: 1;
+    }
+
+    .reviewer-info strong {
+        color: #333;
+        font-size: 1.1em;
+    }
+
+    .review-date {
+        color: #666;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+
+    .review-rating {
+        display: flex;
+        gap: 2px;
+        margin-left: 15px;
+    }
+
+    .review-comment {
+        margin-top: 10px;
+        line-height: 1.6;
+        color: #444;
+        font-size: 0.95em;
+    }
+
+    .already-reviewed {
+        background-color: #e3f2fd;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 15px 0;
+        text-align: center;
+        color: #1976D2;
+    }
+
+    .review-form {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .rating-input {
+        margin: 15px 0;
+    }
+
+    .stars {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .stars input {
+        display: none;
+    }
+
+    .stars label {
+        font-size: 30px;
+        color: #ddd;
+        cursor: pointer;
+        margin: 0 2px;
+    }
+
+    .stars input:checked~label,
+    .stars label:hover,
+    .stars label:hover~label {
+        color: #ffd700;
+    }
+
+    .review-text textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .submit-review {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .submit-review:hover {
+        background-color: #45a049;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 20px 0;
+    }
+</style>
