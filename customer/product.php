@@ -320,8 +320,8 @@ if (isset($_POST['query'])) {
         }
     }
 </style>
+<link rel="stylesheet" href="../resources/css/chat.css">
 </head>
-
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -401,6 +401,169 @@ if (isset($_POST['query'])) {
             <?php endif; ?>
         </div>
     </div>
+    <!-- Chatbot -->
+<div class="chat-container" id="chatContainer">
+    <button class="chat-button" id="chatButton">
+        <img src="../resources/img/icons/chat.png" alt="Chat" width="30">
+    </button>
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <h3>Asisten Jamu Madura</h3>
+            <button class="close-button" onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="bot-message">Halo! Saya adalah asisten Jamu Madura. Apa yang ingin Anda ketahui tentang jamu kami?</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Ketik pesan Anda...">
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.chat-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #77dd77;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.chat-popup {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.chat-header {
+    background: #77dd77;
+    color: white;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-messages {
+    height: 300px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.chat-input {
+    padding: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 5px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chat-input button {
+    padding: 8px 15px;
+    background: #77dd77;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bot-message {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    background: #e3f9e3;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+</style>
+
+<script>
+function toggleChat() {
+    const popup = document.getElementById('chatPopup');
+    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
+    input.value = '';
+
+    // Kirim pesan ke server
+    fetch('../config/process_chat.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `message=${encodeURIComponent(message)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
+    });
+}
+
+document.getElementById('messageInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+document.getElementById('chatButton').addEventListener('click', toggleChat);
+</script>
+<script src="../resources/js/chat.js"></script>
 </body>
 
 </html>
