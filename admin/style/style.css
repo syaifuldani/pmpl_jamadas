@@ -136,7 +136,7 @@ body {
 .card h3 {
     margin-bottom: 10px;
 }
-.card p {   
+.card p {
     margin-bottom: 10px;
     font-size: 20px;
 }
@@ -164,9 +164,10 @@ body {
     border-collapse: collapse; /* Menghilangkan ruang antar sel */
 }
 
-.sales-table th, .sales-table td {
+.sales-table th,
+.sales-table td {
     padding: 12px 15px; /* Padding yang nyaman di dalam tabel */
-    text-align: left; 
+    text-align: left;
     border: 1px solid #ddd; /* Garis pemisah antar sel */
 }
 
@@ -199,7 +200,6 @@ body {
 .sales-list button:hover {
     background-color: #0056b3; /* Efek hover tombol */
 }
-
 
 .recent-orders {
     margin-top: 20px;
@@ -963,14 +963,14 @@ body {
 }
 
 .chart-controls {
-    margin-bottom: 15px;    
+    margin-bottom: 15px;
 }
 
 .chart-controls button {
     padding: 10px;
     margin-right: 5px;
     border: none;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     cursor: pointer;
 }

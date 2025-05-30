@@ -742,26 +742,32 @@ function addItemsToProduct($data)
     // Ambil dan sanitasi data dari form
     $nama_produk = trim($data['product_name']);
     $deskripsi = trim($data['description']);
+    $manfaat = trim($data['manfaat']);
+    $komposisi = trim($data['komposisi']);
     $kategori = isset($data['category']) ? trim($data['category']) : '';
+    $subkategori = isset($data['subcategory']) ? trim($data['subcategory']) : '';
     $harga_product = trim($data['product_price']);
 
     // Daftar kategori yang diizinkan
     $allowed_categories = [
-        'Pernikahan',
-        'Khitan',
-        'Walimatul',
-        'Tahlil&KirimDoa',
-        'UlangTahun'
+        'Perawatan Kecantikan dan Tubuh',
+        'Reproduksi Wanita',
+        'Vitalitas Pria'
     ];
 
     // Validasi input
-    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($harga_product)) {
+    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
         $errors['field'] = 'Semua field wajib diisi!';
     }
 
     // Validasi kategori
     if (!in_array($kategori, $allowed_categories)) {
         $errors['category'] = 'Kategori tidak valid!';
+    }
+
+    // Validasi Sub kategori
+    if (!in_array($kategori, $allowed_categories)) {
+        $errors['subcategory'] = 'Kategori tidak valid!';
     }
 
     // Validasi harga_product adalah angka
@@ -795,18 +801,22 @@ function addItemsToProduct($data)
     }
 
     // Simpan data ke database
-    $sql = "INSERT INTO products (nama_produk, deskripsi, harga_produk, gambar_satu, gambar_dua, gambar_tiga, kategori) 
-            VALUES (:nama_produk, :deskripsi, :harga_product, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori)";
+    $sql = "INSERT INTO products (nama_produk, deskripsi, manfaat_produk, komposisi_produk, harga_produk, gambar_satu, gambar_dua, gambar_tiga, kategori, sub_kategori) 
+        VALUES (:nama_produk, :deskripsi, :manfaat_produk, :komposisi_produk, :harga_product, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori, :subkategori)";
+
 
     try {
         $stmt = $GLOBALS["db"]->prepare($sql);
         $stmt->bindParam(':nama_produk', $nama_produk, PDO::PARAM_STR);
         $stmt->bindParam(':deskripsi', $deskripsi, PDO::PARAM_STR);
+        $stmt->bindParam(':manfaat_produk', $manfaat, PDO::PARAM_STR);
+        $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
         $stmt->bindParam(':harga_product', $harga_product, PDO::PARAM_STR);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_dua', $gambar_dua, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_tiga', $gambar_tiga, PDO::PARAM_LOB);
         $stmt->bindParam(':kategori', $kategori, PDO::PARAM_STR);
+        $stmt->bindParam(':subkategori', $subkategori, PDO::PARAM_STR);
         $stmt->execute();
 
         // Redirect atau tampilkan pesan sukses
