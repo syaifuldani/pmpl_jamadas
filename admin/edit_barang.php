@@ -43,13 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ambil dan sanitasi data dari form
     $nama_produk = trim($_POST['product_name']);
     $deskripsi = trim($_POST['description']);
+    $manfaat = trim($_POST['manfaat']);
+    $komposisi = trim($_POST['komposisi']);
     $kategori = trim($_POST['category']);
+    $subkategori = trim($_POST['subcategory']);
     $harga_product = trim($_POST['product_price']);
 
     // Validasi input
-    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($harga_product)) {
-        echo "Semua field wajib diisi!";
-        exit();
+    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
+        $errors['field'] = 'Semua field wajib diisi!';
     }
 
     // Validasi harga_product adalah angka
@@ -102,22 +104,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "UPDATE products SET 
                 nama_produk = :nama_produk, 
                 deskripsi = :deskripsi, 
+                manfaat_produk = :manfaat_produk, 
+                komposisi_produk = :komposisi_produk, 
                 harga_produk = :harga_produk, 
                 gambar_satu = :gambar_satu, 
                 gambar_dua = :gambar_dua, 
                 gambar_tiga = :gambar_tiga, 
-                kategori = :kategori 
+                kategori = :kategori,
+                sub_kategori = :subkategori 
             WHERE product_id = :product_id";
 
     try {
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':nama_produk', $nama_produk, PDO::PARAM_STR);
         $stmt->bindParam(':deskripsi', $deskripsi, PDO::PARAM_STR);
+        $stmt->bindParam(':manfaat_produk', $manfaat, PDO::PARAM_STR);
+        $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
         $stmt->bindParam(':harga_produk', $harga_product, PDO::PARAM_STR);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_dua', $gambar_dua, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_tiga', $gambar_tiga, PDO::PARAM_LOB);
         $stmt->bindParam(':kategori', $kategori, PDO::PARAM_STR);
+        $stmt->bindParam(':subkategori', $subkategori, PDO::PARAM_STR);
         $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -135,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Produk - PleeART</title>
+    <title>Edit Produk - Jamadas</title>
     <link rel="stylesheet" href="./style/style.css">
     <style>
         .delete-checkbox {
@@ -178,20 +186,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             required><?php echo htmlspecialchars($product['deskripsi']); ?></textarea>
                     </div>
 
+                    <!-- Manfaat -->
+                    <div class="form-group">
+                        <label for="manfaat">Manfaat</label>
+                        <textarea id="manfaat" name="manfaat"
+                            placeholder="Masukkan manfaat produk"><?php echo htmlspecialchars($product['manfaat_produk']); ?></textarea>
+                    </div>
+
+                    <!-- Komposisi -->
+                    <div class="form-group">
+                        <label for="komposisi">Komposisi</label>
+                        <textarea id="komposisi" name="komposisi"
+                            placeholder="Masukkan komposisi produk"><?php echo htmlspecialchars($product['komposisi_produk']); ?></textarea>
+                    </div>
+
                     <div class="form-group">
                         <label for="category">Kategori</label>
                         <select id="category" name="category" required>
-                            <option value="Pernikahan" <?php echo ($product['kategori'] == 'Pernikahan') ? 'selected' : ''; ?>>
-                                Undangan Pernikahan</option>
-                            <option value="Khitan" <?php echo ($product['kategori'] == 'Khitan') ? 'selected' : ''; ?>>
-                                Undangan
-                                Khitan</option>
-                            <option value="Walimatul" <?php echo ($product['kategori'] == 'Walimatul') ? 'selected' : ''; ?>>Undangan
-                                Walimatul</option>
-                            <option value="Tahlil&KirimDoa" <?php echo ($product['kategori'] == 'Tahlil&KirimDoa') ? 'selected' : ''; ?>>
-                                Undangan Tahlil & Kirim Doa</option>
-                            <option value="UlangTahun" <?php echo ($product['kategori'] == 'UlangTahun') ? 'selected' : ''; ?>>
-                                Undangan Ulang Tahun</option>
+                            <option value="Perawatan Kecantikan dan Tubuh" <?php echo ($product['kategori'] == 'Perawatan Kecantikan dan Tubuh') ? 'selected' : ''; ?>>
+                                Perawatan Kecantikan dan Tubuh</option>
+                            <option value="Reproduksi Wanita" <?php echo ($product['kategori'] == 'Reproduksi Wanita') ? 'selected' : ''; ?>>
+                                Reproduksi Wanita</option>
+                            <option value="Vitalitas Pria" <?php echo ($product['kategori'] == 'Vitalitas Pria') ? 'selected' : ''; ?>>
+                                Vitalitas Pria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subcategory">Sub Kategori</label>
+                        <select id="subcategory" name="subcategory" required>
+                            <option value="Jamu Cair" <?php echo ($product['sub_kategori'] == 'Jamu Cair') ? 'selected' : ''; ?>>
+                                Jamu Cair</option>
+                            <option value="Jamu Bubuk" <?php echo ($product['sub_kategori'] == 'Jamu Bubuk') ? 'selected' : ''; ?>>
+                                Jamu Bubuk</option>
+                            <option value="Lainnya" <?php echo ($product['sub_kategori'] == 'Lainnya') ? 'selected' : ''; ?>>
+                                Lainnya</option>
                         </select>
                     </div>
 

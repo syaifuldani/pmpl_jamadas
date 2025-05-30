@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
 require '../config/connection.php';
 require '../config/function.php';
 
-$title = "PleeART";
+$title = "Jamadas";
 $jenishalaman = "Tambah Barang";
 $user_email = $_SESSION['user_email'];
 
@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($responseAddItems['status']) && $responseAddItems['status'] === 'success') {
         $success_message = $responseAddItems['message'];
+        header("Location: product.php");
+        exit();
     } else {
         // If errors exist, handle them
         $errors = $responseAddItems;
@@ -53,12 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <main class="main-content">
             <header class="header">
                 <h2>Tambah Barang</h2>
-                <div class="date"><?php echo date('F d, Y'); ?></div>
+                <div class="date"><?php echo date('<F></F> d, Y'); ?></div>
                 <div class="admin-dropdown">
                     <button class="dropdown-toggle">Admin ▼</button>
                     <ul class="dropdown-menu">
-                        <li><a href="../profile/profile.php">Profile</a></li>
-                        <li><a href="../logout.php">Logout</a></li>
+                        <li><a href="../admin/profile.php">Profile</a></li>
+                        <li><a href="../admin/process/logout.php">Logout</a></li>
                     </ul>
                 </div>
             </header>
@@ -82,19 +84,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
+                    <!-- Manfaat -->
+                    <div class="form-group">
+                        <label for="manfaat">Manfaat</label>
+                        <textarea id="manfaat" name="manfaat" placeholder="Masukkan manfaat produk"></textarea>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                    </div>
+
+                    <!-- Komposisi -->
+                    <div class="form-group">
+                        <label for="komposisi">Komposisi</label>
+                        <textarea id="komposisi" name="komposisi" placeholder="Masukkan komposisi produk"></textarea>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                    </div>
+
                     <!-- Kategori (Dropdown) -->
                     <div class="form-group">
                         <label for="category">Kategori</label>
                         <select id="category" name="category">
                             <option value="" disabled selected>-- Pilih Kategori --</option>
-                            <option value="Pernikahan">Undangan Pernikahan</option>
-                            <option value="Khitan">Undangan Khitan</option>
-                            <option value="Walimatul">Undangan Walimatul</option>
-                            <option value="Tahlil&KirimDoa">Undangan Tahlil & Kirim Doa</option>
-                            <option value="UlangTahun">Undangan Ulang Tahun</option>
+                            <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
+                            <option value="Reproduksi Wanita">Reproduksi Wanita</option>
+                            <option value="Vitalitas Pria">Vitalitas Pria</option>
                         </select>
                         <span
                             class="error-message"><?= isset($responseAddItems['category']) ? $responseAddItems['category'] : ''; ?></span>
+                    </div>
+
+                    <!-- Sub Kategori (Dropdown) -->
+                    <div class="form-group">
+                        <label for="subcategory">Sub kategori</label>
+                        <select id="subcategory" name="subcategory">
+                            <option value="" disabled selected>-- Pilih Kategori --</option>
+                            <option value="Jamu Cair">Jamu Cair</option>
+                            <option value="Jamu Bubuk">Jamu Bubuk</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                     </div>
 
                     <!-- Harga Produk -->
@@ -111,25 +140,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <!-- Product Gallery -->
                     <div class="product-gallery">
                         <label>Product Gallery (max 3)</label>
-                        
+
                         <!-- Input untuk Gambar Satu -->
                         <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
                             <label for="gambar_satu">Gambar Satu</label>
-                            <input type="file" id="gambar_satu" name="gambar_satu" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="previewImage(event, 'preview-satu')">
+                            <input type="file" id="gambar_satu" name="gambar_satu" accept=".jpg,.jpeg,.png,.gif,.webp"
+                                onchange="previewImage(event, 'preview-satu')">
                             <div id="preview-satu" style="margin-top: 10px;"></div>
                         </div>
 
                         <!-- Input untuk Gambar Dua -->
                         <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
                             <label for="gambar_dua">Gambar Dua</label>
-                            <input type="file" id="gambar_dua" name="gambar_dua" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="previewImage(event, 'preview-dua')">
+                            <input type="file" id="gambar_dua" name="gambar_dua" accept=".jpg,.jpeg,.png,.gif,.webp"
+                                onchange="previewImage(event, 'preview-dua')">
                             <div id="preview-dua" style="margin-top: 10px;"></div>
                         </div>
 
                         <!-- Input untuk Gambar Tiga -->
                         <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
                             <label for="gambar_tiga">Gambar Tiga</label>
-                            <input type="file" id="gambar_tiga" name="gambar_tiga" accept=".jpg,.jpeg,.png,.gif,.webp" onchange="previewImage(event, 'preview-tiga')">
+                            <input type="file" id="gambar_tiga" name="gambar_tiga" accept=".jpg,.jpeg,.png,.gif,.webp"
+                                onchange="previewImage(event, 'preview-tiga')">
                             <div id="preview-tiga" style="margin-top: 10px;"></div>
                         </div>
 
@@ -142,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <span class="error-message">
                             <?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?>
                         </span>
-                    </div>           
+                    </div>
 
                     <!-- Tombol Submit dan Cancel -->
                     <div class="button-group">
@@ -194,29 +226,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
     </script>
     <script>
-            function previewImage(event, previewId) {
-                const previewContainer = document.getElementById(previewId);
-                const file = event.target.files[0];
+        function previewImage(event, previewId) {
+            const previewContainer = document.getElementById(previewId);
+            const file = event.target.files[0];
 
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // Hapus konten lama jika ada
-                        previewContainer.innerHTML = '';
-                        // Tambahkan gambar baru
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.maxWidth = '100px';
-                        img.style.maxHeight = '100px';
-                        previewContainer.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    // Hapus pratinjau jika file dihapus
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Hapus konten lama jika ada
                     previewContainer.innerHTML = '';
-                }
+                    // Tambahkan gambar baru
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Hapus pratinjau jika file dihapus
+                previewContainer.innerHTML = '';
             }
-            </script>
+        }
+    </script>
 
 </body>
 

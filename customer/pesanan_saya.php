@@ -169,8 +169,6 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                                     Pesanan Diterima
                                 </button>
                             <?php endif; ?>
-                            <button class="btn-reviews">Berikan
-                                ulasan</button>
                             <button class="btn-details"
                                 onclick="viewOrderDetails('<?= htmlspecialchars($order['order_id']) ?>')">Lihat
                                 Detail</button>

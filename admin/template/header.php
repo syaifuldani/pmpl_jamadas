@@ -4,8 +4,8 @@
     <div class="admin-dropdown">
         <button class="dropdown-toggle">Admin ▼</button>
         <ul class="dropdown-menu">
-            <li><a href=".\profile.php">Profile</a></li>
-            <li><a href="./process/logout.php">Logout</a></li>
+            <li><a href="../admin/profile.php">Profile</a></li>
+            <li><a href="../admin/process/logout.php">Logout</a></li>
         </ul>
     </div>
 </header>

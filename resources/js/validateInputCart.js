@@ -14,9 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("payment-form");
         let isValid = true;
 
-        isValid = validateTanggalAcara(form.tanggalacara) && isValid;
-        isValid = validateLokasiAcara(form.lokasiacara) && isValid;
-        // isValid = validateKeterangan(form.keterangan_order) && isValid;
+        // isValid = validateTanggalAcara(form.tanggalacara) && isValid;
+        // isValid = validateLokasiAcara(form.lokasiacara) && isValid;
+        isValid = validateKeterangan(form.keterangan_order) && isValid;
         isValid = validateNamaPenerima(form.namapenerima) && isValid;
         isValid = validateEmail(form.email) && isValid;
         isValid = validateKelurahan(form.kelurahan) && isValid;
@@ -104,52 +104,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validasi tanggal acara
-    function validateTanggalAcara(input) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset waktu ke 00:00:00
-        const selectedDate = new Date(input.value);
+    // function validateTanggalAcara(input) {
+    //     const today = new Date();
+    //     today.setHours(0, 0, 0, 0); // Reset waktu ke 00:00:00
+    //     const selectedDate = new Date(input.value);
 
-        if (!input.value) {
-            showError(input, "Tanggal acara harus diisi");
-            return false;
-        }
-
-        if (selectedDate < today) {
-            showError(input, "Tanggal acara tidak boleh kurang dari hari ini");
-            return false;
-        }
-
-        removeError(input);
-        return true;
-    }
-
-    // Validasi lokasi acara
-    function validateLokasiAcara(input) {
-        if (!input.value.trim()) {
-            showError(input, "Lokasi acara harus diisi");
-            return false;
-        }
-        if (input.value.length < 3) {
-            showError(input, "Lokasi acara minimal 3 karakter");
-            return false;
-        }
-        removeError(input);
-        return true;
-    }
-
-    // Validasi keterangan order
-    // function validateKeterangan(input) {
-    //     if (!input.value.trim()) {
-    //         showError(input, "Keterangan tambahan harus diisi");
+    //     if (!input.value) {
+    //         showError(input, "Tanggal acara harus diisi");
     //         return false;
     //     }
-    //     if (input.value.length < 10) {
-    //         showError(input, "Keterangan minimal 10 karakter");
+
+    //     if (selectedDate < today) {
+    //         showError(input, "Tanggal acara tidak boleh kurang dari hari ini");
+    //         return false;
+    //     }
+
+    //     removeError(input);
+    //     return true;
+    // }
+
+    // Validasi lokasi acara
+    // function validateLokasiAcara(input) {
+    //     if (!input.value.trim()) {
+    //         showError(input, "Lokasi acara harus diisi");
+    //         return false;
+    //     }
+    //     if (input.value.length < 3) {
+    //         showError(input, "Lokasi acara minimal 3 karakter");
     //         return false;
     //     }
     //     removeError(input);
     //     return true;
     // }
+
+    // Validasi keterangan order
+    function validateKeterangan(input) {
+        if (!input.value.trim()) {
+            showError(input, "Keterangan tambahan harus diisi");
+            return false;
+        }
+        if (input.value.length < 10) {
+            showError(input, "Keterangan minimal 10 karakter");
+            return false;
+        }
+        removeError(input);
+        return true;
+    }
 
     // Validasi nama penerima
     function validateNamaPenerima(input) {
