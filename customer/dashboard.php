@@ -31,7 +31,7 @@ if (isset($_POST['query'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+  <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
   <link rel="stylesheet" href="../resources/css/dashboard.css">
   <link rel="stylesheet" href="../resources/css/navbar.css">
   <link rel="stylesheet" href="../resources/css/chat.css">
@@ -86,33 +86,21 @@ if (isset($_POST['query'])) {
       </h2>
       <div class="product-grid">
         <div class="product-card-dsbrd animate-slide-top animate-delay-2">
-          <a href="jamu_vitalitas.php">
+          <a href="product.php?kategori=Perawatan+Kecantikan+dan+Tubuh&sub_kategori=all">
             <img src="../resources/img/homeimg/jamu_vitalitas.jpeg" alt="Jamu Vitalitas">
             <p>Jamu Vitalitas</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-3">
-          <a href="jamu_kecantikan.php">
-            <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Jamu Kecantikan">
-            <p>Jamu Kecantikan</p>
+          <a href="product.php?kategori=Reproduksi+Wanita&sub_kategori=all">
+            <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Reproduksi Wanita">
+            <p>Reproduksi Wanita</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-4">
-          <a href="jamu_kesehatan.php">
-            <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Jamu Kewanitaan">
-            <p>Jamu Kewanitaan</p>
-          </a>
-        </div>
-        <div class="product-card-dsbrd animate-slide-top animate-delay-5">
-          <a href="jamu_herbal.php">
-            <img src="../resources/img/homeimg/jamu_pelangsing.jpg" alt="Jamu Pelangsing">
-            <p>Jamu Pelangsing</p>
-          </a>
-        </div>
-        <div class="product-card-dsbrd animate-slide-top animate-delay-6">
-          <a href="jamu_lainnya.php">
-            <img src="../resources/img/homeimg/jamu_lainnya.jpeg" alt="Jamu Lainnya">
-            <p>Jamu Lainnya</p>
+          <a href="product.php?kategori=Vitalitas+Pria&sub_kategori=all">
+            <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Vitalitas Pria">
+            <p>Vitalitas Pria</p>
           </a>
         </div>
       </div>
@@ -153,165 +141,165 @@ if (isset($_POST['query'])) {
     <?php include 'layout/cusmrLayout/footer.php'; ?>
   </footer>
   </div>
-<!-- Chatbot -->
-<div class="chat-toggle">
+  <!-- Chatbot -->
+  <div class="chat-toggle">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
-</div>
+  </div>
 
-<div class="chat-container">
+  <div class="chat-container">
     <div class="chat-header">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
-        <h3>Asisten Jamu</h3>
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
+      <h3>Asisten Jamu</h3>
     </div>
     <div class="chat-box"></div>
     <div class="chat-input">
-        <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
-        <button onclick="sendMessage()">Kirim</button>
+      <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
+      <button onclick="sendMessage()">Kirim</button>
     </div>
-</div>
+  </div>
 
-<style>
-.chat-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.chat-button {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #77dd77;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.chat-popup {
-    display: none;
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    width: 300px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.chat-header {
-    background: #77dd77;
-    color: white;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.chat-header h3 {
-    margin: 0;
-    font-size: 16px;
-}
-
-.close-button {
-    background: none;
-    border: none;
-    color: black;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.chat-messages {
-    height: 300px;
-    padding: 10px;
-    overflow-y: auto;
-}
-
-.chat-input {
-    padding: 10px;
-    border-top: 1px solid #eee;
-    display: flex;
-    gap: 5px;
-}
-
-.chat-input input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.chat-input button {
-    padding: 8px 15px;
-    background: #77dd77;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.bot-message {
-    background:rgb(4, 255, 42);
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.user-message {
-    background:rgb(0, 254, 0);
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    text-align: right;
-}
-</style>
-
-<script>
-function toggleChat() {
-    const popup = document.getElementById('chatPopup');
-    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
-}
-
-function sendMessage() {
-    const input = document.getElementById('messageInput');
-    const message = input.value.trim();
-    if (!message) return;
-
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
-    input.value = '';
-
-    // Kirim pesan ke server
-    fetch('../config/process_chat.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `message=${encodeURIComponent(message)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
-    });
-}
-
-document.getElementById('messageInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
+  <style>
+    .chat-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
     }
-});
 
-document.getElementById('chatButton').addEventListener('click', toggleChat);
-</script>
+    .chat-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #77dd77;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .chat-popup {
+      display: none;
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 300px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-header {
+      background: #77dd77;
+      color: white;
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: black;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .chat-messages {
+      height: 300px;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .chat-input {
+      padding: 10px;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 5px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .chat-input button {
+      padding: 8px 15px;
+      background: #77dd77;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .bot-message {
+      background: rgb(4, 255, 42);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .user-message {
+      background: rgb(0, 254, 0);
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+  </style>
+
+  <script>
+    function toggleChat() {
+      const popup = document.getElementById('chatPopup');
+      popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
+      input.value = '';
+
+      // Kirim pesan ke server
+      fetch('../config/process_chat.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `message=${encodeURIComponent(message)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
+        });
+    }
+
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    document.getElementById('chatButton').addEventListener('click', toggleChat);
+  </script>
   <script src="../resources/js/burgersidebar.js"></script>
   <script src="../resources/js/livesearch.js"></script>
   <script src="../resources/js/chat.js"></script>
