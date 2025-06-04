@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
     exit();
 }
 
+$jenishalaman = "Edit Produk";
+
 require '../config/connection.php';
 
 // Alias objek PDO dari $GLOBALS['db'] ke $pdo untuk kompatibilitas
@@ -160,17 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php require "./template/sidebar.php" ?>
 
         <main class="main-content">
-            <header class="header">
-                <h2>Edit Barang</h2>
-                <div class="date"><?php echo date('F d, Y'); ?></div>
-                <div class="admin-dropdown">
-                    <button class="dropdown-toggle">Admin ▼</button>
-                    <ul class="dropdown-menu">
-                        <li><a href="../profile/profile.php">Profile</a></li>
-                        <li><a href="../logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </header>
+            <?php require "template/header.php"; ?>
 
             <section class="product-detail">
                 <form action="" method="POST" enctype="multipart/form-data">
