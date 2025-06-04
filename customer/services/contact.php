@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kontak</title>
-    <link rel="icon" href="../../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../../resources/img/icons/jamadas.jpg" type="image/png">
     <link rel="stylesheet" href="../../resources/css/service.css">
 </head>
 
@@ -13,7 +13,7 @@
     <div class="contact-us-wrapper">
         <div class="contact-us-container">
             <div class="image-container">
-                <img src="../../resources/img/icons/pleeart-image.png" alt="Logo" class="logo-image">
+                <img src="../../resources/img/icons/jamadas.jpg" alt="Logo" class="logo-image">
             </div>
             <div class="contact-us-content">
                 <h1>Contact Us</h1>

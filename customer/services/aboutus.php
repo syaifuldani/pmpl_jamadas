@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
-    <link rel="icon" href="../../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../../resources/img/icons/jamadas.jpg" type="image/png">
     <link rel="stylesheet" href="../../resources/css/service.css">
 </head>
 
@@ -14,37 +14,37 @@
         <h1>Tentang Kami</h1>
         <div class="about-us-content">
             <div class="image-container">
-                <img src="../../resources/img/icons/pleeart-image.png" alt="Logo" class="logo-image">
+                <img src="../../resources/img/icons/jamadas.jpg" alt="Logo" class="logo-image">
             </div>
             <div class="text-content">
-                <h2>Selamat Datang di Aplikasi Cetak Undangan</h2>
+                <h2>Selamat datang di layanan Jamu Madura Online!</h2>
                 <p>
-                    Kami adalah penyedia layanan cetak undangan online yang didedikasikan untuk mempermudah Anda dalam
-                    mencetak undangan untuk berbagai acara spesial seperti pernikahan,
-                    ulang tahun, khitanan, dan lainnya. Dengan aplikasi kami, Anda dapat memilih undangan dengan desain
-                    yang menarik dan kualitas cetak terbaik tanpa harus repot.
+                    Kami menyediakan berbagai pilihan jamu Madura asli yang siap Anda pesan untuk menjaga kesehatan dan kebugaran Anda.
+                    Mulai dari jamu untuk vitalitas, kecantikan, hingga kesehatan harian, semua terbuat dari bahan alami pilihan khas Madura.
+                    Pilih produk favorit Anda, tambahkan ke keranjang, dan biarkan kami mengirimkannya langsung ke alamat Anda.
+                    Proses mudah, hasil menyehatkan!
                 </p>
                 <h3>Visi Kami</h3>
                 <p>
-                    Menjadi solusi terbaik untuk layanan cetak undangan digital dan fisik dengan memberikan kemudahan,
-                    kecepatan, dan kualitas terbaik bagi pelanggan.
+                    Menjadi platform terpercaya dan terdepan dalam penyediaan jamu Madura berkualitas tinggi secara online,
+                    yang menjaga warisan budaya sekaligus menjawab kebutuhan kesehatan dan kecantikan masyarakat modern.
                 </p>
                 <h3>Misi Kami</h3>
                 <ul>
-                    <li>Menyediakan berbagai template undangan yang kreatif dan sesuai dengan kebutuhan acara Anda.</li>
-                    <li>Memberikan layanan cetak dengan kualitas tinggi dan pengiriman tepat waktu.</li>
-                    <li>Mempermudah proses pemesanan undangan secara online dengan sistem yang user-friendly.</li>
+                    <li>Menyediakan produk jamu Madura asli yang aman, berkualitas, dan terjamin keasliannya.</li>
+                    <li>Melestarikan kearifan lokal dan warisan leluhur dalam bidang pengobatan tradisional Madura.</li>
+                    <li>Memberikan kemudahan akses pembelian jamu Madura melalui platform digital yang aman dan responsif.</li>
+                    <li>Meningkatkan kesadaran masyarakat terhadap manfaat jamu tradisional untuk kesehatan dan kecantikan alami.</li>
+                    <li>Memberdayakan produsen lokal dan pengrajin jamu Madura untuk meningkatkan perekonomian daerah.</li>
                 </ul>
-                <h3>Team :</h3>
-                <p>this website created by us :</p>
+                <!-- <h3>Team :</h3> -->
+                <p>This website is supported by:</p>
                 <ul>
-                    <li>M. Abdillah Al Aziz</li>
-                    <li>Zarkashi Fahriza</li>
-                    <li>Vemas Dwi Prayoga</li>
-                    <li>M. Amanda Rifqianto</li>
-                    <li>Syaiful Rochmandani</li>
+                    <li>FixUP</li>
+                    <li>Artleaf.co</li>
+                    <li>Ojek Kak</li>
                 </ul>
-                <p>to completed the final project of the software design lesson</p>
+                <!-- <p>to completed the final project of the software design lesson</p> -->
             </div>
         </div>
         <a href="../dashboard.php" class="back-button">&laquo; Kembali</a>
