@@ -244,17 +244,13 @@ try {
                             <div class="rating-number"><?= $average_rating ?></div>
                             <div class="rating-stars">
                                 <?php
-                                // Display full stars
-                                for ($i = 1; $i <= floor($average_rating); $i++) {
-                                    echo '<span class="star filled">★</span>';
-                                }
-                                // Display half star if needed
-                                if ($average_rating - floor($average_rating) >= 0.5) {
-                                    echo '<span class="star half">★</span>';
-                                }
-                                // Display empty stars
-                                for ($i = ceil($average_rating); $i < 5; $i++) {
-                                    echo '<span class="star">☆</span>';
+                                // Display average rating stars (1-5 from left to right)
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $average_rating) {
+                                        echo '<span class="star filled">★</span>';
+                                    } else {
+                                        echo '<span class="star">☆</span>';
+                                    }
                                 }
                                 ?>
                             </div>
@@ -279,7 +275,7 @@ try {
                                     </div>
                                     <div class="review-rating">
                                         <?php
-                                        // Display stars based on rating
+                                        // Display stars based on rating (1-5 from left to right)
                                         for ($i = 1; $i <= 5; $i++) {
                                             if ($i <= $review['rating']) {
                                                 echo '<span class="star filled">★</span>';
@@ -407,6 +403,7 @@ try {
 
     .rating-stars {
         display: flex;
+        flex-direction: row;
         gap: 2px;
     }
 
@@ -419,6 +416,7 @@ try {
     .star {
         color: #ddd;
         font-size: 24px;
+        cursor: default;
     }
 
     .star.filled {
@@ -426,17 +424,7 @@ try {
     }
 
     .star.half {
-        color: #ffd700;
-        position: relative;
-    }
-
-    .star.half::after {
-        content: '☆';
-        position: absolute;
-        left: 0;
-        color: #ddd;
-        width: 50%;
-        overflow: hidden;
+        display: none;
     }
 
     .review-item {
@@ -479,8 +467,8 @@ try {
 
     .review-rating {
         display: flex;
+        flex-direction: row;
         gap: 2px;
-        margin-left: 15px;
     }
 
     .review-comment {
@@ -511,8 +499,9 @@ try {
     }
 
     .stars {
-        display: inline-block;
-        margin-left: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 2px;
     }
 
     .stars input {
@@ -560,5 +549,27 @@ try {
         border: none;
         border-top: 1px solid #eee;
         margin: 20px 0;
+    }
+
+    /* Update star rating styles */
+    .stars,
+    .review-rating {
+        display: flex;
+        flex-direction: row;
+        gap: 2px;
+    }
+
+    .star {
+        color: #ddd;
+        font-size: 24px;
+        cursor: default;
+    }
+
+    .star.filled {
+        color: #ffd700;
+    }
+
+    .star.half {
+        display: none;
     }
 </style>

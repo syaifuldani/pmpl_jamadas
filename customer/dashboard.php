@@ -86,21 +86,33 @@ if (isset($_POST['query'])) {
       </h2>
       <div class="product-grid">
         <div class="product-card-dsbrd animate-slide-top animate-delay-2">
-          <a href="product.php?kategori=Perawatan+Kecantikan+dan+Tubuh&sub_kategori=all">
+          <a href="jamu_vitalitas.php">
             <img src="../resources/img/homeimg/jamu_vitalitas.jpeg" alt="Jamu Vitalitas">
             <p>Jamu Vitalitas</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-3">
-          <a href="product.php?kategori=Reproduksi+Wanita&sub_kategori=all">
-            <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Reproduksi Wanita">
-            <p>Reproduksi Wanita</p>
+          <a href="jamu_kecantikan.php">
+            <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Jamu Kecantikan">
+            <p>Jamu Kecantikan</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-4">
-          <a href="product.php?kategori=Vitalitas+Pria&sub_kategori=all">
-            <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Vitalitas Pria">
-            <p>Vitalitas Pria</p>
+          <a href="jamu_kesehatan.php">
+            <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Jamu Kewanitaan">
+            <p>Jamu Kewanitaan</p>
+          </a>
+        </div>
+        <div class="product-card-dsbrd animate-slide-top animate-delay-5">
+          <a href="jamu_herbal.php">
+            <img src="../resources/img/homeimg/jamu_pelangsing.jpg" alt="Jamu Pelangsing">
+            <p>Jamu Pelangsing</p>
+          </a>
+        </div>
+        <div class="product-card-dsbrd animate-slide-top animate-delay-6">
+          <a href="jamu_lainnya.php">
+            <img src="../resources/img/homeimg/jamu_lainnya.jpeg" alt="Jamu Lainnya">
+            <p>Jamu Lainnya</p>
           </a>
         </div>
       </div>

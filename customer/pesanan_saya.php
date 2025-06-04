@@ -58,7 +58,7 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Pesanan</title>
-    <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
     <!-- // Cetak Note Script -->
     <!-- Ganti URL jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -229,18 +229,50 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                         <div class="rating-input">
                             <label>Rating:</label>
                             <div class="stars">
-                                <input type="radio" id="star1" name="rating" value="1" required>
-                                <label for="star1">★</label>
-                                <input type="radio" id="star2" name="rating" value="2">
-                                <label for="star2">★</label>
-                                <input type="radio" id="star3" name="rating" value="3">
-                                <label for="star3">★</label>
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5">★</label>
                                 <input type="radio" id="star4" name="rating" value="4">
                                 <label for="star4">★</label>
-                                <input type="radio" id="star5" name="rating" value="5">
-                                <label for="star5">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1">★</label>
                             </div>
                         </div>
+
+                        <style>
+                            .stars {
+                                display: flex;
+                                flex-direction: row;
+                                /* Display stars from left to right */
+                                gap: 2px;
+                            }
+
+                            .stars input {
+                                display: none;
+                            }
+
+                            .stars label {
+                                cursor: pointer;
+                                font-size: 30px;
+                                color: #ddd;
+                                transition: color 0.2s;
+                            }
+
+                            /* Hover effect from left to right */
+                            .stars label:hover,
+                            .stars label:hover~label,
+                            .stars input:checked~label {
+                                color: #ffd700;
+                            }
+
+                            /* Ensure stars are filled from left to right */
+                            .stars input:checked+label {
+                                color: #ffd700;
+                            }
+                        </style>
 
                         <div class="review-text">
                             <label for="reviewComment">Ulasan Anda:</label>
