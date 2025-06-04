@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
-    <link rel="icon" href="../../resources/img/icons/jamadas.jpg" type="image/png">
+    <link rel="icon" href="../../resources/img/icons/jamadas2.png" type="image/png">
     <link rel="stylesheet" href="../../resources/css/service.css">
 </head>
 

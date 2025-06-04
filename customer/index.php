@@ -25,7 +25,7 @@ if (isset($_POST['query'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="icon" href="../resources/img/icons/jamadas.jpg" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
     <link rel="stylesheet" href="../resources/css/dashboard.css">
     <link rel="stylesheet" href="../resources/css/navbar.css">
 </head>
@@ -58,7 +58,7 @@ if (isset($_POST['query'])) {
                 </h2>
                 <p class="animate-fade-in animate-delay-2">
                     Pesan Sekarang, Jamu Madura Siap Dikirim ke Rumah Anda
-                <!-- </p>
+                    <!-- </p>
                 <form action="" method="POST" class="search-input animate-slide-right animate-delay-3">
                     <label><img src="../resources/img/icons/search.png" alt=""></label>
                     <input type="text" id="contentSearchBox" name="query" placeholder="Cari Jamu Madura Anda"

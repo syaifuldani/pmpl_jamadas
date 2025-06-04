@@ -47,11 +47,11 @@
     <div class="footer-section">
         <h2>Other</h2>
         <ul>
-            <li>
+            <!-- <li>
                 <a href="services/ulasan_website.php">
                     <p><img src="../resources/img/icons/pencil.png" alt="Ulasan">Beri ulasan untuk JAMADAS.</p>
                 </a>
-            </li>
+            </li> -->
             <li>
                 <a href="termofuse.php">
                     <img src="../resources/img/icons/termofuse.png" alt="Term Of Use">Terms of Use
