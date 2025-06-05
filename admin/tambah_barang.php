@@ -53,116 +53,118 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php require "./template/sidebar.php" ?>
 
         <main class="main-content">
-            <header class="header">
-                <h2>Tambah Barang</h2>
-                <div class="date"><?php echo date('<F></F> d, Y'); ?></div>
-                <div class="admin-dropdown">
-                    <button class="dropdown-toggle">Admin ▼</button>
-                    <ul class="dropdown-menu">
-                        <li><a href="../admin/profile.php">Profile</a></li>
-                        <li><a href="../admin/process/logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </header>
+            <?php require "template/header.php"; ?>
 
             <section class="product-detail">
                 <form action="" method="POST" enctype="multipart/form-data">
                     <!-- Nama Produk -->
                     <div class="form-group">
-                        <label for="product-name">Nama Produk</label>
+                        <label for="product-name">
+                            <i class="fas fa-box"></i> Nama Produk
+                        </label>
                         <input type="text" id="product-name" name="product_name" placeholder="Masukkan nama produk">
-                        <span
-                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Deskripsi -->
                     <div class="form-group">
-                        <label for="description">Deskripsi</label>
-                        <textarea id="description" name="description"
-                            placeholder="Masukkan deskripsi produk"></textarea>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <label for="description">
+                            <i class="fas fa-align-left"></i> Deskripsi
+                        </label>
+                        <textarea id="description" name="description" placeholder="Masukkan deskripsi produk"></textarea>
+                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Manfaat -->
                     <div class="form-group">
-                        <label for="manfaat">Manfaat</label>
+                        <label for="manfaat">
+                            <i class="fas fa-star"></i> Manfaat
+                        </label>
                         <textarea id="manfaat" name="manfaat" placeholder="Masukkan manfaat produk"></textarea>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Komposisi -->
                     <div class="form-group">
-                        <label for="komposisi">Komposisi</label>
+                        <label for="komposisi">
+                            <i class="fas fa-flask"></i> Komposisi
+                        </label>
                         <textarea id="komposisi" name="komposisi" placeholder="Masukkan komposisi produk"></textarea>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
-                    <!-- Kategori (Dropdown) -->
-                    <div class="form-group">
-                        <label for="category">Kategori</label>
-                        <select id="category" name="category">
-                            <option value="" disabled selected>-- Pilih Kategori --</option>
-                            <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
-                            <option value="Reproduksi Wanita">Reproduksi Wanita</option>
-                            <option value="Vitalitas Pria">Vitalitas Pria</option>
-                        </select>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['category']) ? $responseAddItems['category'] : ''; ?></span>
-                    </div>
+                    <!-- Kategori dan Sub Kategori -->
+                    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label for="category">
+                                <i class="fas fa-tags"></i> Kategori
+                            </label>
+                            <select id="category" name="category">
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
+                                <option value="Reproduksi Wanita">Reproduksi Wanita</option>
+                                <option value="Vitalitas Pria">Vitalitas Pria</option>
+                            </select>
+                            <span class="error-message"><?= isset($responseAddItems['category']) ? $responseAddItems['category'] : ''; ?></span>
+                        </div>
 
-                    <!-- Sub Kategori (Dropdown) -->
-                    <div class="form-group">
-                        <label for="subcategory">Sub kategori</label>
-                        <select id="subcategory" name="subcategory">
-                            <option value="" disabled selected>-- Pilih Kategori --</option>
-                            <option value="Jamu Cair">Jamu Cair</option>
-                            <option value="Jamu Bubuk">Jamu Bubuk</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
+                        <div>
+                            <label for="subcategory">
+                                <i class="fas fa-tag"></i> Sub kategori
+                            </label>
+                            <select id="subcategory" name="subcategory">
+                                <option value="" disabled selected>-- Pilih Sub Kategori --</option>
+                                <option value="Jamu Cair">Jamu Cair</option>
+                                <option value="Jamu Bubuk">Jamu Bubuk</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                            <span class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
+                        </div>
                     </div>
 
                     <!-- Harga Produk -->
                     <div class="form-group price-group">
                         <div class="price-field">
-                            <label for="product-price">Harga Produk</label>
-                            <input type="text" id="product-price" name="product_price"
-                                placeholder="Masukkan harga produk">
+                            <label for="product-price">
+                                <i class="fas fa-tag"></i> Harga Produk
+                            </label>
+                            <input type="text" id="product-price" name="product_price" placeholder="Masukkan harga produk">
                         </div>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
+                        <span class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                     </div>
 
                     <!-- Product Gallery -->
                     <div class="product-gallery">
-                        <label>Product Gallery (max 3)</label>
+                        <label><i class="fas fa-images"></i> Product Gallery (max 3)</label>
 
                         <!-- Input untuk Gambar Satu -->
-                        <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
-                            <label for="gambar_satu">Gambar Satu</label>
+                        <div class="image-upload">
+                            <label for="gambar_satu">
+                                <i class="fas fa-image"></i> Gambar Utama
+                            </label>
                             <input type="file" id="gambar_satu" name="gambar_satu" accept=".jpg,.jpeg,.png,.gif,.webp"
                                 onchange="previewImage(event, 'preview-satu')">
-                            <div id="preview-satu" style="margin-top: 10px;"></div>
+                            <div id="preview-satu"></div>
                         </div>
 
                         <!-- Input untuk Gambar Dua -->
-                        <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
-                            <label for="gambar_dua">Gambar Dua</label>
+                        <div class="image-upload">
+                            <label for="gambar_dua">
+                                <i class="fas fa-image"></i> Gambar Kedua
+                            </label>
                             <input type="file" id="gambar_dua" name="gambar_dua" accept=".jpg,.jpeg,.png,.gif,.webp"
                                 onchange="previewImage(event, 'preview-dua')">
-                            <div id="preview-dua" style="margin-top: 10px;"></div>
+                            <div id="preview-dua"></div>
                         </div>
 
                         <!-- Input untuk Gambar Tiga -->
-                        <div class="image-upload" style="border: #000000 2px solid; margin-top: 1rem;">
-                            <label for="gambar_tiga">Gambar Tiga</label>
+                        <div class="image-upload">
+                            <label for="gambar_tiga">
+                                <i class="fas fa-image"></i> Gambar Ketiga
+                            </label>
                             <input type="file" id="gambar_tiga" name="gambar_tiga" accept=".jpg,.jpeg,.png,.gif,.webp"
                                 onchange="previewImage(event, 'preview-tiga')">
-                            <div id="preview-tiga" style="margin-top: 10px;"></div>
+                            <div id="preview-tiga"></div>
                         </div>
 
                         <span class="error-message">
@@ -178,9 +180,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- Tombol Submit dan Cancel -->
                     <div class="button-group">
-                        <button type="submit" class="btn btn-update">Tambah</button>
-                        <button type="button" class="btn btn-cancel"
-                            onclick="window.location.href='product.php'">CANCEL</button>
+                        <button type="submit" class="btn btn-update">
+                            <i class="fas fa-plus"></i> Tambah Produk
+                        </button>
+                        <button type="button" class="btn btn-cancel" onclick="window.location.href='product.php'">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
                     </div>
                 </form>
             </section>

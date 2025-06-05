@@ -19,6 +19,12 @@ $stmt_kategori = $GLOBALS['db']->prepare($query_kategori);
 $stmt_kategori->execute();
 $result_kategori = $stmt_kategori->fetchAll(PDO::FETCH_ASSOC);
 
+// Ambil semua sub kategori
+$query_subkategori = "SELECT DISTINCT sub_kategori FROM products WHERE sub_kategori IS NOT NULL AND sub_kategori != ''";
+$stmt_subkategori = $GLOBALS['db']->prepare($query_subkategori);
+$stmt_subkategori->execute();
+$result_subkategori = $stmt_subkategori->fetchAll(PDO::FETCH_ASSOC);
+
 // Filter produk berdasarkan kategori
 $selected_kategori = $_GET['kategori'] ?? 'all';
 $selected_subkategori = $_GET['sub_kategori'] ?? 'all';
@@ -97,10 +103,8 @@ if (isset($_POST['query'])) {
 
     .sidebar-kategori {
         width: 250px;
-        /* background-color: #f8f9fa; */
         padding: 5px;
         border-radius: 5px;
-        /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
         height: calc(100vh - 100px);
         position: fixed;
         left: 20px;
@@ -113,29 +117,139 @@ if (isset($_POST['query'])) {
         padding-top: 20px;
         padding-bottom: 10px;
         border-bottom: 2px solid #77dd77;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    .kategori-list {
-        list-style: none;
-        padding: 0;
+    .sidebar-kategori h3 i {
+        color: #77dd77;
     }
 
-    .kategori-list li {
-        margin-bottom: 10px;
+    .kategori-dropdown {
+        position: relative;
+        margin-bottom: 20px;
     }
 
-    .kategori-list a {
-        display: block;
-        padding: 3px;
-        color: #333;
-        text-decoration: none;
-        border-radius: 5px;
+    .kategori-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: none;
+        border-radius: 8px;
+        background-color: transparent;
+        font-size: 14px;
+        color: #666;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377dd77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
         transition: all 0.3s ease;
     }
 
-    .kategori-list a:hover,
-    .kategori-list a.active {
+    .kategori-select:hover {
         color: #77dd77;
+    }
+
+    .kategori-select:focus {
+        outline: none;
+        color: #77dd77;
+    }
+
+    .kategori-select option {
+        color: #666;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    .kategori-select option:hover {
+        color: #77dd77;
+    }
+
+    .kategori-select option:checked {
+        color: #77dd77;
+        font-weight: 500;
+    }
+
+    .sub-kategori {
+        margin-top: 20px;
+        position: relative;
+    }
+
+    .sub-kategori-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: none;
+        border-radius: 8px;
+        background-color: transparent;
+        font-size: 14px;
+        color: #666;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377dd77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .sub-kategori-select:hover {
+        color: #77dd77;
+    }
+
+    .sub-kategori-select:focus {
+        outline: none;
+        color: #77dd77;
+    }
+
+    .sub-kategori-select option {
+        color: #666;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    .sub-kategori-select option:hover {
+        color: #77dd77;
+    }
+
+    .sub-kategori-select option:checked {
+        color: #77dd77;
+        font-weight: 500;
+    }
+
+    .reset-filter {
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px 15px;
+        background-color: transparent;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .reset-filter:hover {
+        color: #dc3545;
+    }
+
+    .reset-filter i {
+        color: #dc3545;
+    }
+
+    .reset-filter:hover i {
+        color: #dc3545;
     }
 
     .product-content {
@@ -186,6 +300,10 @@ if (isset($_POST['query'])) {
             position: relative;
             margin-bottom: 20px;
             left: 0;
+        }
+
+        .kategori-dropdown {
+            margin-bottom: 15px;
         }
 
         .product-content {
@@ -264,61 +382,6 @@ if (isset($_POST['query'])) {
             font-size: 11px;
         }
     }
-
-    .sub-kategori {
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .sub-kategori-btn {
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: left;
-        font-size: 14px;
-        color: #333;
-    }
-
-    .sub-kategori-btn:hover {
-        background-color: #77dd77;
-        color: white;
-        border-color: #77dd77;
-    }
-
-    .sub-kategori-btn.active {
-        background-color: #77dd77;
-        color: white;
-        border-color: #77dd77;
-    }
-
-    @media (max-width: 1024px) {
-        .sub-kategori {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .sub-kategori-btn {
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .sub-kategori {
-            flex-direction: column;
-        }
-
-        .sub-kategori-btn {
-            width: 100%;
-        }
-    }
 </style>
 <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
@@ -333,46 +396,43 @@ if (isset($_POST['query'])) {
     <div class="product-container">
         <!-- Sidebar Kategori -->
         <div class="sidebar-kategori">
-            <h3>Kategori Jamu</h3>
-            <ul class="kategori-list">
-                <li>
-                    <a href="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>"
-                        class="<?= $selected_kategori === 'all' ? 'active' : '' ?>">
+            <h3><i class="fas fa-filter"></i> Filter Produk</h3>
+            
+            <div class="kategori-dropdown">
+                <select class="kategori-select" onchange="window.location.href=this.value">
+                    <option value="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>" 
+                        <?= $selected_kategori === 'all' ? 'selected' : '' ?>>
                         Semua Kategori
-                    </a>
-                </li>
-                <?php foreach ($result_kategori as $kategori): ?>
-                    <li>
-                        <a href="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
-                            class="<?= $selected_kategori === $kategori['kategori'] ? 'active' : '' ?>">
+                    </option>
+                    <?php foreach ($result_kategori as $kategori): ?>
+                        <option value="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
+                            <?= $selected_kategori === $kategori['kategori'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($kategori['kategori']) ?>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            <h3>Sub Kategori</h3>
+            <h3><i class="fas fa-tags"></i> Sub Kategori</h3>
             <div class="sub-kategori">
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Jamu Cair' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Jamu Cair'">
-                    Jamu Cair
-                </button>
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Jamu Bubuk' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Jamu Bubuk'">
-                    Jamu Bubuk
-                </button>
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Lainnya' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Lainnya'">
-                    Lainnya
-                </button>
+                <select class="sub-kategori-select" onchange="window.location.href=this.value">
+                    <option value="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all"
+                        <?= $selected_subkategori === 'all' ? 'selected' : '' ?>>
+                        Semua Sub Kategori
+                    </option>
+                    <?php foreach ($result_subkategori as $sub): ?>
+                        <option value="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
+                            <?= $selected_subkategori === $sub['sub_kategori'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($sub['sub_kategori']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button class="sub-kategori-btn" style="background-color: #ccc;"
-                    onclick="window.location.href='?kategori=all&sub_kategori=all'">
-                    🔄 Reset Filter
-                </button>
-            </div>
+            <button class="reset-filter" onclick="window.location.href='?kategori=all&sub_kategori=all'">
+                <i class="fas fa-sync-alt"></i>
+                Reset Filter
+            </button>
         </div>
 
 
