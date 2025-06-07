@@ -154,85 +154,87 @@ input::-webkit-inner-spin-button {
 }
 
 .product-card {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #77dd77;
+    transition: transform 0.3s ease;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid #ddd;
-    text-align: center;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-    min-width: 220px;
-    max-width: 220px;
-    padding: 10px;
     height: 100%;
-    cursor: pointer;
-    transition: transform 0.3s ease;
 }
 
 .product-card img {
-    max-width: 100%;
-    max-height: 190px;
-    border-radius: 2px;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
 .product-card .description {
-    background-color: #f1f1f1;
+    background-color: white;
     padding: 10px;
     text-align: left;
-    min-height: 100px;
-    max-height: 100px;
+    min-height: 80px;
+    max-height: 80px;
     overflow-x: hidden;
     word-wrap: break-word;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
 .product-card .description p {
-    margin-top: 10px;
+    margin: 0;
     font-size: 12px;
+    color: #666;
 }
 
-.product-card .product {
-    max-width: 100%;
-    min-height: 200px;
-    max-height: 200px;
-    border-radius: 2px;
-}
-
-.product-card a {
-    text-decoration: none;
-}
-
-.product-name,
-.product-price {
-    text-align: left;
-    margin: 3%;
-}
-
-.product-price {
+.product-card .product-info {
     margin-top: auto;
-    justify-content: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
 }
 
 .product-name {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.product-price {
+    color: #77dd77;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .detail-button {
-    background-color: #77dd77;
-    border-radius: 3px;
-    color: white;
-    border: none;
-    cursor: pointer;
+    border: 1px solid #77dd77;
+    color: #77dd77;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: auto;
-    padding: 5px;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
 }
 
 .detail-button:hover {
-    background-color: #6eca6e;
+    background-color: #77dd77;
+    color: white;
+}
+
+.detail-button p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .cart-icon {

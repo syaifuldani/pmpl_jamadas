@@ -102,43 +102,53 @@ if (isset($_POST['query'])) {
     }
 
     .sidebar-kategori {
-        width: 250px;
-        padding: 5px;
-        border-radius: 5px;
+        width: 280px;
+        padding: 20px;
+        border-radius: 15px;
         height: calc(100vh - 100px);
         position: fixed;
         left: 20px;
         z-index: 1;
+        background: #ffffff;
+        border: 1px solid #77dd77;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-kategori:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
     }
 
     .sidebar-kategori h3 {
-        color: #333;
-        margin-bottom: 20px;
+        color: #2c3e50;
+        margin-bottom: 25px;
         padding-top: 20px;
-        padding-bottom: 10px;
+        padding-bottom: 15px;
         border-bottom: 2px solid #77dd77;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 600;
     }
 
     .sidebar-kategori h3 i {
         color: #77dd77;
+        font-size: 1.3rem;
     }
 
     .kategori-dropdown {
         position: relative;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     .kategori-select {
         width: 100%;
-        padding: 12px 15px;
-        border: none;
-        border-radius: 8px;
-        background-color: transparent;
+        padding: 14px 18px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
         font-size: 14px;
-        color: #666;
+        color: #2c3e50;
         cursor: pointer;
         appearance: none;
         -webkit-appearance: none;
@@ -151,12 +161,14 @@ if (isset($_POST['query'])) {
     }
 
     .kategori-select:hover {
-        color: #77dd77;
+        border-color: #77dd77;
+        background-color: #ffffff;
     }
 
     .kategori-select:focus {
         outline: none;
-        color: #77dd77;
+        border-color: #77dd77;
+        box-shadow: 0 0 0 3px rgba(119, 221, 119, 0.1);
     }
 
     .kategori-select option {
@@ -175,18 +187,18 @@ if (isset($_POST['query'])) {
     }
 
     .sub-kategori {
-        margin-top: 20px;
+        margin-top: 25px;
         position: relative;
     }
 
     .sub-kategori-select {
         width: 100%;
-        padding: 12px 15px;
-        border: none;
-        border-radius: 8px;
-        background-color: transparent;
+        padding: 14px 18px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
         font-size: 14px;
-        color: #666;
+        color: #2c3e50;
         cursor: pointer;
         appearance: none;
         -webkit-appearance: none;
@@ -199,57 +211,44 @@ if (isset($_POST['query'])) {
     }
 
     .sub-kategori-select:hover {
-        color: #77dd77;
+        border-color: #77dd77;
+        background-color: #ffffff;
     }
 
     .sub-kategori-select:focus {
         outline: none;
-        color: #77dd77;
-    }
-
-    .sub-kategori-select option {
-        color: #666;
-        background-color: #fff;
-        padding: 10px;
-    }
-
-    .sub-kategori-select option:hover {
-        color: #77dd77;
-    }
-
-    .sub-kategori-select option:checked {
-        color: #77dd77;
-        font-weight: 500;
+        border-color: #77dd77;
+        box-shadow: 0 0 0 3px rgba(119, 221, 119, 0.1);
     }
 
     .reset-filter {
-        margin-top: 20px;
+        margin-top: 25px;
         width: 100%;
-        padding: 12px 15px;
-        background-color: transparent;
-        border: none;
-        border-radius: 8px;
+        padding: 14px 18px;
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
         text-align: center;
         font-size: 14px;
-        color: #333;
+        color: #2c3e50;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
+        font-weight: 500;
     }
 
     .reset-filter:hover {
+        background-color: #fff5f5;
+        border-color: #dc3545;
         color: #dc3545;
     }
 
     .reset-filter i {
         color: #dc3545;
-    }
-
-    .reset-filter:hover i {
-        color: #dc3545;
+        font-size: 1.1rem;
     }
 
     .product-content {
@@ -260,28 +259,6 @@ if (isset($_POST['query'])) {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
-    }
-
-    .detail-button {
-        background-color: #77dd77 !important;
-        color: white !important;
-        text-decoration: none;
-        padding: 5px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .detail-button:hover {
-        background-color: #6eca6e !important;
-    }
-
-    .detail-button p {
-        margin: 0;
-        font-size: 14px;
     }
 
     .cart-icon {
@@ -298,8 +275,9 @@ if (isset($_POST['query'])) {
             width: 100%;
             height: auto;
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             left: 0;
+            padding: 15px;
         }
 
         .kategori-dropdown {
@@ -308,6 +286,7 @@ if (isset($_POST['query'])) {
 
         .product-content {
             margin-left: 0;
+            margin-right: 0;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
@@ -382,6 +361,238 @@ if (isset($_POST['query'])) {
             font-size: 11px;
         }
     }
+
+    .sub-kategori-list {
+        max-height: 230px;
+        overflow-y: auto;
+        margin-top: 15px;
+        padding-right: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-thumb {
+        background: #77dd77;
+        border-radius: 10px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-thumb:hover {
+        background: #6eca6e;
+    }
+
+    .sub-kategori-item {
+        display: block;
+        padding: 10px 15px;
+        color: #2c3e50;
+        text-decoration: none;
+        font-size: 14px;
+        border-bottom: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .sub-kategori-item:last-child {
+        border-bottom: none;
+    }
+
+    .sub-kategori-item:hover {
+        background-color: #ffffff;
+        color: #77dd77;
+        padding-left: 20px;
+    }
+
+    .sub-kategori-item.active {
+        background-color: #77dd77;
+        color: white;
+        font-weight: 500;
+    }
+
+    .sub-kategori-item.active:hover {
+        background-color: #6eca6e;
+        color: white;
+    }
+
+    .product-card {
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #77dd77;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .product-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .product-card .description {
+        background-color: white;
+        padding: 10px;
+        text-align: left;
+        min-height: 80px;
+        max-height: 80px;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .product-card .description p {
+        margin: 0;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .product-card .product-info {
+        margin-top: auto;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 8px;
+    }
+
+    .product-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .product-price {
+        color: #77dd77;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .detail-button {
+        border: 1px solid #77dd77;
+        color: #77dd77;
+        text-decoration: none;
+        padding: 8px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .detail-button:hover {
+        background-color: #77dd77;
+        color: white;
+    }
+
+    .detail-button p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .product-card {
+            padding: 8px;
+        }
+
+        .product-card img {
+            height: 160px;
+            margin-bottom: 8px;
+        }
+
+        .product-card .description {
+            min-height: 70px;
+            max-height: 70px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .product-card .description p {
+            font-size: 11px;
+        }
+
+        .product-card .product-info {
+            padding: 8px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .detail-button {
+            padding: 6px;
+        }
+
+        .detail-button p {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-card {
+            padding: 6px;
+        }
+
+        .product-card img {
+            height: 140px;
+            margin-bottom: 6px;
+        }
+
+        .product-card .description {
+            min-height: 60px;
+            max-height: 60px;
+            padding: 6px;
+            margin-bottom: 6px;
+        }
+
+        .product-card .description p {
+            font-size: 10px;
+        }
+
+        .product-card .product-info {
+            padding: 6px;
+        }
+
+        .product-name {
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .product-price {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .detail-button {
+            padding: 5px;
+        }
+
+        .detail-button p {
+            font-size: 11px;
+        }
+    }
+
 </style>
 <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
@@ -414,19 +625,43 @@ if (isset($_POST['query'])) {
             </div>
 
             <h3><i class="fas fa-tags"></i> Sub Kategori</h3>
-            <div class="sub-kategori">
-                <select class="sub-kategori-select" onchange="window.location.href=this.value">
-                    <option value="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all"
-                        <?= $selected_subkategori === 'all' ? 'selected' : '' ?>>
-                        Semua Sub Kategori
-                    </option>
-                    <?php foreach ($result_subkategori as $sub): ?>
-                        <option value="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
-                            <?= $selected_subkategori === $sub['sub_kategori'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($sub['sub_kategori']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="sub-kategori-list">
+                <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all" 
+                   class="sub-kategori-item <?= $selected_subkategori === 'all' ? 'active' : '' ?>">
+                    Semua Sub Kategori
+                </a>
+                <?php 
+                $regular_subkategori = [];
+                $lainnya_subkategori = [];
+                
+                foreach ($result_subkategori as $sub) {
+                    if (strtolower($sub['sub_kategori']) === 'lainnya' || strtolower($sub['sub_kategori']) === 'lain-lain') {
+                        $lainnya_subkategori[] = $sub;
+                    } else {
+                        $regular_subkategori[] = $sub;
+                    }
+                }
+                
+                // Tampilkan sub kategori regular
+                foreach ($regular_subkategori as $sub): ?>
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>" 
+                       class="sub-kategori-item <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                        <?= htmlspecialchars($sub['sub_kategori']) ?>
+                    </a>
+                <?php endforeach; 
+                
+                // Tambahkan pemisah jika ada sub kategori "Lainnya"
+                if (!empty($lainnya_subkategori)): ?>
+                    <div class="sub-kategori-divider"></div>
+                <?php endif;
+                
+                // Tampilkan sub kategori "Lainnya"
+                foreach ($lainnya_subkategori as $sub): ?>
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>" 
+                       class="sub-kategori-item lainnya <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                        <?= htmlspecialchars($sub['sub_kategori']) ?>
+                    </a>
+                <?php endforeach; ?>
             </div>
 
             <button class="reset-filter" onclick="window.location.href='?kategori=all&sub_kategori=all'">
@@ -447,16 +682,16 @@ if (isset($_POST['query'])) {
                     <div class="product-card">
                         <img class="product" src="data:image/jpeg;base64,<?= base64_encode($produk['gambar_satu']) ?>"
                             alt="<?= htmlspecialchars($produk['nama_produk']) ?>">
-                        <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
                         <div class="description">
-                            <h5>Deskripsi Produk</h5>
                             <p><?= htmlspecialchars($produk['deskripsi']) ?></p>
                         </div>
-                        <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
-                        <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
-                            <!-- <img class="cart-icon" src="../resources/img/icons/cart.png" alt=""> -->
-                            <p>Lihat Detail</p>
-                        </a>
+                        <div class="product-info">
+                            <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
+                            <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
+                            <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
+                                <p>Lihat Detail</p>
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

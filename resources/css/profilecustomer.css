@@ -14,11 +14,11 @@
     padding: 20px;
     background-color: #fff; /* Warna latar belakang kontainer */
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(119, 221, 119, 0.2);
 }
 
 h1 {
-    color: #7D93BA; /* Warna judul */
+    color: #77dd77; /* Warna judul */
     margin-bottom: 30px;
     text-align: center;
 }
@@ -38,14 +38,14 @@ h1 {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #7D93BA; /* Border untuk gambar profil */
+    border: 2px solid #77dd77; /* Border untuk gambar profil */
 }
 
 .edit-text {
     display: block;
     margin-top: 10px;
     font-size: 12px;
-    color: #7D93BA; /* Warna teks edit */
+    color: #77dd77; /* Warna teks edit */
     cursor: pointer;
 }
 
@@ -68,13 +68,13 @@ h1 {
 }
 
 .form-group input:focus {
-    border-color: #7D93BA; /* Border saat fokus */
+    border-color: #77dd77; /* Border saat fokus */
 }
 
 .btn {
     width: 100%;
     padding: 10px;
-    background-color: #7D93BA; /* Warna tombol simpan */
+    background-color: #77dd77; /* Warna tombol simpan */
     color: white;
     border: none;
     border-radius: 5px;
@@ -84,5 +84,5 @@ h1 {
 }
 
 .btn:hover {
-    background-color: #6A7D9D; /* Warna tombol saat hover */
+    background-color: #66cc66; /* Warna tombol saat hover */
 }
