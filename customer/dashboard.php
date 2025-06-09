@@ -89,31 +89,31 @@ if (isset($_POST['query'])) {
       </h2>
       <div class="product-grid">
         <div class="product-card-dsbrd animate-slide-top animate-delay-2">
-          <a href="jamu_vitalitas.php">
+          <a href="">
             <img src="../resources/img/homeimg/jamu_vitalitas.jpeg" alt="Jamu Vitalitas">
             <p>Jamu Vitalitas</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-3">
-          <a href="jamu_kecantikan.php">
+          <a href="">
             <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Jamu Kecantikan">
             <p>Jamu Kecantikan</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-4">
-          <a href="jamu_kesehatan.php">
+          <a href="">
             <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Jamu Kewanitaan">
             <p>Jamu Kewanitaan</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-5">
-          <a href="jamu_herbal.php">
+          <a href="">
             <img src="../resources/img/homeimg/jamu_pelangsing.jpg" alt="Jamu Pelangsing">
             <p>Jamu Pelangsing</p>
           </a>
         </div>
         <div class="product-card-dsbrd animate-slide-top animate-delay-6">
-          <a href="jamu_lainnya.php">
+          <a href="">
             <img src="../resources/img/homeimg/jamu_lainnya.jpeg" alt="Jamu Lainnya">
             <p>Jamu Lainnya</p>
           </a>
