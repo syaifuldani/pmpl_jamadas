@@ -43,6 +43,21 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $orders = getOrdersByID($userId);
 $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId);
+
+// Get order_id from URL if present
+$targetOrderId = isset($_GET['order_id']) ? htmlspecialchars($_GET['order_id']) : null;
+$targetOrderStatus = null;
+
+// Find the status of the target order
+if ($targetOrderId) {
+    foreach ($orders as $order) {
+        if ($order['order_id'] == $targetOrderId) {
+            $targetOrderStatus = $order['transaction_status'];
+            break;
+        }
+    }
+}
+
 // var_dump($userId);
 // var_dump($orders);
 
@@ -110,7 +125,7 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
             <!-- Orders Container -->
             <div class="orders-container">
                 <?php foreach ($orders as $order): ?>
-                    <div class="order-card" data-status="<?= $order['transaction_status'] ?>">
+                    <div class="order-card" data-status="<?= $order['transaction_status'] ?>" id="order-<?= htmlspecialchars($order['order_id']) ?>">
                         <div class="order-header">
                             <div class="order-date">
                                 <i class="fas fa-calendar"></i>
@@ -242,12 +257,13 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                             </div>
                         </div>
 
-                        <style>
+                        <!-- <style>
                             .stars {
                                 display: flex;
                                 flex-direction: row;
                                 /* Display stars from left to right */
                                 gap: 2px;
+                                justify-content: center;
                             }
 
                             .stars input {
@@ -272,7 +288,7 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
                             .stars input:checked+label {
                                 color: #ffd700;
                             }
-                        </style>
+                        </style> -->
 
                         <div class="review-text">
                             <label for="reviewComment">Ulasan Anda:</label>
@@ -436,6 +452,43 @@ $CheckTransactionPendingOver24Hours = CheckTransactionPendingOver24Hours($userId
     <script src="../resources/js/LihatDetailPesananCust.js"></script>
     <script src="../resources/js/ExistingOrder.js"></script>
     <script src="../resources/js/CetakNota.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const targetOrderId = '<?= $targetOrderId ?>';
+            const targetOrderStatus = '<?= $targetOrderStatus ?>';
+
+            if (targetOrderId) {
+                // Ensure targetOrderStatus is always a string
+                const targetOrderStatusStr = String(targetOrderStatus);
+
+                // Update URL to include the status parameter if not already set or different
+                const url = new URL(window.location.href);
+                if (url.searchParams.get('status') !== targetOrderStatusStr) {
+                    url.searchParams.set('status', targetOrderStatusStr);
+                    window.history.replaceState({}, '', url); // Use replaceState to avoid cluttering history
+                }
+
+                const targetElement = document.getElementById('order-' + targetOrderId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    // Optionally, add a visual highlight
+                    targetElement.style.border = '2px solid #007bff';
+                    targetElement.style.boxShadow = '0 0 10px rgba(0, 123, 255, 0.5)';
+
+                    // Remove highlight after a few seconds
+                    setTimeout(() => {
+                        targetElement.style.border = '';
+                        targetElement.style.boxShadow = '';
+                    }, 5000);
+                }
+
+                // No need to simulate click here, LihatDetailPesananCust.js handles initial filtering based on URL status param
+            }
+        });
+    </script>
 
 </body>
 

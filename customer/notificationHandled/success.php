@@ -41,7 +41,6 @@ try {
 
     // Get payment result from session storage (optional)
     $paymentResult = isset($_SESSION['payment_result']) ? $_SESSION['payment_result'] : null;
-
 } catch (Exception $e) {
     $_SESSION['error'] = $e->getMessage();
     header('Location: ../cart.php');
@@ -101,15 +100,31 @@ try {
                 <div class="order-items">
                     <h3>Produk yang Dipesan</h3>
                     <?php foreach ($orderItems as $item): ?>
-                    <div class="item-card">
-                        <img src="<?= htmlspecialchars($item['gambar_satu']) ?>"
-                            alt="<?= htmlspecialchars($item['nama_produk']) ?>" class="item-image">
-                        <div class="item-info">
-                            <h4><?= htmlspecialchars($item['nama_produk']) ?></h4>
-                            <p>Jumlah: <?= $item['jumlah_order'] ?></p>
-                            <p>Harga: Rp <?= number_format($item['harga_order'], 0, ',', '.') ?></p>
+                        <div class="item-card">
+                            <?php
+                            $imageData = $item['gambar_satu'];
+                            error_log("Processing image for product: " . $item['nama_produk'] . " in success.php");
+                            error_log("Image data length: " . strlen($imageData) . " in success.php");
+
+                            $imageSrc = 'data:image/jpeg;base64,' . base64_encode($imageData); // Default to JPEG if detection fails
+
+                            $imageInfo = @getimagesizefromstring($imageData);
+                            if ($imageInfo && isset($imageInfo['mime'])) {
+                                $mimeType = $imageInfo['mime'];
+                                error_log("Detected MIME type: " . $mimeType . " in success.php");
+                                $imageSrc = 'data:' . $mimeType . ';base64,' . base64_encode($imageData);
+                            } else {
+                                error_log("Failed to determine MIME type for image in success.php. Image data might be invalid or not an image. Falling back to JPEG.");
+                            }
+                            ?>
+                            <img src="<?= htmlspecialchars($imageSrc) ?>"
+                                alt="<?= htmlspecialchars($item['nama_produk']) ?>" class="item-image">
+                            <div class="item-info">
+                                <h4><?= htmlspecialchars($item['nama_produk']) ?></h4>
+                                <p>Jumlah: <?= $item['jumlah_order'] ?></p>
+                                <p>Harga: Rp <?= number_format($item['harga_order'], 0, ',', '.') ?></p>
+                            </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -127,17 +142,17 @@ try {
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ambil payment result dari sessionStorage jika ada
-        const paymentResult = sessionStorage.getItem('paymentResult');
-        if (paymentResult) {
-            const result = JSON.parse(paymentResult);
-            console.log('Payment Result:', result);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil payment result dari sessionStorage jika ada
+            const paymentResult = sessionStorage.getItem('paymentResult');
+            if (paymentResult) {
+                const result = JSON.parse(paymentResult);
+                console.log('Payment Result:', result);
 
-            // Bersihkan sessionStorage
-            sessionStorage.removeItem('paymentResult');
-        }
-    });
+                // Bersihkan sessionStorage
+                sessionStorage.removeItem('paymentResult');
+            }
+        });
     </script>
 </body>
 
