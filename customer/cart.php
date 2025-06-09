@@ -77,6 +77,9 @@ if (isset($_SESSION['user_id'])) {
 
     // Ambil item keranjang dari database
     $cartItems = getCartItems($userId);
+
+    // Ambil riwayat pesanan (sekarang hanya yang pending)
+    $userOrders = getOrdersByID($userId, 'pending');
 } else {
     // Set status HTTP menjadi 404 (Not Found)
     http_response_code(404);
@@ -102,6 +105,9 @@ $cartItems = getCartItems($userId);
 // Mendapatkan user_id dari session
 $userId = $_SESSION['user_id'];
 
+// Ambil riwayat pesanan (sekarang hanya yang pending)
+$userOrders = getOrdersByID($userId, 'pending');
+
 // Live Search
 if (isset($_POST['query'])) {
     $searchTerm = $_POST['query'];
@@ -120,7 +126,7 @@ if (isset($_POST['query'])) {
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang</title>
-    <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
     <link rel="stylesheet" href="../resources/css/cart.css">
     <link rel="stylesheet" href="../resources/css/navbar.css">
     <!-- @TODO: replace SET_YOUR_CLIENT_KEY_HERE with your client key -->
@@ -319,20 +325,19 @@ if (isset($_POST['query'])) {
                     <div class="order-history">
                         <h3>Pesanan Saya</h3>
                         <ul>
-                            <li>
-                                <div class="information">
-                                    <img src="../resources/img/icons/li-caption.png" alt="">
-                                    <span>05/09/2024</span>
-                                </div>
-                                <a href="pesanan_saya.php">Lihat →</a>
-                            </li>
-                            <li>
-                                <div class="information">
-                                    <img src="../resources/img/icons/li-caption.png" alt="">
-                                    <span>05/09/2024</span>
-                                </div>
-                                <a href="pesanan_saya.php">Lihat →</a>
-                            </li>
+                            <?php if (!empty($userOrders)): ?>
+                                <?php foreach ($userOrders as $order): ?>
+                                    <li>
+                                        <div class="information">
+                                            <img src="../resources/img/icons/li-caption.png" alt="">
+                                            <span><?= date('d/m/Y', strtotime($order['created_at'])) ?></span>
+                                        </div>
+                                        <a href="pesanan_saya.php?order_id=<?= htmlspecialchars($order['order_id']) ?>">Lihat →</a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li>Tidak ada riwayat pesanan.</li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </div>
@@ -368,7 +373,7 @@ if (isset($_POST['query'])) {
 
         // Tambahkan event listener pada tombol hapus
         document.querySelectorAll('.delete-item').forEach(button => {
-            button.addEventListener('click', function (e) {
+            button.addEventListener('click', function(e) {
                 e.preventDefault();
                 deleteUrl = this.getAttribute('href'); // Simpan URL penghapusan
                 deleteOverlay.style.display = 'flex'; // Tampilkan overlay
@@ -376,17 +381,17 @@ if (isset($_POST['query'])) {
         });
 
         // Tombol konfirmasi penghapusan
-        confirmDeleteBtn.addEventListener('click', function () {
+        confirmDeleteBtn.addEventListener('click', function() {
             window.location.href = deleteUrl; // Arahkan ke URL penghapusan
         });
 
         // Tombol batal
-        cancelDeleteBtn.addEventListener('click', function () {
+        cancelDeleteBtn.addEventListener('click', function() {
             deleteOverlay.style.display = 'none'; // Sembunyikan overlay
         });
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             const updateOverlay = document.getElementById('updateOverlay');
             const closeUpdateOverlayBtn = document.getElementById('closeUpdateOverlay');
@@ -396,7 +401,7 @@ if (isset($_POST['query'])) {
             }
 
             // Tutup overlay saat tombol "OK" ditekan
-            closeUpdateOverlayBtn.addEventListener('click', function () {
+            closeUpdateOverlayBtn.addEventListener('click', function() {
                 updateOverlay.style.display = 'none';
                 // Menghapus parameter dari URL
                 window.history.replaceState({}, document.title, window.location.pathname);

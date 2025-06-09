@@ -19,6 +19,12 @@ $stmt_kategori = $GLOBALS['db']->prepare($query_kategori);
 $stmt_kategori->execute();
 $result_kategori = $stmt_kategori->fetchAll(PDO::FETCH_ASSOC);
 
+// Ambil semua sub kategori
+$query_subkategori = "SELECT DISTINCT sub_kategori FROM products WHERE sub_kategori IS NOT NULL AND sub_kategori != ''";
+$stmt_subkategori = $GLOBALS['db']->prepare($query_subkategori);
+$stmt_subkategori->execute();
+$result_subkategori = $stmt_subkategori->fetchAll(PDO::FETCH_ASSOC);
+
 // Filter produk berdasarkan kategori
 $selected_kategori = $_GET['kategori'] ?? 'all';
 $selected_subkategori = $_GET['sub_kategori'] ?? 'all';
@@ -44,29 +50,6 @@ if ($selected_kategori === 'all' && $selected_subkategori === 'all') {
 $stmt_produk->execute();
 $produk = $stmt_produk->fetchAll(PDO::FETCH_ASSOC);
 
-
-// if ($selected_kategori === 'all') {
-//     // Ambil semua produk jika tidak ada kategori yang dipilih
-//     $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, kategori FROM products";
-//     $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-// } else {
-//     // Ambil produk berdasarkan kategori yang dipilih
-//     $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, kategori 
-//                      FROM products 
-//                      WHERE kategori = :kategori";
-//     $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-//     $stmt_produk->bindParam(':kategori', $selected_kategori);
-
-// }
-
-
-// // Ambil produk berdasarkan kategori yang dipilih
-// $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, sub_kategori 
-//                  FROM products 
-//                  WHERE sub_kategori = :sub_kategori";
-// $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-// $stmt_produk->bindParam(':sub_kategori', $selected_subkategori);
-
 $stmt_produk->execute();
 $result_produk = $stmt_produk->fetchAll(PDO::FETCH_ASSOC);
 
@@ -84,7 +67,7 @@ if (isset($_POST['query'])) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Produk Jamu Madura</title>
-<link rel="icon" href="../resources/img/icons/jamadas.jpg" type="image/png">
+<link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
 <link rel="stylesheet" href="../resources/css/navbar.css">
 <link rel="stylesheet" href="../resources/css/dashboard.css">
 <style>
@@ -96,46 +79,153 @@ if (isset($_POST['query'])) {
     }
 
     .sidebar-kategori {
-        width: 250px;
-        /* background-color: #f8f9fa; */
-        padding: 5px;
-        border-radius: 5px;
-        /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
+        width: 280px;
+        padding: 20px;
+        border-radius: 15px;
         height: calc(100vh - 100px);
         position: fixed;
         left: 20px;
         z-index: 1;
-    }
-
-    .sidebar-kategori h3 {
-        color: #333;
-        margin-bottom: 20px;
-        padding-top: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #77dd77;
-    }
-
-    .kategori-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .kategori-list li {
-        margin-bottom: 10px;
-    }
-
-    .kategori-list a {
-        display: block;
-        padding: 3px;
-        color: #333;
-        text-decoration: none;
-        border-radius: 5px;
+        background: #ffffff;
+        border: 1px solid #77dd77;
         transition: all 0.3s ease;
     }
 
-    .kategori-list a:hover,
-    .kategori-list a.active {
+    .sidebar-kategori:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .sidebar-kategori h3 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-top: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #77dd77;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .sidebar-kategori h3 i {
         color: #77dd77;
+        font-size: 1.3rem;
+    }
+
+    .kategori-dropdown {
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .kategori-select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        color: #2c3e50;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377dd77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .kategori-select:hover {
+        border-color: #77dd77;
+        background-color: #ffffff;
+    }
+
+    .kategori-select:focus {
+        outline: none;
+        border-color: #77dd77;
+        box-shadow: 0 0 0 3px rgba(119, 221, 119, 0.1);
+    }
+
+    .kategori-select option {
+        color: #666;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    .kategori-select option:hover {
+        color: #77dd77;
+    }
+
+    .kategori-select option:checked {
+        color: #77dd77;
+        font-weight: 500;
+    }
+
+    .sub-kategori {
+        margin-top: 25px;
+        position: relative;
+    }
+
+    .sub-kategori-select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        color: #2c3e50;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377dd77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .sub-kategori-select:hover {
+        border-color: #77dd77;
+        background-color: #ffffff;
+    }
+
+    .sub-kategori-select:focus {
+        outline: none;
+        border-color: #77dd77;
+        box-shadow: 0 0 0 3px rgba(119, 221, 119, 0.1);
+    }
+
+    .reset-filter {
+        margin-top: 25px;
+        width: 100%;
+        padding: 14px 18px;
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-size: 14px;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-weight: 500;
+    }
+
+    .reset-filter:hover {
+        background-color: #fff5f5;
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+    .reset-filter i {
+        color: #dc3545;
+        font-size: 1.1rem;
     }
 
     .product-content {
@@ -146,28 +236,6 @@ if (isset($_POST['query'])) {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
-    }
-
-    .detail-button {
-        background-color: #77dd77 !important;
-        color: white !important;
-        text-decoration: none;
-        padding: 5px;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-
-    .detail-button:hover {
-        background-color: #6eca6e !important;
-    }
-
-    .detail-button p {
-        margin: 0;
-        font-size: 14px;
     }
 
     .cart-icon {
@@ -184,12 +252,18 @@ if (isset($_POST['query'])) {
             width: 100%;
             height: auto;
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             left: 0;
+            padding: 15px;
+        }
+
+        .kategori-dropdown {
+            margin-bottom: 15px;
         }
 
         .product-content {
             margin-left: 0;
+            margin-right: 0;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
@@ -265,63 +339,240 @@ if (isset($_POST['query'])) {
         }
     }
 
-    .sub-kategori {
-        margin-top: 20px;
+    .sub-kategori-list {
+        max-height: 230px;
+        overflow-y: auto;
+        margin-top: 15px;
+        padding-right: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-thumb {
+        background: #77dd77;
+        border-radius: 10px;
+    }
+
+    .sub-kategori-list::-webkit-scrollbar-thumb:hover {
+        background: #6eca6e;
+    }
+
+    .sub-kategori-item {
+        display: block;
+        padding: 10px 15px;
+        color: #2c3e50;
+        text-decoration: none;
+        font-size: 14px;
+        border-bottom: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+    .sub-kategori-item:last-child {
+        border-bottom: none;
+    }
+
+    .sub-kategori-item:hover {
+        background-color: #ffffff;
+        color: #77dd77;
+        padding-left: 20px;
+    }
+
+    .sub-kategori-item.active {
+        background-color: #77dd77;
+        color: white;
+        font-weight: 500;
+    }
+
+    .sub-kategori-item.active:hover {
+        background-color: #6eca6e;
+        color: white;
+    }
+
+    .product-card {
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #77dd77;
+        transition: transform 0.3s ease;
+        cursor: pointer;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        height: 100%;
     }
 
-    .sub-kategori-btn {
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
+    .product-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .product-card .description {
+        background-color: white;
+        padding: 10px;
         text-align: left;
+        min-height: 80px;
+        max-height: 80px;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .product-card .description p {
+        margin: 0;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .product-card .product-info {
+        margin-top: auto;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 8px;
+    }
+
+    .product-name {
+        font-weight: 600;
         font-size: 14px;
-        color: #333;
+        color: #2c3e50;
+        margin-bottom: 5px;
     }
 
-    .sub-kategori-btn:hover {
+    .product-price {
+        color: #77dd77;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .detail-button {
+        border: 1px solid #77dd77;
+        color: #77dd77;
+        text-decoration: none;
+        padding: 8px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .detail-button:hover {
         background-color: #77dd77;
         color: white;
-        border-color: #77dd77;
     }
 
-    .sub-kategori-btn.active {
-        background-color: #77dd77;
-        color: white;
-        border-color: #77dd77;
+    .detail-button p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
     }
 
-    @media (max-width: 1024px) {
-        .sub-kategori {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
+    @media (max-width: 768px) {
+        .product-card {
+            padding: 8px;
         }
 
-        .sub-kategori-btn {
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
+        .product-card img {
+            height: 160px;
+            margin-bottom: 8px;
+        }
+
+        .product-card .description {
+            min-height: 70px;
+            max-height: 70px;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .product-card .description p {
+            font-size: 11px;
+        }
+
+        .product-card .product-info {
+            padding: 8px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .detail-button {
+            padding: 6px;
+        }
+
+        .detail-button p {
+            font-size: 12px;
         }
     }
 
     @media (max-width: 480px) {
-        .sub-kategori {
-            flex-direction: column;
+        .product-card {
+            padding: 6px;
         }
 
-        .sub-kategori-btn {
-            width: 100%;
+        .product-card img {
+            height: 140px;
+            margin-bottom: 6px;
+        }
+
+        .product-card .description {
+            min-height: 60px;
+            max-height: 60px;
+            padding: 6px;
+            margin-bottom: 6px;
+        }
+
+        .product-card .description p {
+            font-size: 10px;
+        }
+
+        .product-card .product-info {
+            padding: 6px;
+        }
+
+        .product-name {
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .product-price {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .detail-button {
+            padding: 5px;
+        }
+
+        .detail-button p {
+            font-size: 11px;
         }
     }
 </style>
 <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -332,46 +583,68 @@ if (isset($_POST['query'])) {
     <div class="product-container">
         <!-- Sidebar Kategori -->
         <div class="sidebar-kategori">
-            <h3>Kategori Jamu</h3>
-            <ul class="kategori-list">
-                <li>
-                    <a href="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>"
-                        class="<?= $selected_kategori === 'all' ? 'active' : '' ?>">
+            <h3><i class="fas fa-filter"></i> Filter Produk</h3>
+
+            <div class="kategori-dropdown">
+                <select class="kategori-select" onchange="window.location.href=this.value">
+                    <option value="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>"
+                        <?= $selected_kategori === 'all' ? 'selected' : '' ?>>
                         Semua Kategori
-                    </a>
-                </li>
-                <?php foreach ($result_kategori as $kategori): ?>
-                    <li>
-                        <a href="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
-                            class="<?= $selected_kategori === $kategori['kategori'] ? 'active' : '' ?>">
+                    </option>
+                    <?php foreach ($result_kategori as $kategori): ?>
+                        <option
+                            value="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
+                            <?= $selected_kategori === $kategori['kategori'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($kategori['kategori']) ?>
-                        </a>
-                    </li>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <h3><i class="fas fa-tags"></i> Sub Kategori</h3>
+            <div class="sub-kategori-list">
+                <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all"
+                    class="sub-kategori-item <?= $selected_subkategori === 'all' ? 'active' : '' ?>">
+                    Semua Sub Kategori
+                </a>
+                <?php
+                $regular_subkategori = [];
+                $lainnya_subkategori = [];
+
+                foreach ($result_subkategori as $sub) {
+                    if (strtolower($sub['sub_kategori']) === 'lainnya' || strtolower($sub['sub_kategori']) === 'lain-lain') {
+                        $lainnya_subkategori[] = $sub;
+                    } else {
+                        $regular_subkategori[] = $sub;
+                    }
+                }
+
+                // Tampilkan sub kategori regular
+                foreach ($regular_subkategori as $sub): ?>
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
+                        class="sub-kategori-item <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                        <?= htmlspecialchars($sub['sub_kategori']) ?>
+                    </a>
+                <?php endforeach;
+
+                // Tambahkan pemisah jika ada sub kategori "Lainnya"
+                if (!empty($lainnya_subkategori)): ?>
+                    <div class="sub-kategori-divider"></div>
+                <?php endif;
+
+                // Tampilkan sub kategori "Lainnya"
+                foreach ($lainnya_subkategori as $sub): ?>
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
+                        class="sub-kategori-item lainnya <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                        <?= htmlspecialchars($sub['sub_kategori']) ?>
+                    </a>
                 <?php endforeach; ?>
-            </ul>
-
-            <h3>Sub Kategori</h3>
-            <div class="sub-kategori">
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Jamu Cair' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Jamu Cair'">
-                    Jamu Cair
-                </button>
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Jamu Bubuk' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Jamu Bubuk'">
-                    Jamu Bubuk
-                </button>
-                <button class="sub-kategori-btn <?= $selected_subkategori === 'Lainnya' ? 'active' : '' ?>"
-                    onclick="window.location.href='?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=Lainnya'">
-                    Lainnya
-                </button>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button class="sub-kategori-btn" style="background-color: #ccc;"
-                    onclick="window.location.href='?kategori=all&sub_kategori=all'">
-                    🔄 Reset Filter
-                </button>
-            </div>
+            <button class="reset-filter" onclick="window.location.href='?kategori=all&sub_kategori=all'">
+                <i class="fas fa-sync-alt"></i>
+                Reset Filter
+            </button>
         </div>
 
 
@@ -386,21 +659,22 @@ if (isset($_POST['query'])) {
                     <div class="product-card">
                         <img class="product" src="data:image/jpeg;base64,<?= base64_encode($produk['gambar_satu']) ?>"
                             alt="<?= htmlspecialchars($produk['nama_produk']) ?>">
-                        <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
                         <div class="description">
-                            <h5>Deskripsi Produk</h5>
                             <p><?= htmlspecialchars($produk['deskripsi']) ?></p>
                         </div>
-                        <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
-                        <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
-                            <!-- <img class="cart-icon" src="../resources/img/icons/cart.png" alt=""> -->
-                            <p>Lihat Detail</p>
-                        </a>
+                        <div class="product-info">
+                            <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
+                            <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
+                            <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
+                                <p>Lihat Detail</p>
+                            </a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
+<<<<<<< HEAD
  <!-- Chatbot -->
 <div class="chat-toggle">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
@@ -415,9 +689,30 @@ if (isset($_POST['query'])) {
     <div class="chat-input">
         <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
         <button onclick="sendMessage()">Kirim</button>
+=======
+    <!-- Chatbot -->
+    <div class="chat-container" id="chatContainer">
+        <button class="chat-button" id="chatButton">
+            <img src="../resources/img/icons/chat.png" alt="Chat" width="30">
+        </button>
+        <div class="chat-popup" id="chatPopup">
+            <div class="chat-header">
+                <h3>Asisten Jamu Madura</h3>
+                <button class="close-button" onclick="toggleChat()">&times;</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="bot-message">Halo! Saya adalah asisten Jamu Madura. Apa yang ingin Anda ketahui tentang jamu
+                    kami?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Ketik pesan Anda...">
+                <button onclick="sendMessage()">Kirim</button>
+            </div>
+        </div>
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
     </div>
-</div>
 
+<<<<<<< HEAD
 <style>
 .chat-container {
     position: fixed;
@@ -434,46 +729,56 @@ if (isset($_POST['query'])) {
 .chat-container.active {
     display: block;
 }
+=======
+    <style>
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
-.chat-button {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #77dd77;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #77dd77;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
 
-.chat-popup {
-    display: none;
-    position: absolute;
-    bottom: 80px;
-    right: 0;
-    width: 300px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+        .chat-popup {
+            display: none;
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-.chat-header {
-    background: #77dd77;
-    color: white;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .chat-header {
+            background: #77dd77;
+            color: white;
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.chat-header h3 {
-    margin: 0;
-    font-size: 16px;
-}
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
 
+<<<<<<< HEAD
 .close-button {
     background: none;
     border: none;
@@ -483,36 +788,46 @@ if (isset($_POST['query'])) {
     padding: 0 5px;
     line-height: 1;
 }
+=======
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
-.chat-messages {
-    height: 300px;
-    padding: 10px;
-    overflow-y: auto;
-}
+        .chat-messages {
+            height: 300px;
+            padding: 10px;
+            overflow-y: auto;
+        }
 
-.chat-input {
-    padding: 10px;
-    border-top: 1px solid #eee;
-    display: flex;
-    gap: 5px;
-}
+        .chat-input {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 5px;
+        }
 
-.chat-input input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
 
-.chat-input button {
-    padding: 8px 15px;
-    background: #77dd77;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+        .chat-input button {
+            padding: 8px 15px;
+            background: #77dd77;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
+<<<<<<< HEAD
 .bot-message {
     background:rgb(4, 255, 42);
     padding: 10px;
@@ -534,46 +849,75 @@ function toggleChat() {
     const chatContainer = document.querySelector('.chat-container');
     chatContainer.classList.toggle('active');
 }
+=======
+        .bot-message {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
 
-function sendMessage() {
-    const input = document.getElementById('messageInput');
-    const message = input.value.trim();
-    if (!message) return;
+        .user-message {
+            background: #e3f9e3;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+    </style>
 
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
-    input.value = '';
+    <script>
+        function toggleChat() {
+            const popup = document.getElementById('chatPopup');
+            popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+        }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
-    // Kirim pesan ke server
-    fetch('../config/process_chat.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `message=${encodeURIComponent(message)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
-    });
-}
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
 
-document.getElementById('messageInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-});
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML += `<div class="user-message">${message}</div>`;
+            input.value = '';
 
+            // Kirim pesan ke server
+            fetch('../config/process_chat.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `message=${encodeURIComponent(message)}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    chatMessages.innerHTML += `<div class="bot-message">Maaf, terjadi kesalahan. Silakan coba lagi.</div>`;
+                });
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+<<<<<<< HEAD
 document.getElementById('chatButton').addEventListener('click', toggleChat);
 </script>
   <script src="../resources/js/burgersidebar.js"></script>
   <script src="../resources/js/livesearch.js"></script>
   <script src="../resources/js/chat.js"></script>
+=======
+        document.getElementById('chatButton').addEventListener('click', toggleChat);
+    </script>
+    <script src="../resources/js/chat.js"></script>
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 </body>
 
 </html>

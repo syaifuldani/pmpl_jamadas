@@ -25,7 +25,7 @@ if (isset($_POST['query'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="icon" href="../resources/img/icons/jamadas.jpg" type="image/png">
+    <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
     <link rel="stylesheet" href="../resources/css/dashboard.css">
     <link rel="stylesheet" href="../resources/css/navbar.css">
 </head>
@@ -58,7 +58,7 @@ if (isset($_POST['query'])) {
                 </h2>
                 <p class="animate-fade-in animate-delay-2">
                     Pesan Sekarang, Jamu Madura Siap Dikirim ke Rumah Anda
-                <!-- </p>
+                    <!-- </p>
                 <form action="" method="POST" class="search-input animate-slide-right animate-delay-3">
                     <label><img src="../resources/img/icons/search.png" alt=""></label>
                     <input type="text" id="contentSearchBox" name="query" placeholder="Cari Jamu Madura Anda"
@@ -79,31 +79,31 @@ if (isset($_POST['query'])) {
             </h2>
             <div class="product-grid">
                 <div class="product-card-dsbrd animate-slide-top animate-delay-2">
-                    <a href="jamu_vitalitas.php">
+                    <a href="">
                         <img src="../resources/img/homeimg/jamu_vitalitas.jpeg" alt="Jamu Vitalitas">
                         <p>Jamu Vitalitas</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-3">
-                    <a href="jamu_kecantikan.php">
+                    <a href="">
                         <img src="../resources/img/homeimg/jamu_kecantikan.jpg" alt="Jamu Kecantikan">
                         <p>Jamu Kecantikan</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-4">
-                    <a href="jamu_kesehatan.php">
+                    <a href="">
                         <img src="../resources/img/homeimg/jamu_kewanitaan.jpg" alt="Jamu Kewanitaan">
                         <p>Jamu Kewanitaan</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-5">
-                    <a href="jamu_herbal.php">
+                    <a href="">
                         <img src="../resources/img/homeimg/jamu_pelangsing.jpg" alt="Jamu Pelangsing">
                         <p>Jamu Pelangsing</p>
                     </a>
                 </div>
                 <div class="product-card-dsbrd animate-slide-top animate-delay-6">
-                    <a href="jamu_lainnya.php">
+                    <a href="">
                         <img src="../resources/img/homeimg/jamu_lainnya.jpeg" alt="Jamu Lainnya">
                         <p>Jamu Lainnya</p>
                     </a>

@@ -27,8 +27,8 @@ $total_stmt->execute();
 $total_data = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 $total_pages = ceil($total_data / $limit);
 
-// Query untuk mengambil data customer
-$sql = "SELECT user_id, nama_lengkap, profile_image, email, nomor_telepon, jenis_pengguna FROM users WHERE jenis_pengguna = 'customer' LIMIT :limit OFFSET :offset";
+// Query sederhana untuk mengambil data customer
+$sql = "SELECT * FROM users WHERE jenis_pengguna = 'customer' LIMIT :limit OFFSET :offset";
 $stmt = $GLOBALS['db']->prepare($sql);
 $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -62,8 +62,29 @@ if (isset($_GET['delete_id'])) {
     <link rel="stylesheet" href="./style/style.css">
     <script>
         function confirmDelete(url) {
-            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-                window.location.href = url;
+            const dialog = document.createElement('div');
+            dialog.className = 'dialog-overlay';
+            dialog.innerHTML = `
+                <div class="confirm-dialog">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus</h3>
+                    <p>Apakah Anda yakin ingin menghapus data customer ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="button-group">
+                        <button class="btn btn-cancel" onclick="closeDialog()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button class="btn btn-confirm" onclick="window.location.href='${url}'">
+                            <i class="fas fa-trash-alt"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        function closeDialog() {
+            const dialog = document.querySelector('.dialog-overlay');
+            if (dialog) {
+                dialog.remove();
             }
         }
     </script>
@@ -74,45 +95,84 @@ if (isset($_GET['delete_id'])) {
 
         <?php require "template/sidebar.php"; ?>
 
-        <div class="main">
+        <div class="main-content">
 
             <?php require "template/header.php"; ?>
 
             <div class="content">
-                <h3>Daftar Customer</h3>
-                <table class="table">
+                <div class="content-header">
+                    <div class="content-title">
+                        <h3><i class="fas fa-users"></i> Daftar Customer</h3>
+                        <p>Kelola data pelanggan JAMADAS</p>
+                    </div>
+                </div>
+
+                <div class="filter-container">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Cari nama atau email...">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table" id="customerTable">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama Lengkap</th>
-                            <th>Profile Image</th>
-                            <th>Email</th>
-                            <th>Nomor Telepon</th>
-                            <th>Aksi</th> <!-- Kolom Aksi untuk tombol Delete -->
+                                <th><i class="fas fa-hashtag"></i> No</th>
+                                <th><i class="fas fa-user"></i> Nama Lengkap</th>
+                                <th><i class="fas fa-image"></i> Foto Profil</th>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <th><i class="fas fa-phone"></i> Nomor Telepon</th>
+                                <th><i class="fas fa-cogs"></i> Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                            <?php if (!empty($customers)): ?>
                         <?php foreach ($customers as $customer): ?>
                             <tr>
                                 <td><?= ++$n; ?></td>
                                 <td><?= htmlspecialchars($customer['nama_lengkap']); ?></td>
                                 <td>
-                                    <img src="../images/<?= htmlspecialchars($customer['profile_image']); ?>" alt="Profile Image" width="50" height="50">
+                                            <div class="profile-image">
+                                                <?php if (!empty($customer['profile_image'])): ?>
+                                                    <img src="../images/<?= htmlspecialchars($customer['profile_image']); ?>" 
+                                                         alt="Profile Image">
+                                                <?php else: ?>
+                                                    <i class="fas fa-user"></i>
+                                                <?php endif; ?>
+                                            </div>
                                 </td>
                                 <td><?= htmlspecialchars($customer['email']); ?></td>
-                                <td><?= htmlspecialchars($customer['nomor_telepon']); ?></td>
+                                <td><?= !empty($customer['nomor_telepon']) ? htmlspecialchars($customer['nomor_telepon']) : '-'; ?></td>
                                 <td>
-                                    <button onclick="confirmDelete('?delete_id=<?= $customer['user_id']; ?>')">Delete</button> <!-- Tombol Delete -->
+                                            <div class="aksi">
+                                                <button onclick="confirmDelete('?delete_id=<?= $customer['user_id']; ?>')" 
+                                                        class="btn-delete">
+                                                    <i class="fas fa-trash-alt"></i> Hapus
+                                                </button>
+                                            </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="6" class="no-data">
+                                        <i class="fas fa-users"></i>
+                                        <p>Belum ada data customer</p>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
 
                 <div class="pagination">
                     <ul>
                         <?php if ($page > 1): ?>
-                            <li><a href="?page=<?= $page - 1; ?>">&lt; Prev</a></li>
+                            <li>
+                                <a href="?page=<?= $page - 1; ?>">
+                                    <i class="fas fa-chevron-left"></i> Prev
+                                </a>
+                            </li>
                         <?php endif; ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
@@ -122,7 +182,11 @@ if (isset($_GET['delete_id'])) {
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
-                            <li><a href="?page=<?= $page + 1; ?>">Next &gt;</a></li>
+                            <li>
+                                <a href="?page=<?= $page + 1; ?>">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -130,6 +194,62 @@ if (isset($_GET['delete_id'])) {
         </div>
     </div>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit-id.js" crossorigin="anonymous"></script>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const customerTable = document.getElementById('customerTable');
+            const rows = customerTable.getElementsByTagName('tr');
 
-</html>
+            searchInput.addEventListener('input', function(e) {
+                e.preventDefault(); // Mencegah refresh halaman
+                const searchTerm = this.value.toLowerCase();
+                
+                // Mulai dari index 1 untuk melewati header tabel
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    const cells = row.getElementsByTagName('td');
+                    let found = false;
+
+                    // Cari di kolom nama dan email
+                    const namaCell = cells[1]; // Index kolom nama
+                    const emailCell = cells[3]; // Index kolom email
+                    
+                    if (namaCell.textContent.toLowerCase().includes(searchTerm) || 
+                        emailCell.textContent.toLowerCase().includes(searchTerm)) {
+                        found = true;
+                    }
+
+                    // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
+                    row.style.display = found ? '' : 'none';
+                }
+            });
+        });
+
+        function confirmDelete(url) {
+            const dialog = document.createElement('div');
+            dialog.className = 'dialog-overlay';
+            dialog.innerHTML = `
+                <div class="confirm-dialog">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Konfirmasi Hapus</h3>
+                    <p>Apakah Anda yakin ingin menghapus data customer ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="button-group">
+                        <button class="btn btn-cancel" onclick="closeDialog()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button class="btn btn-confirm" onclick="window.location.href='${url}'">
+                            <i class="fas fa-trash-alt"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        function closeDialog() {
+            const dialog = document.querySelector('.dialog-overlay');
+            if (dialog) {
+                dialog.remove();
+            }
+        }
+    </script>
+</body>

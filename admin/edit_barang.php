@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
     exit();
 }
 
+$jenishalaman = "Edit Produk";
+
 require '../config/connection.php';
 
 // Alias objek PDO dari $GLOBALS['db'] ke $pdo untuk kompatibilitas
@@ -160,17 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php require "./template/sidebar.php" ?>
 
         <main class="main-content">
-            <header class="header">
-                <h2>Edit Barang</h2>
-                <div class="date"><?php echo date('F d, Y'); ?></div>
-                <div class="admin-dropdown">
-                    <button class="dropdown-toggle">Admin ▼</button>
-                    <ul class="dropdown-menu">
-                        <li><a href="../profile/profile.php">Profile</a></li>
-                        <li><a href="../logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </header>
+            <?php require "template/header.php"; ?>
 
             <section class="product-detail">
                 <form action="" method="POST" enctype="multipart/form-data">
@@ -209,6 +201,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 Reproduksi Wanita</option>
                             <option value="Vitalitas Pria" <?php echo ($product['kategori'] == 'Vitalitas Pria') ? 'selected' : ''; ?>>
                                 Vitalitas Pria</option>
+                            <option value="Kesehatan Pencernaan" <?php echo ($product['kategori'] == 'Kesehatan Pencernaan') ? 'selected' : ''; ?>>
+                                Kesehatan Pencernaan</option>
+                            <option value="Kesehatan Umum & Imunitas" <?php echo ($product['kategori'] == 'Kesehatan Umum & Imunitas') ? 'selected' : ''; ?>>
+                                Kesehatan Umum & Imunitas</option>
+                            <option value="Kesehatan Tulang & Sendi" <?php echo ($product['kategori'] == 'Kesehatan Tulang & Sendi') ? 'selected' : ''; ?>>
+                                Kesehatan Tulang & Sendi</option>
+                            <option value="Kesehatan Anak" <?php echo ($product['kategori'] == 'Kesehatan Anak') ? 'selected' : ''; ?>>
+                                Kesehatan Anak</option>
+                            <option value="Kesehatan Lansia" <?php echo ($product['kategori'] == 'Kesehatan Lansia') ? 'selected' : ''; ?>>
+                                Kesehatan Lansia</option>
+                            <option value="Kesehatan Mata" <?php echo ($product['kategori'] == 'Kesehatan Mata') ? 'selected' : ''; ?>>
+                                Kesehatan Mata</option>
+                            <option value="Kesehatan Jantung" <?php echo ($product['kategori'] == 'Kesehatan Jantung') ? 'selected' : ''; ?>>
+                                Kesehatan Jantung</option>
+                            <option value="Kesehatan Mental & Relaksasi" <?php echo ($product['kategori'] == 'Kesehatan Mental & Relaksasi') ? 'selected' : ''; ?>>
+                                Kesehatan Mental & Relaksasi</option>
                         </select>
                     </div>
 
@@ -219,6 +227,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 Jamu Cair</option>
                             <option value="Jamu Bubuk" <?php echo ($product['sub_kategori'] == 'Jamu Bubuk') ? 'selected' : ''; ?>>
                                 Jamu Bubuk</option>
+                            <option value="Kapsul" <?php echo ($product['sub_kategori'] == 'Kapsul') ? 'selected' : ''; ?>>
+                                Kapsul</option>
+                            <option value="Lulur" <?php echo ($product['sub_kategori'] == 'Lulur') ? 'selected' : ''; ?>>
+                                Lulur</option>
+                            <option value="Minyak Herbal" <?php echo ($product['sub_kategori'] == 'Minyak Herbal') ? 'selected' : ''; ?>>
+                                Minyak Herbal</option>
+                            <option value="Minuman Instant" <?php echo ($product['sub_kategori'] == 'Minuman Instant') ? 'selected' : ''; ?>>
+                                Minuman Instant</option>
+                            <option value="Balsem" <?php echo ($product['sub_kategori'] == 'Balsem') ? 'selected' : ''; ?>>
+                                Balsem</option>
+                            <option value="Madu Herbal" <?php echo ($product['sub_kategori'] == 'Madu Herbal') ? 'selected' : ''; ?>>
+                                Madu Herbal</option>
+                            <option value="Minuman Bubuk" <?php echo ($product['sub_kategori'] == 'Minuman Bubuk') ? 'selected' : ''; ?>>
+                                Minuman Bubuk</option>
+                            <option value="Minuman Tradisional" <?php echo ($product['sub_kategori'] == 'Minuman Tradisional') ? 'selected' : ''; ?>>
+                                Minuman Tradisional</option>
+                            <option value="Sabun Herbal" <?php echo ($product['sub_kategori'] == 'Sabun Herbal') ? 'selected' : ''; ?>>
+                                Sabun Herbal</option>
+                            <option value="Serum" <?php echo ($product['sub_kategori'] == 'Serum') ? 'selected' : ''; ?>>
+                                Serum</option>
+                            <option value="Toner" <?php echo ($product['sub_kategori'] == 'Toner') ? 'selected' : ''; ?>>
+                                Toner</option>
+                            <option value="Pil Herbal" <?php echo ($product['sub_kategori'] == 'Pil Herbal') ? 'selected' : ''; ?>>
+                                Pil Herbal</option>
+                            <option value="Minuman Herbal" <?php echo ($product['sub_kategori'] == 'Minuman Herbal') ? 'selected' : ''; ?>>
+                                Minuman Herbal</option>
+                            <option value="Teh Herbal" <?php echo ($product['sub_kategori'] == 'Teh Herbal') ? 'selected' : ''; ?>>
+                                Teh Herbal</option>
+                            <option value="Bubuk Herbal" <?php echo ($product['sub_kategori'] == 'Bubuk Herbal') ? 'selected' : ''; ?>>
+                                Bubuk Herbal</option>
+                            <option value="Sirup Herbal" <?php echo ($product['sub_kategori'] == 'Sirup Herbal') ? 'selected' : ''; ?>>
+                                Sirup Herbal</option>
+                            <option value="Permen Herbal" <?php echo ($product['sub_kategori'] == 'Permen Herbal') ? 'selected' : ''; ?>>
+                                Permen Herbal</option>
+                            <option value="Inhaler" <?php echo ($product['sub_kategori'] == 'Inhaler') ? 'selected' : ''; ?>>
+                                Inhaler</option>
+                            <option value="Krim" <?php echo ($product['sub_kategori'] == 'Krim') ? 'selected' : ''; ?>>
+                                Krim</option>
+                            <option value="Patch" <?php echo ($product['sub_kategori'] == 'Patch') ? 'selected' : ''; ?>>
+                                Patch</option>
+                            <option value="Suplemen" <?php echo ($product['sub_kategori'] == 'Suplemen') ? 'selected' : ''; ?>>
+                                Suplemen</option>
+                            <option value="Vitamin Gummy" <?php echo ($product['sub_kategori'] == 'Vitamin Gummy') ? 'selected' : ''; ?>>
+                                Vitamin Gummy</option>
+                            <option value="Tetes Mata" <?php echo ($product['sub_kategori'] == 'Tetes Mata') ? 'selected' : ''; ?>>
+                                Tetes Mata</option>
+                            <option value="Aromaterapi" <?php echo ($product['sub_kategori'] == 'Aromaterapi') ? 'selected' : ''; ?>>
+                                Aromaterapi</option>
                             <option value="Lainnya" <?php echo ($product['sub_kategori'] == 'Lainnya') ? 'selected' : ''; ?>>
                                 Lainnya</option>
                         </select>

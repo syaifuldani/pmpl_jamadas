@@ -186,7 +186,6 @@ function updateProfileUser($data)
                                 return ['status' => true, 'message' => 'Profil dan gambar berhasil diperbarui!'];
                             } else {
                                 return ['status' => false, 'message' => 'Profil diperbarui, tapi tidak ada perubahan pada gambar.'];
-
                             }
                         } else {
                             return ['status' => false, 'message' => 'Terjadi kesalahan saat mengunggah file.'];
@@ -203,12 +202,10 @@ function updateProfileUser($data)
             } else {
                 return ['status' => false, 'message' => 'Tidak ada perubahan pada profil.'];
             }
-
         } catch (\Exception $e) {
             // Tangani error database
             return ['status' => false, 'message' => 'Error: ' . $e->getMessage()];
         }
-
     } else {
         return ['status' => false, 'message' => 'User ID tidak ditemukan!'];
     }
@@ -399,7 +396,6 @@ function getCartItems($userId)
             // Masukkan item ke dalam array cartItems
             $cartItems[] = $item;
         }
-
     } catch (PDOException $e) {
         // Tangani error
         return ['error' => 'Error fetching cart items: ' . $e->getMessage()];
@@ -442,7 +438,6 @@ function updateCartItem($userId, $quantities)
 
         $GLOBALS['db']->commit();
         return true;
-
     } catch (Exception $e) {
         $GLOBALS['db']->rollBack();
         error_log("Cart update error: " . $e->getMessage());
@@ -707,7 +702,6 @@ function updateProfileAdmin($data)
                                 return ['status' => true, 'message' => 'Profil dan gambar berhasil diperbarui!'];
                             } else {
                                 return ['status' => false, 'message' => 'Profil diperbarui, tapi tidak ada perubahan pada gambar.'];
-
                             }
                         } else {
                             return ['status' => false, 'message' => 'Terjadi kesalahan saat mengunggah file.'];
@@ -724,12 +718,10 @@ function updateProfileAdmin($data)
             } else {
                 return ['status' => false, 'message' => 'Tidak ada perubahan pada profil.'];
             }
-
         } catch (\Exception $e) {
             // Tangani error database
             return ['status' => false, 'message' => 'Error: ' . $e->getMessage()];
         }
-
     } else {
         return ['status' => false, 'message' => 'User ID tidak ditemukan!'];
     }
@@ -916,7 +908,6 @@ function getAllDataByCategory($category)
     $stmt->bindParam(':category', $category);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 }
 
 // Pesanan saya
@@ -934,17 +925,28 @@ function getStatusLabel($status)
     return $labels[$status] ?? $status;
 }
 
-function getOrdersByID($userId)
+function getOrdersByID($userId, $status = null)
 {
     global $db;
 
     // Query utama untuk orders
-    $sql = "SELECT o.* FROM orders o 
-            WHERE o.user_id = :user_id 
-            ORDER BY o.created_at DESC";
+    $sql = "SELECT o.* FROM orders o ";
+    $conditions = ["o.user_id = :user_id"];
+    $params = [':user_id' => $userId];
+
+    if ($status) {
+        $conditions[] = "o.transaction_status = :status";
+        $params[':status'] = $status;
+    }
+
+    if (!empty($conditions)) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    $sql .= " ORDER BY o.created_at DESC";
 
     $stmt = $db->prepare($sql);
-    $stmt->execute([':user_id' => $userId]);
+    $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Query tambahan untuk mendapatkan items per order
@@ -962,6 +964,24 @@ function getOrdersByID($userId)
         $itemStmt = $db->prepare($itemSql);
         $itemStmt->execute([':order_id' => $order['order_id']]);
         $order['items'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Encode gambar_satu dalam format base64 for each item
+        foreach ($order['items'] as &$item) {
+            if (!empty($item['gambar_satu'])) {
+                $imageData = $item['gambar_satu'];
+                $imageInfo = getimagesizefromstring($imageData);
+
+                if ($imageInfo && isset($imageInfo['mime'])) {
+                    $mimeType = $imageInfo['mime'];
+                    error_log("MIME Type for product image: " . $mimeType);
+                    $item['gambar_satu'] = 'data:' . $mimeType . ';base64,' . base64_encode($imageData);
+                } else {
+                    error_log("Failed to determine MIME type for product image. Using default (image/jpeg).");
+                    // Fallback to a common type if MIME type cannot be determined
+                    $item['gambar_satu'] = 'data:image/jpeg;base64,' . base64_encode($imageData); // Default to JPEG
+                }
+            }
+        }
     }
 
     return $orders;
@@ -1016,7 +1036,6 @@ function updateStatusByOrderId($orderID, $newStatus)
             'status' => 'success',
             'message' => "Status berhasil diupdate menjadi $newStatus"
         ];
-
     } catch (Exception $e) {
         return [
             'status' => 'error',
@@ -1097,7 +1116,6 @@ function updateResi($orderID, $nomor_resi)
     </script>";
         exit;
     }
-
 }
 // ADMIN FUNCTIONS DASHBOARD
 function getPenjualanChart()

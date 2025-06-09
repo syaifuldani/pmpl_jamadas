@@ -159,7 +159,7 @@ try {
 
                             <!-- Harga produk -->
                             <p class="price">Rp.
-                                <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>/Lembar
+                                <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>/Pcs
                             </p>
 
                             <div class="description">
@@ -204,25 +204,22 @@ try {
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                            ?>
+                                    ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
-                                        <p class="product-name"><?= htmlspecialchars($product['nama_produk']); ?></p>
                                         <div class="description">
-                                            <h6>Deskripsi Produk</h6>
                                             <p><?= htmlspecialchars($product['deskripsi']); ?></p>
                                         </div>
-                                        <p class="product-price">Rp.
-                                            <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>
-                                        </p>
-                                        <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>"
-                                            class="detail-button">
-                                            <img class="cart-icon" src="../resources/img/icons/cart.png" alt="">
-                                            <p>Lihat Detail</p>
-                                        </a>
+                                        <div class="product-info">
+                                            <p class="product-name"><?= htmlspecialchars($product['nama_produk']); ?></p>
+                                            <p class="product-price">Rp. <?= htmlspecialchars(number_format($product['harga_produk'], 0, ',', '.')); ?></p>
+                                            <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>" class="detail-button">
+                                                <p>Lihat Detail</p>
+                                            </a>
+                                        </div>
                                     </div>
-                                <?php
+                                    <?php
                                 endforeach;
                             else:
                                 ?>
@@ -244,17 +241,13 @@ try {
                             <div class="rating-number"><?= $average_rating ?></div>
                             <div class="rating-stars">
                                 <?php
-                                // Display full stars
-                                for ($i = 1; $i <= floor($average_rating); $i++) {
-                                    echo '<span class="star filled">★</span>';
-                                }
-                                // Display half star if needed
-                                if ($average_rating - floor($average_rating) >= 0.5) {
-                                    echo '<span class="star half">★</span>';
-                                }
-                                // Display empty stars
-                                for ($i = ceil($average_rating); $i < 5; $i++) {
-                                    echo '<span class="star">☆</span>';
+                                // Display average rating stars (1-5 from left to right)
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $average_rating) {
+                                        echo '<span class="star filled">★</span>';
+                                    } else {
+                                        echo '<span class="star">☆</span>';
+                                    }
                                 }
                                 ?>
                             </div>
@@ -279,7 +272,7 @@ try {
                                     </div>
                                     <div class="review-rating">
                                         <?php
-                                        // Display stars based on rating
+                                        // Display stars based on rating (1-5 from left to right)
                                         for ($i = 1; $i <= 5; $i++) {
                                             if ($i <= $review['rating']) {
                                                 echo '<span class="star filled">★</span>';
@@ -515,224 +508,3 @@ document.getElementById('chatButton').addEventListener('click', toggleChat);
 </body>
 
 </html>
-
-<style>
-    /* Add these styles to your existing CSS */
-    .reviews {
-        margin-top: 20px;
-    }
-
-    .review-item {
-        background-color: #f9f9f9;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .review-item p {
-        margin: 5px 0;
-    }
-
-    .review-date {
-        color: #666;
-        font-size: 0.9em;
-    }
-
-    .review-comment {
-        margin-top: 10px;
-        line-height: 1.4;
-    }
-
-    .no-reviews {
-        text-align: center;
-        color: #666;
-        font-style: italic;
-        padding: 20px;
-    }
-
-    .reviews-product {
-        margin-top: 30px;
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header {
-        margin-bottom: 20px;
-    }
-
-    .average-rating {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin: 15px 0;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
-
-    .rating-number {
-        font-size: 48px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .rating-stars {
-        display: flex;
-        gap: 2px;
-    }
-
-    .rating-count {
-        color: #666;
-        font-size: 14px;
-        margin-left: auto;
-    }
-
-    .star {
-        color: #ddd;
-        font-size: 24px;
-    }
-
-    .star.filled {
-        color: #ffd700;
-    }
-
-    .star.half {
-        color: #ffd700;
-        position: relative;
-    }
-
-    .star.half::after {
-        content: '☆';
-        position: absolute;
-        left: 0;
-        color: #ddd;
-        width: 50%;
-        overflow: hidden;
-    }
-
-    .review-item {
-        background-color: #f9f9f9;
-        padding: 20px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-    }
-
-    .review-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    }
-
-    .review-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 10px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .reviewer-info {
-        flex: 1;
-    }
-
-    .reviewer-info strong {
-        color: #333;
-        font-size: 1.1em;
-    }
-
-    .review-date {
-        color: #666;
-        font-size: 0.9em;
-        margin-top: 5px;
-    }
-
-    .review-rating {
-        display: flex;
-        gap: 2px;
-        margin-left: 15px;
-    }
-
-    .review-comment {
-        margin-top: 10px;
-        line-height: 1.6;
-        color: #444;
-        font-size: 0.95em;
-    }
-
-    .already-reviewed {
-        background-color: #e3f2fd;
-        padding: 15px;
-        border-radius: 4px;
-        margin: 15px 0;
-        text-align: center;
-        color: #1976D2;
-    }
-
-    .review-form {
-        background-color: #f5f5f5;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px 0;
-    }
-
-    .rating-input {
-        margin: 15px 0;
-    }
-
-    .stars {
-        display: inline-block;
-        margin-left: 10px;
-    }
-
-    .stars input {
-        display: none;
-    }
-
-    .stars label {
-        font-size: 30px;
-        color: #ddd;
-        cursor: pointer;
-        margin: 0 2px;
-    }
-
-    .stars input:checked~label,
-    .stars label:hover,
-    .stars label:hover~label {
-        color: #ffd700;
-    }
-
-    .review-text textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .submit-review {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 10px;
-    }
-
-    .submit-review:hover {
-        background-color: #45a049;
-    }
-
-    hr {
-        border: none;
-        border-top: 1px solid #eee;
-        margin: 20px 0;
-    }
-</style>
