@@ -158,10 +158,10 @@ if (isset($_POST['query'])) {
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
 </div>
 
-<div class="chat-container">
-    <div class="chat-header">
+<div class="chat-container">    <div class="chat-header">
         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
         <h3>Asisten Jamu</h3>
+        <button class="close-button" onclick="toggleChat()">×</button>
     </div>
     <div class="chat-box"></div>
     <div class="chat-input">
@@ -176,6 +176,15 @@ if (isset($_POST['query'])) {
     bottom: 20px;
     right: 20px;
     z-index: 1000;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.chat-container.active {
+    display: block;
 }
 
 .chat-button {
@@ -220,9 +229,11 @@ if (isset($_POST['query'])) {
 .close-button {
     background: none;
     border: none;
-    color: black;
-    font-size: 20px;
+    color: white;
+    font-size: 24px;
     cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
 }
 
 .chat-messages {
@@ -272,8 +283,8 @@ if (isset($_POST['query'])) {
 
 <script>
 function toggleChat() {
-    const popup = document.getElementById('chatPopup');
-    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+    const chatContainer = document.querySelector('.chat-container');
+    chatContainer.classList.toggle('active');
 }
 
 function sendMessage() {

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require 'connection.php';
+require 'function.php';
 
 // Inisialisasi session chat jika belum ada
 if (!isset($_SESSION['current_chat'])) {
@@ -27,11 +28,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
     
     // Preprocessing pesan
     $pesan = strtolower($pesan);
-    $pesan = preg_replace('/[^a-z0-9\s]/', '', $pesan);
+    $pesan = preg_replace('/[^a-z0-9\s]/', '', $pesan);    // RATING-BASED SEARCH PROCESSING - IMPROVED LOGIC
+    $rating_response = null;
+    
+    // Define category mapping for all scenarios
+    $category_mapping = [
+        'kecantikan' => 'Perawatan Kecantikan dan Tubuh',
+        'wanita' => 'Reproduksi Wanita',
+        'pria' => 'Vitalitas Pria',
+        'pencernaan' => 'Kesehatan Pencernaan',
+        'imunitas' => 'Kesehatan Umum & Imunitas',
+        'sendi' => 'Kesehatan Tulang & Sendi',
+        'anak' => 'Kesehatan Anak',
+        'lansia' => 'Kesehatan Lansia',
+        'jantung' => 'Kesehatan Jantung',
+        'mata' => 'Kesehatan Mata',
+        'mental' => 'Kesehatan Mental & Relaksasi'
+    ];
+    
+    // NEW IMPROVED RATING DETECTION LOGIC
+    // Priority 1: Check for exact rating queries (e.g., "rating 4", "bintang 3")
+    if (preg_match('/(?:rating|bintang)\s*([1-5])(?!\s*(?:ke\s*atas|di\s*atas))/i', $pesan, $matches)) {
+        $exact_rate = intval($matches[1]);
+        
+        // Get category filter if specified
+        $category_filter = null;
+        foreach ($category_mapping as $key => $category) {
+            if (strpos($pesan, $key) !== false) {
+                $category_filter = $category;
+                break;
+            }
+        }
+        
+        $products = getProductsByExactRating($exact_rate, $category_filter, 5);
+        $rating_response = generateRatingResponse($products, "Berikut produk jamu dengan rating tepat {$exact_rate} bintang:", $category_filter);
+    }
+    // Priority 2: Check for minimum rating queries (e.g., "rating 3 ke atas", "rating di atas 2")
+    elseif (preg_match('/(?:rating|bintang)\s*(?:(?:([1-5])\s*(?:ke\s*atas))|(?:di\s*atas\s*([1-5])))/i', $pesan, $matches)) {
+        $min_rate = isset($matches[1]) && $matches[1] ? intval($matches[1]) : intval($matches[2]);
+        
+        // For "di atas X", we want X+1 and above
+        if (strpos($pesan, 'di atas') !== false) {
+            $min_rate = $min_rate + 1;
+        }
+        
+        // Get category filter if specified
+        $category_filter = null;
+        foreach ($category_mapping as $key => $category) {
+            if (strpos($pesan, $key) !== false) {
+                $category_filter = $category;
+                break;
+            }
+        }
+        
+        $products = getProductsByMinimumRating($min_rate, $category_filter, 5);
+        $rating_response = generateRatingResponse($products, "Berikut produk jamu dengan rating {$min_rate} bintang ke atas:", $category_filter);
+    }
+    // Priority 3: Check for highest rating queries (e.g., "rating tertinggi", "produk terbaik")
+    elseif (preg_match('/(?:rating\s*tertinggi|produk\s*terbaik|jamu\s*terbaik|paling\s*bagus|kualitas\s*terbaik)/i', $pesan)) {
+        // Get category filter if specified
+        $category_filter = null;
+        foreach ($category_mapping as $key => $category) {
+            if (strpos($pesan, $key) !== false) {
+                $category_filter = $category;
+                break;
+            }
+        }
+        
+        $products = getTopRatedProducts(5, $category_filter);
+        $rating_response = generateRatingResponse($products, 'Berikut produk jamu dengan rating tertinggi:', $category_filter);
+    }
+    
+    // If we found a rating-based response, use it
+    if ($rating_response) {
+        // Simpan chat ke database
+        $stmt = $GLOBALS['db']->prepare("INSERT INTO chats (users_id, pesan_pengguna, respons_jawaban, kategori_jamu, created_at) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->execute([$user_id, $_POST['message'], $rating_response, 'Rating Search']);
+        
+        // Simpan chat ke session
+        $_SESSION['current_chat'][] = [
+            'pesan_pengguna' => $_POST['message'],
+            'respons_jawaban' => $rating_response
+        ];
+        
+        echo json_encode(['response' => $rating_response]);
+        exit;
+    }
+    
+    // EXISTING DATASET PROCESSING CONTINUES BELOW
       // Dataset jamu dan kata kunci
-    $dataset = [
-        'kunyit_asam' => [
-            'keywords' => ['sehat', 'metabolisme', 'detox', 'haid', 'bau badan', 'daya tahan', 'segar'],
+    $dataset = [        'kunyit_asam' => [
+            'keywords' => ['sehat', 'metabolisme', 'detox', 'haid', 'bau badan', 'daya tahan', 'segar', 'terbaik', 'unggulan'],
             'response' => "Jamu Kunyit Asam Madura cocok untuk Anda! Jamu ini mengandung kunyit, asam jawa, dan bahan alami lainnya. Manfaatnya termasuk meningkatkan daya tahan tubuh, melancarkan haid, detoksifikasi, dan menyegarkan badan.",
             'product_id' => 1,
             'product_link' => 'productdetail.php?id=1',
@@ -39,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
             'sub_kategori' => 'Jamu Cair'
         ],        
         'pahitan' => [
-            'keywords' => ['jerawat', 'kulit', 'darah', 'bau badan', 'keringat', 'kekebalan'],
+            'keywords' => ['jerawat', 'kulit', 'darah', 'bau badan', 'keringat', 'kekebalan', 'populer', 'bagus'],
             'response' => "Jamu Pahitan Madura adalah pilihan tepat! Terbuat dari sambiloto, brotowali, dan rempah lainnya. Sangat efektif untuk mengatasi masalah kulit, membersihkan darah, dan meningkatkan sistem kekebalan tubuh.",
             'product_id' => 2,
             'product_link' => 'productdetail.php?id=2',
@@ -782,7 +869,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
             $response .= "<a href='{$product_link}' class='jamu-link'>Lihat Detail Jamu</a><br><br>";
         }
     } else {
-        $response = "Maaf, saya tidak dapat menemukan produk jamu yang sesuai dengan pencarian Anda. Silakan tanyakan tentang jamu untuk kesehatan, vitalitas, kecantikan, atau kewanitaan.<br><br>Anda juga dapat melihat daftar semua kategori dengan mengetik \"tampilkan semua kategori jamu\".";
+        $response = "Maaf, saya tidak dapat menemukan produk jamu yang sesuai dengan pencarian Anda. Silakan tanyakan tentang jamu untuk kesehatan, vitalitas, kecantikan, atau kewanitaan.<br><br>Anda juga dapat melihat daftar semua kategori dengan mengetik \"tampilkan semua kategori jamu\".<br><br><strong>💡 Tips Pencarian:</strong><br>• Coba: \"jamu rating tinggi\" untuk produk terbaik<br>• Coba: \"rekomendasi jamu\" untuk saran produk<br>• Coba: \"jamu populer\" untuk produk favorit<br>• Coba: \"jamu bintang 5\" untuk produk rating tertinggi";
         $best_category = "";
     }
     

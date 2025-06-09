@@ -401,23 +401,20 @@ if (isset($_POST['query'])) {
             <?php endif; ?>
         </div>
     </div>
-    <!-- Chatbot -->
-<div class="chat-container" id="chatContainer">
-    <button class="chat-button" id="chatButton">
-        <img src="../resources/img/icons/chat.png" alt="Chat" width="30">
-    </button>
-    <div class="chat-popup" id="chatPopup">
-        <div class="chat-header">
-            <h3>Asisten Jamu Madura</h3>
-            <button class="close-button" onclick="toggleChat()">&times;</button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="bot-message">Halo! Saya adalah asisten Jamu Madura. Apa yang ingin Anda ketahui tentang jamu kami?</div>
-        </div>
-        <div class="chat-input">
-            <input type="text" id="messageInput" placeholder="Ketik pesan Anda...">
-            <button onclick="sendMessage()">Kirim</button>
-        </div>
+ <!-- Chatbot -->
+<div class="chat-toggle">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
+</div>
+
+<div class="chat-container">    <div class="chat-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
+        <h3>Asisten Jamu</h3>
+        <button class="close-button" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-box"></div>
+    <div class="chat-input">
+        <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
+        <button onclick="sendMessage()">Kirim</button>
     </div>
 </div>
 
@@ -427,6 +424,15 @@ if (isset($_POST['query'])) {
     bottom: 20px;
     right: 20px;
     z-index: 1000;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.chat-container.active {
+    display: block;
 }
 
 .chat-button {
@@ -472,8 +478,10 @@ if (isset($_POST['query'])) {
     background: none;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
 }
 
 .chat-messages {
@@ -506,14 +514,14 @@ if (isset($_POST['query'])) {
 }
 
 .bot-message {
-    background: #f1f1f1;
+    background:rgb(4, 255, 42);
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
 }
 
 .user-message {
-    background: #e3f9e3;
+    background:rgb(0, 254, 0);
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -523,8 +531,8 @@ if (isset($_POST['query'])) {
 
 <script>
 function toggleChat() {
-    const popup = document.getElementById('chatPopup');
-    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+    const chatContainer = document.querySelector('.chat-container');
+    chatContainer.classList.toggle('active');
 }
 
 function sendMessage() {
@@ -563,7 +571,9 @@ document.getElementById('messageInput').addEventListener('keypress', function(e)
 
 document.getElementById('chatButton').addEventListener('click', toggleChat);
 </script>
-<script src="../resources/js/chat.js"></script>
+  <script src="../resources/js/burgersidebar.js"></script>
+  <script src="../resources/js/livesearch.js"></script>
+  <script src="../resources/js/chat.js"></script>
 </body>
 
 </html>
