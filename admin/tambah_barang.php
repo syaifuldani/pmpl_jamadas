@@ -63,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <i class="fas fa-box"></i> Nama Produk
                         </label>
                         <input type="text" id="product-name" name="product_name" placeholder="Masukkan nama produk">
-                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Deskripsi -->
@@ -71,8 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="description">
                             <i class="fas fa-align-left"></i> Deskripsi
                         </label>
-                        <textarea id="description" name="description" placeholder="Masukkan deskripsi produk"></textarea>
-                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <textarea id="description" name="description"
+                            placeholder="Masukkan deskripsi produk"></textarea>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Manfaat -->
@@ -81,7 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <i class="fas fa-star"></i> Manfaat
                         </label>
                         <textarea id="manfaat" name="manfaat" placeholder="Masukkan manfaat produk"></textarea>
-                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Komposisi -->
@@ -90,7 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <i class="fas fa-flask"></i> Komposisi
                         </label>
                         <textarea id="komposisi" name="komposisi" placeholder="Masukkan komposisi produk"></textarea>
-                        <span class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['field']) ? $responseAddItems['field'] : ''; ?></span>
                     </div>
 
                     <!-- Kategori dan Sub Kategori -->
@@ -103,9 +108,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
                                 <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
                                 <option value="Reproduksi Wanita">Reproduksi Wanita</option>
-                                <option value="Vitalitas Pria">Vitalitas Pria</option>
+                                <option value="Kesehatan Pencernaan">Kesehatan Pencernaan</option>
+                                <option value="Kesehatan Umum & Imunitas">Kesehatan Umum & Imunitas</option>
+                                <option value="Kesehatan Tulang & Sendi">Kesehatan Tulang & Sendi</option>
+                                <option value="Kesehatan Anak">Kesehatan Anak</option>
+                                <option value="Kesehatan Lansia">Kesehatan Lansia</option>
+                                <option value="Kesehatan Mata">Kesehatan Mata</option>
+                                <option value="Kesehatan Jantung">Kesehatan Jantung</option>
+                                <option value="Kesehatan Mental & Relaksasi">Kesehatan Mental & Relaksasi</option>
                             </select>
-                            <span class="error-message"><?= isset($responseAddItems['category']) ? $responseAddItems['category'] : ''; ?></span>
+                            <span
+                                class="error-message"><?= isset($responseAddItems['category']) ? $responseAddItems['category'] : ''; ?></span>
                         </div>
 
                         <div>
@@ -116,9 +129,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <option value="" disabled selected>-- Pilih Sub Kategori --</option>
                                 <option value="Jamu Cair">Jamu Cair</option>
                                 <option value="Jamu Bubuk">Jamu Bubuk</option>
+                                <option value="Kapsul">Kapsul</option>
+                                <option value="Lulur">Lulur</option>
+                                <option value="Minyak Herbal">Minyak Herbal</option>
+                                <option value="Minuman Instant">Minuman Instant</option>
+                                <option value="Balsem">Balsem</option>
+                                <option value="Madu Herbal">Madu Herbal</option>
+                                <option value="Minuman Bubuk">Minuman Bubuk</option>
+                                <option value="Minuman Tradisional">Minuman Tradisional</option>
+                                <option value="Sabun Herbal">Sabun Herbal</option>
+                                <option value="Serum">Serum</option>
+                                <option value="Toner">Toner</option>
+                                <option value="Pil Herbal">Pil Herbal</option>
+                                <option value="Minuman Herbal">Minuman Herbal</option>
+                                <option value="Teh Herbal">Teh Herbal</option>
+                                <option value="Bubuk Herbal">Bubuk Herbal</option>
+                                <option value="Sirup Herbal">Sirup Herbal</option>
+                                <option value="Permen Herbal">Permen Herbal</option>
+                                <option value="Inhaler">Inhaler</option>
+                                <option value="Krim">Krim</option>
+                                <option value="Patch">Patch</option>
+                                <option value="Suplemen">Suplemen</option>
+                                <option value="Vitamin Gummy">Vitamin Gummy</option>
+                                <option value="Tetes Mata">Tetes Mata</option>
+                                <option value="Aromaterapi">Aromaterapi</option>
                                 <option value="Lainnya">Lainnya</option>
                             </select>
-                            <span class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
+                            <span
+                                class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                         </div>
                     </div>
 
@@ -128,9 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <label for="product-price">
                                 <i class="fas fa-tag"></i> Harga Produk
                             </label>
-                            <input type="text" id="product-price" name="product_price" placeholder="Masukkan harga produk">
+                            <input type="text" id="product-price" name="product_price"
+                                placeholder="Masukkan harga produk">
                         </div>
-                        <span class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                     </div>
 
                     <!-- Product Gallery -->
