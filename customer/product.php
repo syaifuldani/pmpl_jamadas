@@ -50,29 +50,6 @@ if ($selected_kategori === 'all' && $selected_subkategori === 'all') {
 $stmt_produk->execute();
 $produk = $stmt_produk->fetchAll(PDO::FETCH_ASSOC);
 
-
-// if ($selected_kategori === 'all') {
-//     // Ambil semua produk jika tidak ada kategori yang dipilih
-//     $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, kategori FROM products";
-//     $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-// } else {
-//     // Ambil produk berdasarkan kategori yang dipilih
-//     $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, kategori 
-//                      FROM products 
-//                      WHERE kategori = :kategori";
-//     $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-//     $stmt_produk->bindParam(':kategori', $selected_kategori);
-
-// }
-
-
-// // Ambil produk berdasarkan kategori yang dipilih
-// $query_produk = "SELECT product_id, nama_produk, deskripsi, harga_produk, gambar_satu, sub_kategori 
-//                  FROM products 
-//                  WHERE sub_kategori = :sub_kategori";
-// $stmt_produk = $GLOBALS['db']->prepare($query_produk);
-// $stmt_produk->bindParam(':sub_kategori', $selected_subkategori);
-
 $stmt_produk->execute();
 $result_produk = $stmt_produk->fetchAll(PDO::FETCH_ASSOC);
 
@@ -592,7 +569,6 @@ if (isset($_POST['query'])) {
             font-size: 11px;
         }
     }
-
 </style>
 <link rel="stylesheet" href="../resources/css/chat.css">
 </head>
@@ -608,15 +584,16 @@ if (isset($_POST['query'])) {
         <!-- Sidebar Kategori -->
         <div class="sidebar-kategori">
             <h3><i class="fas fa-filter"></i> Filter Produk</h3>
-            
+
             <div class="kategori-dropdown">
                 <select class="kategori-select" onchange="window.location.href=this.value">
-                    <option value="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>" 
+                    <option value="?kategori=all&sub_kategori=<?= urlencode($selected_subkategori) ?>"
                         <?= $selected_kategori === 'all' ? 'selected' : '' ?>>
                         Semua Kategori
                     </option>
                     <?php foreach ($result_kategori as $kategori): ?>
-                        <option value="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
+                        <option
+                            value="?kategori=<?= urlencode($kategori['kategori']) ?>&sub_kategori=<?= urlencode($selected_subkategori) ?>"
                             <?= $selected_kategori === $kategori['kategori'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($kategori['kategori']) ?>
                         </option>
@@ -626,14 +603,14 @@ if (isset($_POST['query'])) {
 
             <h3><i class="fas fa-tags"></i> Sub Kategori</h3>
             <div class="sub-kategori-list">
-                <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all" 
-                   class="sub-kategori-item <?= $selected_subkategori === 'all' ? 'active' : '' ?>">
+                <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=all"
+                    class="sub-kategori-item <?= $selected_subkategori === 'all' ? 'active' : '' ?>">
                     Semua Sub Kategori
                 </a>
-                <?php 
+                <?php
                 $regular_subkategori = [];
                 $lainnya_subkategori = [];
-                
+
                 foreach ($result_subkategori as $sub) {
                     if (strtolower($sub['sub_kategori']) === 'lainnya' || strtolower($sub['sub_kategori']) === 'lain-lain') {
                         $lainnya_subkategori[] = $sub;
@@ -641,24 +618,24 @@ if (isset($_POST['query'])) {
                         $regular_subkategori[] = $sub;
                     }
                 }
-                
+
                 // Tampilkan sub kategori regular
                 foreach ($regular_subkategori as $sub): ?>
-                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>" 
-                       class="sub-kategori-item <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
+                        class="sub-kategori-item <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
                         <?= htmlspecialchars($sub['sub_kategori']) ?>
                     </a>
-                <?php endforeach; 
-                
+                <?php endforeach;
+
                 // Tambahkan pemisah jika ada sub kategori "Lainnya"
                 if (!empty($lainnya_subkategori)): ?>
                     <div class="sub-kategori-divider"></div>
                 <?php endif;
-                
+
                 // Tampilkan sub kategori "Lainnya"
                 foreach ($lainnya_subkategori as $sub): ?>
-                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>" 
-                       class="sub-kategori-item lainnya <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
+                    <a href="?kategori=<?= urlencode($selected_kategori) ?>&sub_kategori=<?= urlencode($sub['sub_kategori']) ?>"
+                        class="sub-kategori-item lainnya <?= $selected_subkategori === $sub['sub_kategori'] ? 'active' : '' ?>">
                         <?= htmlspecialchars($sub['sub_kategori']) ?>
                     </a>
                 <?php endforeach; ?>
@@ -708,7 +685,8 @@ if (isset($_POST['query'])) {
                 <button class="close-button" onclick="toggleChat()">&times;</button>
             </div>
             <div class="chat-messages" id="chatMessages">
-                <div class="bot-message">Halo! Saya adalah asisten Jamu Madura. Apa yang ingin Anda ketahui tentang jamu kami?</div>
+                <div class="bot-message">Halo! Saya adalah asisten Jamu Madura. Apa yang ingin Anda ketahui tentang jamu
+                    kami?</div>
             </div>
             <div class="chat-input">
                 <input type="text" id="messageInput" placeholder="Ketik pesan Anda...">
@@ -834,12 +812,12 @@ if (isset($_POST['query'])) {
 
             // Kirim pesan ke server
             fetch('../config/process_chat.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `message=${encodeURIComponent(message)}`
-                })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `message=${encodeURIComponent(message)}`
+            })
                 .then(response => response.json())
                 .then(data => {
                     chatMessages.innerHTML += `<div class="bot-message">${data.response}</div>`;
@@ -851,7 +829,7 @@ if (isset($_POST['query'])) {
                 });
         }
 
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        document.getElementById('messageInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }

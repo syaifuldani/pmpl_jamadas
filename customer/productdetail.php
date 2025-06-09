@@ -159,7 +159,7 @@ try {
 
                             <!-- Harga produk -->
                             <p class="price">Rp.
-                                <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>/Lembar
+                                <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>/Pcs
                             </p>
 
                             <div class="description">
@@ -204,7 +204,7 @@ try {
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                            ?>
+                                    ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
@@ -219,7 +219,7 @@ try {
                                             </a>
                                         </div>
                                     </div>
-                                <?php
+                                    <?php
                                 endforeach;
                             else:
                                 ?>
