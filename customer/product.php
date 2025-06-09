@@ -674,6 +674,22 @@ if (isset($_POST['query'])) {
             <?php endif; ?>
         </div>
     </div>
+<<<<<<< HEAD
+ <!-- Chatbot -->
+<div class="chat-toggle">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
+</div>
+
+<div class="chat-container">    <div class="chat-header">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
+        <h3>Asisten Jamu</h3>
+        <button class="close-button" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-box"></div>
+    <div class="chat-input">
+        <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
+        <button onclick="sendMessage()">Kirim</button>
+=======
     <!-- Chatbot -->
     <div class="chat-container" id="chatContainer">
         <button class="chat-button" id="chatButton">
@@ -693,8 +709,27 @@ if (isset($_POST['query'])) {
                 <button onclick="sendMessage()">Kirim</button>
             </div>
         </div>
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
     </div>
 
+<<<<<<< HEAD
+<style>
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.chat-container.active {
+    display: block;
+}
+=======
     <style>
         .chat-container {
             position: fixed;
@@ -702,6 +737,7 @@ if (isset($_POST['query'])) {
             right: 20px;
             z-index: 1000;
         }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
         .chat-button {
             width: 60px;
@@ -742,6 +778,17 @@ if (isset($_POST['query'])) {
             font-size: 16px;
         }
 
+<<<<<<< HEAD
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+}
+=======
         .close-button {
             background: none;
             border: none;
@@ -749,6 +796,7 @@ if (isset($_POST['query'])) {
             font-size: 20px;
             cursor: pointer;
         }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
         .chat-messages {
             height: 300px;
@@ -779,6 +827,29 @@ if (isset($_POST['query'])) {
             cursor: pointer;
         }
 
+<<<<<<< HEAD
+.bot-message {
+    background:rgb(4, 255, 42);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    background:rgb(0, 254, 0);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+</style>
+
+<script>
+function toggleChat() {
+    const chatContainer = document.querySelector('.chat-container');
+    chatContainer.classList.toggle('active');
+}
+=======
         .bot-message {
             background: #f1f1f1;
             padding: 10px;
@@ -800,6 +871,7 @@ if (isset($_POST['query'])) {
             const popup = document.getElementById('chatPopup');
             popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
         }
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 
         function sendMessage() {
             const input = document.getElementById('messageInput');
@@ -835,9 +907,17 @@ if (isset($_POST['query'])) {
             }
         });
 
+<<<<<<< HEAD
+document.getElementById('chatButton').addEventListener('click', toggleChat);
+</script>
+  <script src="../resources/js/burgersidebar.js"></script>
+  <script src="../resources/js/livesearch.js"></script>
+  <script src="../resources/js/chat.js"></script>
+=======
         document.getElementById('chatButton').addEventListener('click', toggleChat);
     </script>
     <script src="../resources/js/chat.js"></script>
+>>>>>>> f3c2d49b63612cb7df683559621115e2929cb70a
 </body>
 
 </html>
