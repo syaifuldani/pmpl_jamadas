@@ -30,11 +30,10 @@ if (isset($_POST['query'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
-  <link rel="stylesheet" href="../resources/css/dashboard.css">
-  <link rel="stylesheet" href="../resources/css/navbar.css">
-  <link rel="stylesheet" href="../resources/css/chat.css">
+  <title>Dashboard</title>  <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
+  <link rel="stylesheet" href="../resources/css/dashboard.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="../resources/css/navbar.css?v=<?= time() ?>">
+  <link rel="stylesheet" href="../resources/css/chat.css?v=<?= time() ?>">
 </head>
 
 <body>
@@ -153,15 +152,16 @@ if (isset($_POST['query'])) {
       </div>
     </div>
   </div>
-
   <!-- Footers Promotions -->
   <footer class="footer animate-slide-top animate-delay-2">
     <?php include 'layout/cusmrLayout/footer.php'; ?>
-  </footer>  </div>
-    <!-- Chatbot -->
-  <div class="chat-toggle" onclick="toggleChat()">
+  </footer>
+  </div>  <!-- Chatbot -->
+  <div class="chat-toggle" id="chatToggleBtn">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
-  </div><div class="chat-container">
+  </div>
+  
+  <div class="chat-container">
     <div class="chat-header">
       <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
       <h3>Asisten Jamu</h3>
@@ -172,8 +172,67 @@ if (isset($_POST['query'])) {
       <button onclick="sendMessage()">Kirim</button>
     </div>
   </div>
-
-  <script src="../resources/js/burgersidebar.js"></script>
-  <script src="../resources/js/livesearch.js"></script>
-  <script src="../resources/js/chat.js"></script>
+  <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+  <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
+  <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
+  <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
+    <script>
+  // Pastikan chat toggle berfungsi setelah clear cache
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard chat initializing...');
+    
+    // Tunggu sebentar untuk memastikan semua script ter-load
+    setTimeout(function() {
+      const chatToggle = document.getElementById('chatToggleBtn');
+      
+      if (chatToggle) {
+        console.log('Chat toggle button found');
+        
+        // Hapus event listener yang mungkin sudah ada
+        chatToggle.removeEventListener('click', toggleChat);
+        
+        // Tambahkan event listener baru
+        chatToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Chat toggle clicked!');
+          
+          // Pastikan function toggleChat tersedia
+          if (typeof toggleChat === 'function') {
+            toggleChat();
+          } else {
+            console.error('toggleChat function not found');
+            // Fallback manual toggle
+            const chatContainer = document.querySelector('.chat-container');
+            if (chatContainer) {
+              chatContainer.classList.toggle('active');
+            }
+          }
+        });
+        
+        console.log('Chat toggle event listener attached');
+      } else {
+        console.error('Chat toggle button not found');
+      }
+    }, 500);
+  });
+  
+  // Tambahkan fallback jika semua gagal
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      const chatToggle = document.getElementById('chatToggleBtn');
+      if (chatToggle && !chatToggle.onclick) {
+        console.log('Adding fallback onclick handler');
+        chatToggle.onclick = function() {
+          console.log('Fallback chat toggle activated');
+          const chatContainer = document.querySelector('.chat-container');
+          if (chatContainer) {
+            chatContainer.classList.toggle('active');
+            console.log('Chat toggled via fallback');
+          }
+        };
+      }
+    }, 1000);
+  });
+  </script>
 </body>
