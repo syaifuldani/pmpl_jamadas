@@ -1,6 +1,6 @@
 .chat-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 90px;
     right: 20px;
     width: 350px;
     background: #fff;
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     padding: 15px;
-    background: #6366f1;
+    background: #4CAF50;
     border-radius: 15px 15px 0 0;
     color: #fff;
 }
@@ -39,7 +39,7 @@
     padding: 15px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #6366f1 #f3f4f6;
+    scrollbar-color: #4CAF50 #f3f4f6;
 }
 
 .chat-message {
@@ -67,19 +67,16 @@
     font-weight: 500;
 }
 
-.chat-header {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    background: #4CAF50;
-    border-radius: 15px 15px 0 0;
-    color: #fff;
-}
-
 .chat-header h3 {
     font-size: 16px;
     font-weight: 600;
     margin: 0;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .chat-input input {
@@ -96,6 +93,11 @@
     color: #9ca3af;
 }
 
+.chat-input input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
 .chat-input button {
     background: #4CAF50;
     color: #fff;
@@ -108,8 +110,31 @@
     transition: all 0.2s ease;
 }
 
+.chat-input button:hover {
+    transform: scale(1.05);
+}
+
 .chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
     background: #4CAF50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    z-index: 1001;
+    border: 2px solid #fff;
+}
+
+.chat-toggle:hover {
+    transform: scale(1.1);
+    background: #45a049;
 }
 
 .jamu-link {
@@ -127,46 +152,7 @@
 .jamu-link:hover {
     background: rgba(255,255,255,0.2);
     text-decoration: none;
-}
-
-.chat-input input:focus {
-    outline: none;
-    border-color: #6366f1;
-}
-
-.chat-input button {
-    background: #6366f1;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.chat-input button:hover {
-    transform: scale(1.05);
-}
-
-.chat-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: #6366f1;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    z-index: 999;
-}
-
-.chat-toggle:hover {
-    transform: scale(1.1);
+    opacity: 0.8;
 }
 
 @keyframes pulse {
@@ -178,14 +164,4 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-.jamu-link {
-    color: #fff;
-    text-decoration: underline;
-    transition: opacity 0.3s ease;
-}
-
-.jamu-link:hover {
-    opacity: 0.8;
 }
