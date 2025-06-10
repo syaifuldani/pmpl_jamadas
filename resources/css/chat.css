@@ -114,27 +114,41 @@
     transform: scale(1.05);
 }
 
-.chat-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: #4caf50;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-    z-index: 1001;
-    border: 2px solid #fff;
+.chat-toggle,
+.chat-toggle#chatToggleBtn {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: #4caf50 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.3s ease !important;
+    z-index: 1500 !important;
+    border: 2px solid #fff !important;
+    pointer-events: auto !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-.chat-toggle:hover {
-    transform: scale(1.1);
+.chat-toggle:hover,
+.chat-toggle#chatToggleBtn:hover {
+    transform: scale(1.1) !important;
     background: #45a049;
+}
+
+.chat-toggle:active {
+    transform: scale(0.95);
+    background: #3e8e41;
 }
 
 .jamu-link {
@@ -153,6 +167,50 @@
     background: rgba(255, 255, 255, 0.2);
     text-decoration: none;
     opacity: 0.8;
+}
+
+/* Anti-cache fixes dan debugging */
+.chat-toggle img {
+    filter: brightness(0) invert(1) !important;
+    pointer-events: none !important;
+}
+
+/* Debug helper - tambahkan border merah jika ada masalah */
+.chat-toggle.debug {
+    border: 3px solid red !important;
+    background: yellow !important;
+}
+
+/* Pastikan tidak ada elemen yang menghalangi */
+body::after {
+    content: "";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    pointer-events: none;
+    z-index: 1499;
+}
+
+/* Media queries untuk responsive */
+@media (max-width: 768px) {
+    .chat-toggle,
+    .chat-toggle#chatToggleBtn {
+        bottom: 80px !important;
+        right: 15px !important;
+        z-index: 2000 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-toggle,
+    .chat-toggle#chatToggleBtn {
+        bottom: 70px !important;
+        right: 10px !important;
+        width: 50px !important;
+        height: 50px !important;
+    }
 }
 
 @keyframes pulse {
