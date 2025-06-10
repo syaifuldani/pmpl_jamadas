@@ -672,11 +672,14 @@ if (isset($_POST['query'])) {
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>
-    </div>    <!-- Chatbot -->
-    <div class="chat-toggle" onclick="toggleChat()">
+        </div>    </div>
+
+    <!-- Chatbot -->
+    <div class="chat-toggle" id="chatToggleBtn">
         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
-    </div><div class="chat-container">
+    </div>
+    
+    <div class="chat-container">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
             <h3>Asisten Jamu</h3>
@@ -686,25 +689,70 @@ if (isset($_POST['query'])) {
             <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
             <button onclick="sendMessage()">Kirim</button>
         </div>
-    </div>    <script>
-        // Chat functionality is handled by chat.js
-        // Make sure chat toggle has click event listener
+    </div>    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
+    
+    <script>
+        // Pastikan chat toggle berfungsi setelah clear cache
         document.addEventListener('DOMContentLoaded', function() {
-            const chatToggle = document.querySelector('.chat-toggle');
-            if (chatToggle) {
-                // Only add event listener if it doesn't already have onclick
-                if (!chatToggle.onclick) {
-                    chatToggle.addEventListener('click', function() {
-                        toggleChat();
+            console.log('Product page chat initializing...');
+            
+            // Tunggu sebentar untuk memastikan semua script ter-load
+            setTimeout(function() {
+                const chatToggle = document.getElementById('chatToggleBtn');
+                
+                if (chatToggle) {
+                    console.log('Chat toggle button found');
+                    
+                    // Hapus event listener yang mungkin sudah ada
+                    chatToggle.removeEventListener('click', toggleChat);
+                    
+                    // Tambahkan event listener baru
+                    chatToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Chat toggle clicked!');
+                        
+                        // Pastikan function toggleChat tersedia
+                        if (typeof toggleChat === 'function') {
+                            toggleChat();
+                        } else {
+                            console.error('toggleChat function not found');
+                            // Fallback manual toggle
+                            const chatContainer = document.querySelector('.chat-container');
+                            if (chatContainer) {
+                                chatContainer.classList.toggle('active');
+                            }
+                        }
                     });
+                    
+                    console.log('Chat toggle event listener attached');
+                } else {
+                    console.error('Chat toggle button not found');
                 }
-            }
+            }, 500);
+        });
+        
+        // Tambahkan fallback jika semua gagal
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const chatToggle = document.getElementById('chatToggleBtn');
+                if (chatToggle && !chatToggle.onclick) {
+                    console.log('Adding fallback onclick handler');
+                    chatToggle.onclick = function() {
+                        console.log('Fallback chat toggle activated');
+                        const chatContainer = document.querySelector('.chat-container');
+                        if (chatContainer) {
+                            chatContainer.classList.toggle('active');
+                            console.log('Chat toggled via fallback');
+                        }
+                    };
+                }
+            }, 1000);
         });
     </script>
-    <script src="../resources/js/burgersidebar.js"></script>
-    <script src="../resources/js/livesearch.js"></script>
-    <script src="../resources/js/chat.js"></script>
-    <link rel="stylesheet" href="../resources/css/chat.css">
 </body>
 
 </html>

@@ -108,11 +108,86 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan Pernikahan</title>
-    <link rel="icon" href="../resources/img/icons/pleart.png" type="image/png">
+    <title>Detail Produk Jamu - Jamu Madura Online</title>
+    <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
     <link rel="stylesheet" href="../resources/css/navbar.css">
     <link rel="stylesheet" href="../resources/css/productdetail.css">
     <link rel="stylesheet" href="../resources/css/chat.css">
+    <style>
+        .product-category {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .category-badge, .subcategory-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .category-badge {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .subcategory-badge {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4CAF50;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 15px 0;
+        }
+        .quantity {
+            margin: 20px 0;
+        }
+        .quantity button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .quantity button:hover {
+            background: #e9ecef;
+        }
+        .quantity input[type="number"] {
+            width: 60px;
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .order-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+        .order-btn:hover {
+            background: #45a049;
+        }
+        .cart-icon {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
 </head>
 
 <body>
@@ -149,18 +224,22 @@ try {
                                     onclick="changeImage(this)">
                             <?php endif; ?>
                         </div>
-                    </div>
-
-                    <!-- Section Informasi Produk -->
+                    </div>                    <!-- Section Informasi Produk -->
                     <div class="product-info">
                         <?php if ($product): ?>
                             <!-- Nama produk -->
                             <h1><?= htmlspecialchars($product['nama_produk']); ?></h1>
 
+                            <!-- Kategori produk -->
+                            <?php if (isset($product['kategori']) && isset($product['sub_kategori'])): ?>
+                                <div class="product-category">
+                                    <span class="category-badge"><?= htmlspecialchars($product['kategori']); ?></span>
+                                    <span class="subcategory-badge"><?= htmlspecialchars($product['sub_kategori']); ?></span>
+                                </div>
+                            <?php endif; ?>
+
                             <!-- Harga produk -->
-                            <p class="price">Rp.
-                                <?= htmlspecialchars(number_format($product['harga_produk'], 2, ',', '.')); ?>/Pcs
-                            </p>
+                            <p class="price">Rp. <?= number_format($product['harga_produk'], 0, ',', '.'); ?></p>
 
                             <div class="description">
                                 <h4>Deskripsi Produk</h4>
@@ -197,9 +276,7 @@ try {
                                     </a>
                                 <?php endif; ?>
                             </form>
-                        </div>
-
-                        <h2>Undangan Lainnya</h2>
+                        </div>                        <h2>Produk Jamu Lainnya</h2>
                         <div class="product-container">
                             <?php
                             if (!empty($products) && !isset($products['error'])):
@@ -224,7 +301,7 @@ try {
                             else:
                                 ?>
                                 <div class="product-card">
-                                    <p>Tidak ada produk tersedia.</p>
+                                    <p>Tidak ada produk jamu tersedia.</p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -303,12 +380,26 @@ try {
                 </div>
                 <p id="overlayMessage"></p>
                 <a href="javascript:hideOverlay()" class="btn-lanjut">Lanjut Belanja</a>
-            </div>
-        </div>
-    </div>    <script src="../resources/js/thumnail.js"></script>
+            </div>        </div>
+    </div>
+
+    <script src="../resources/js/thumnail.js"></script>
     <script src="../resources/js/zoomimage.js"></script>
     <script src="../resources/js/overlay.js"></script>
     <script>
+        // Fungsi untuk quantity buttons
+        function increaseQuantity() {
+            const input = document.getElementById('quantityInput');
+            input.value = parseInt(input.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('quantityInput');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
         // Cek apakah ada session message dari PHP
         <?php if (isset($_SESSION['cart_status'])): ?>
             const cartStatus = '<?= $_SESSION['cart_status']; ?>';
@@ -326,43 +417,126 @@ try {
             unset($_SESSION['cart_message']);
             ?>
         <?php endif; ?>
-    </script>    
-<!-- Chatbot -->
-<div class="chat-toggle" onclick="toggleChat()">
-    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
-</div>
-
-<div class="chat-container">
-    <div class="chat-header">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
-        <h3>Asisten Jamu</h3>
+    </script>    <!-- Chatbot -->
+    <div class="chat-toggle" id="chatToggleBtn">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
     </div>
-    <div class="chat-box" id="chatMessages"></div>
-    <div class="chat-input">
-        <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
-        <button onclick="sendMessage()">Kirim</button>
-    </div>
-</div>
 
-<script>
-// Chat functionality is handled by chat.js
-// Make sure chat toggle has click event listener
-document.addEventListener('DOMContentLoaded', function() {
-    const chatToggle = document.querySelector('.chat-toggle');
-    if (chatToggle) {
-        // Only add event listener if it doesn't already have onclick
-        if (!chatToggle.onclick) {
-            chatToggle.addEventListener('click', function() {
-                toggleChat();
-            });
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
+            <h3>Asisten Jamu</h3>
+        </div>
+        <div class="chat-box" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
+            <button onclick="sendMessage()">Kirim</button>
+        </div>
+    </div>    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
+    <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
+    
+    <script>
+        // Pastikan chat toggle berfungsi setelah clear cache
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Product detail page chat initializing...');
+            
+            // Tunggu sebentar untuk memastikan semua script ter-load
+            setTimeout(function() {
+                const chatToggle = document.getElementById('chatToggleBtn');
+                
+                if (chatToggle) {
+                    console.log('Chat toggle button found');
+                    
+                    // Hapus event listener yang mungkin sudah ada
+                    chatToggle.removeEventListener('click', toggleChat);
+                    
+                    // Tambahkan event listener baru
+                    chatToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Chat toggle clicked!');
+                        
+                        // Pastikan function toggleChat tersedia
+                        if (typeof toggleChat === 'function') {
+                            toggleChat();
+                        } else {
+                            console.error('toggleChat function not found');
+                            // Fallback manual toggle
+                            const chatContainer = document.querySelector('.chat-container');
+                            if (chatContainer) {
+                                chatContainer.classList.toggle('active');
+                            }
+                        }
+                    });
+                    
+                    console.log('Chat toggle event listener attached');
+                } else {
+                    console.error('Chat toggle button not found');
+                }
+                
+                // Setup chat input event listener
+                const chatInput = document.getElementById('chat-input');
+                if (chatInput) {
+                    chatInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            sendMessage();
+                        }
+                    });
+                    console.log('Chat input event listener added');
+                }
+                
+                // Load chat history
+                loadChatHistory();
+            }, 500);
+        });
+        
+        // Tambahkan fallback jika semua gagal
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const chatToggle = document.getElementById('chatToggleBtn');
+                if (chatToggle && !chatToggle.onclick) {
+                    console.log('Adding fallback onclick handler');
+                    chatToggle.onclick = function() {
+                        console.log('Fallback chat toggle activated');
+                        const chatContainer = document.querySelector('.chat-container');
+                        if (chatContainer) {
+                            chatContainer.classList.toggle('active');
+                            console.log('Chat toggled via fallback');
+                        }
+                    };
+                }
+            }, 1000);
+        });
+        
+        // Function to load chat history
+        function loadChatHistory() {
+            fetch('../config/process_chat.php')
+                .then(response => response.json())
+                .then(data => {
+                    const chatBox = document.querySelector('.chat-box');
+                    if (chatBox && data.history && data.history.length > 0) {
+                        chatBox.innerHTML = ''; // Clear existing content
+                        data.history.forEach(chat => {
+                            // Add user message
+                            const userMessage = document.createElement('div');
+                            userMessage.className = 'chat-message user-message';
+                            userMessage.textContent = chat.pesan_pengguna;
+                            chatBox.appendChild(userMessage);
+
+                            // Add bot response
+                            const botMessage = document.createElement('div');
+                            botMessage.className = 'chat-message bot-message';
+                            botMessage.innerHTML = chat.respons_jawaban;
+                            chatBox.appendChild(botMessage);
+                        });
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                })
+                .catch(error => console.error('Error loading chat history:', error));
         }
-    }
-});
-</script>
-<script src="../resources/js/burgersidebar.js"></script>
-<script src="../resources/js/livesearch.js"></script>
-<script src="../resources/js/chat.js"></script>
-<link rel="stylesheet" href="../resources/css/chat.css">
+    </script>
 </body>
 
 </html>

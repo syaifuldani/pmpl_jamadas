@@ -27,11 +27,20 @@ function loadChatHistory() {
 
 // Fungsi toggle chat - tersedia secara global
 function toggleChat() {
+    console.log('toggleChat function called');
     const chatContainer = document.querySelector('.chat-container');
     
     if (chatContainer) {
+        console.log('Chat container found, toggling active class');
         chatContainer.classList.toggle('active');
+        
+        // Log current state
+        const isActive = chatContainer.classList.contains('active');
+        console.log('Chat container is now:', isActive ? 'active' : 'inactive');
+        
         // Chat toggle button stays visible and serves as both open/close button
+    } else {
+        console.error('Chat container not found in DOM');
     }
 }
 
@@ -96,15 +105,78 @@ function sendMessage() {
 
 // Panggil fungsi saat chatbot dibuka
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Chat.js DOM loaded - Setting up chat functionality');
+    
+    // Tunggu sebentar untuk memastikan semua elemen DOM ter-render
+    setTimeout(function() {
+        initializeChatFunctionality();
+    }, 100);
+});
+
+// Function to initialize chat functionality
+function initializeChatFunctionality() {
+    console.log('Initializing chat functionality...');
+    
     loadChatHistory();
     
-    // Setup event listeners
-    const chatToggle = document.querySelector('.chat-toggle');
+    // Setup event listeners dengan multiple selectors
+    const chatToggle = document.querySelector('.chat-toggle') || document.getElementById('chatToggleBtn');
     
     if (chatToggle) {
-        chatToggle.addEventListener('click', function() {
-            toggleChat();
+        console.log('Chat toggle found, adding event listeners');
+        
+        // Remove any existing event listeners to prevent duplicates
+        chatToggle.removeAttribute('onclick');
+        const newChatToggle = chatToggle.cloneNode(true);
+        chatToggle.parentNode.replaceChild(newChatToggle, chatToggle);
+        
+        // Add multiple event types for maximum compatibility
+        newChatToggle.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chat toggle onclick triggered');
+            if (typeof toggleChat === 'function') {
+                toggleChat();
+            } else {
+                console.error('toggleChat function not available');
+                fallbackToggleChat();
+            }
+        };
+        
+        newChatToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chat toggle addEventListener triggered');
+            if (typeof toggleChat === 'function') {
+                toggleChat();
+            } else {
+                console.error('toggleChat function not available');
+                fallbackToggleChat();
+            }
         });
+        
+        // Add touchstart for mobile devices
+        newChatToggle.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chat toggle touchstart triggered');
+            if (typeof toggleChat === 'function') {
+                toggleChat();
+            } else {
+                console.error('toggleChat function not available');
+                fallbackToggleChat();
+            }
+        });
+        
+        console.log('Chat toggle event listeners added successfully');
+    } else {
+        console.error('Chat toggle not found in DOM');
+        
+        // Retry after a delay
+        setTimeout(function() {
+            console.log('Retrying chat toggle setup...');
+            initializeChatFunctionality();
+        }, 1000);
     }
 
     // Setup input listener
@@ -115,5 +187,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendMessage();
             }
         });
+        console.log('Chat input event listener added');
+    } else {
+        console.error('Chat input not found in DOM');
     }
-});
+}
+
+// Fallback function untuk toggle chat jika function utama tidak tersedia
+function fallbackToggleChat() {
+    console.log('Using fallback toggle chat');
+    const chatContainer = document.querySelector('.chat-container');
+    if (chatContainer) {
+        chatContainer.classList.toggle('active');
+        console.log('Chat container toggled successfully');
+    } else {
+        console.error('Chat container not found for fallback toggle');
+    }
+}
