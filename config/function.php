@@ -437,33 +437,37 @@ function updateCartItem($userId, $quantities)
         }
 
         $GLOBALS['db']->commit();
-        return true;
+        return ['success' => true, 'message' => 'Keranjang berhasil diperbarui!'];
     } catch (Exception $e) {
         $GLOBALS['db']->rollBack();
         error_log("Cart update error: " . $e->getMessage());
-        return false;
+        return ['success' => false, 'message' => 'Gagal memperbarui keranjang.', 'error' => $e->getMessage()];
     }
 }
 
 function deleteCartItems($userId, $cartId)
 {
-    // Validasi: pastikan $cartId adalah integer
-    if (!is_numeric($cartId)) {
-        throw new Exception("Invalid cart ID.");
-    }
+    try {
+        // Validasi: pastikan $cartId adalah integer
+        if (!is_numeric($cartId)) {
+            throw new Exception("Invalid cart ID.");
+        }
 
-    // Query untuk menghapus item dari keranjang
-    $sql = "DELETE FROM carts WHERE user_id = :user_id AND cart_id = :cart_id";
-    $stmt = $GLOBALS['db']->prepare($sql);
-    $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
-    $stmt->bindParam(':cart_id', $cartId, PDO::PARAM_INT);
+        // Query untuk menghapus item dari keranjang
+        $sql = "DELETE FROM carts WHERE user_id = :user_id AND cart_id = :cart_id";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':cart_id', $cartId, PDO::PARAM_INT);
 
-    if ($stmt->execute()) {
-        // Berhasil menghapus
-        return true;
-    } else {
-        // Gagal menghapus
-        return false;
+        if ($stmt->execute()) {
+            // Berhasil menghapus
+            return ['success' => true, 'message' => 'Item berhasil dihapus dari keranjang.'];
+        } else {
+            // Gagal menghapus
+            return ['success' => false, 'message' => 'Gagal menghapus item dari keranjang.'];
+        }
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
     }
 }
 
@@ -1241,39 +1245,40 @@ function getPesananTerbaru()
 // END FUNCTIONS
 
 // RATING-BASED SEARCH FUNCTIONS FOR CHATBOT
-function getProductsWithRatings($minRating = null, $category = null, $limit = 10) {
+function getProductsWithRatings($minRating = null, $category = null, $limit = 10)
+{
     global $db;
-    
+
     $sql = "SELECT p.product_id, p.nama_produk, p.kategori, p.sub_kategori, p.harga_produk, p.gambar_satu,
                    COALESCE(AVG(r.rating), 0) as avg_rating,
                    COUNT(r.reviews_id) as total_reviews
             FROM products p
             LEFT JOIN reviews r ON p.product_id = r.product_id
             WHERE 1=1";
-    
+
     $params = [];
-    
+
     if ($category) {
         $sql .= " AND p.kategori = :category";
         $params[':category'] = $category;
     }
-    
+
     $sql .= " GROUP BY p.product_id";
-    
+
     if ($minRating) {
         $sql .= " HAVING avg_rating >= :minRating";
         $params[':minRating'] = $minRating;
     }
-    
+
     $sql .= " ORDER BY avg_rating DESC, total_reviews DESC";
-    
+
     if ($limit) {
         $sql .= " LIMIT :limit";
         $params[':limit'] = $limit;
     }
-    
+
     $stmt = $db->prepare($sql);
-    
+
     foreach ($params as $key => $value) {
         if ($key === ':limit') {
             $stmt->bindValue($key, $value, PDO::PARAM_INT);
@@ -1281,47 +1286,49 @@ function getProductsWithRatings($minRating = null, $category = null, $limit = 10
             $stmt->bindValue($key, $value);
         }
     }
-    
+
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getTopRatedProducts($limit = 5, $category = null) {
+function getTopRatedProducts($limit = 5, $category = null)
+{
     return getProductsWithRatings(4.0, $category, $limit);
 }
 
 // NEW FUNCTION: Get products with exact rating (e.g., rating 4 = 4.0 to 4.9)
-function getProductsByExactRating($exactRating, $category = null, $limit = 10) {
+function getProductsByExactRating($exactRating, $category = null, $limit = 10)
+{
     global $db;
-    
+
     $sql = "SELECT p.product_id, p.nama_produk, p.kategori, p.sub_kategori, p.harga_produk, p.gambar_satu,
                    COALESCE(AVG(r.rating), 0) as avg_rating,
                    COUNT(r.reviews_id) as total_reviews
             FROM products p
             LEFT JOIN reviews r ON p.product_id = r.product_id
             WHERE 1=1";
-    
+
     $params = [];
-    
+
     if ($category) {
         $sql .= " AND p.kategori = :category";
         $params[':category'] = $category;
     }
-    
+
     $sql .= " GROUP BY p.product_id
               HAVING avg_rating >= :minRating AND avg_rating < :maxRating
               ORDER BY avg_rating DESC, total_reviews DESC";
-    
+
     if ($limit) {
         $sql .= " LIMIT :limit";
         $params[':limit'] = $limit;
     }
-    
+
     $params[':minRating'] = floatval($exactRating);
     $params[':maxRating'] = floatval($exactRating) + 1.0;
-    
+
     $stmt = $db->prepare($sql);
-    
+
     foreach ($params as $key => $value) {
         if ($key === ':limit') {
             $stmt->bindValue($key, $value, PDO::PARAM_INT);
@@ -1329,42 +1336,43 @@ function getProductsByExactRating($exactRating, $category = null, $limit = 10) {
             $stmt->bindValue($key, $value);
         }
     }
-    
+
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // NEW FUNCTION: Get products with minimum rating (e.g., rating 3 ke atas = 3.0+)
-function getProductsByMinimumRating($minRating, $category = null, $limit = 10) {
+function getProductsByMinimumRating($minRating, $category = null, $limit = 10)
+{
     global $db;
-    
+
     $sql = "SELECT p.product_id, p.nama_produk, p.kategori, p.sub_kategori, p.harga_produk, p.gambar_satu,
                    COALESCE(AVG(r.rating), 0) as avg_rating,
                    COUNT(r.reviews_id) as total_reviews
             FROM products p
             LEFT JOIN reviews r ON p.product_id = r.product_id
             WHERE 1=1";
-    
+
     $params = [];
-    
+
     if ($category) {
         $sql .= " AND p.kategori = :category";
         $params[':category'] = $category;
     }
-    
+
     $sql .= " GROUP BY p.product_id
               HAVING avg_rating >= :minRating
               ORDER BY avg_rating DESC, total_reviews DESC";
-    
+
     if ($limit) {
         $sql .= " LIMIT :limit";
         $params[':limit'] = $limit;
     }
-    
+
     $params[':minRating'] = floatval($minRating);
-    
+
     $stmt = $db->prepare($sql);
-    
+
     foreach ($params as $key => $value) {
         if ($key === ':limit') {
             $stmt->bindValue($key, $value, PDO::PARAM_INT);
@@ -1372,26 +1380,28 @@ function getProductsByMinimumRating($minRating, $category = null, $limit = 10) {
             $stmt->bindValue($key, $value);
         }
     }
-    
+
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function formatRatingForChatbot($rating) {
+function formatRatingForChatbot($rating)
+{
     $fullStars = floor($rating);
     $hasHalfStar = ($rating - $fullStars) >= 0.5;
     $emptyStars = 5 - $fullStars - ($hasHalfStar ? 1 : 0);
-    
+
     $ratingDisplay = str_repeat('⭐', $fullStars);
     if ($hasHalfStar) {
         $ratingDisplay .= '⭐';
     }
     $ratingDisplay .= str_repeat('☆', $emptyStars);
-    
+
     return $ratingDisplay . ' (' . number_format($rating, 1) . ')';
 }
 
-function generateRatingResponse($products, $title, $category_filter = null) {
+function generateRatingResponse($products, $title, $category_filter = null)
+{
     if (empty($products)) {
         $response = "Maaf, tidak ada produk yang sesuai dengan kriteria rating tersebut.";
         if ($category_filter) {
@@ -1399,36 +1409,36 @@ function generateRatingResponse($products, $title, $category_filter = null) {
         }
         return $response;
     }
-    
+
     $response = "<strong>" . $title . "</strong>";
     if ($category_filter) {
         $response .= " dalam kategori " . $category_filter;
     }
     $response .= "<br><br>";
-    
+
     foreach ($products as $product) {
         $rating_display = formatRatingForChatbot($product['avg_rating']);
         $review_count = $product['total_reviews'];
-        
+
         $response .= "<strong>" . $product['nama_produk'] . "</strong><br>";
         $response .= "<em>Kategori: " . $product['kategori'];
         if (!empty($product['sub_kategori'])) {
             $response .= " | " . $product['sub_kategori'];
         }
         $response .= "</em><br>";
-        
+
         $response .= "Rating: " . $rating_display;
         if ($review_count > 0) {
             $response .= " (" . $review_count . " ulasan)";
         }
         $response .= "<br>";
-        
+
         $response .= "Harga: Rp " . number_format($product['harga_produk'], 0, ',', '.') . "<br>";
         $response .= "<a href='productdetail.php?id=" . $product['product_id'] . "' class='jamu-link'>Lihat Detail & Ulasan</a><br><br>";
     }
-    
+
     $response .= "<em>Tip: Klik 'Lihat Detail & Ulasan' untuk membaca review lengkap dari pelanggan lain!</em>";
-    
+
     return $response;
 }
 
