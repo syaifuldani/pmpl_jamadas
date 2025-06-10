@@ -1,20 +1,20 @@
 <div class="footer-container">
     <div class="footer-section">
-        <h2>Cari Jamu Anda</h2>
+        <h2>About Us</h2>
         <ul>
             <li>
-                <a href="#">
-                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kewanitaan"> Jamu Kewanitaan
+                <a href="services/aboutus.php">
+                    Tentang Kami
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kesehatan dan Vitalitas"> Jamu Kesehatan dan Vitalitas
+                <a href="services/contact.php">
+                    Hubungi Kami
                 </a>
             </li>
             <li>
-                <a href="#">
-                    <img src="../resources/img/icons/Arrow_right.png" alt="Jamu Kecantikan"> Jamu Kecantikan
+                <a href="termofuse.php">
+                    Syarat & Ketentuan
                 </a>
             </li>
         </ul>
@@ -53,16 +53,13 @@
                 </a>
             </li> -->
             <li>
-                <a href="termofuse.php">
-                    <img src="../resources/img/icons/termofuse.png" alt="Term Of Use">Terms of Use
+                <a href="services/team.php">
+                    Team
                 </a>
             </li>
         </ul>
     </div>
 </div>
 <div class="footer-bottom">
-    <a href="services/aboutus.php">
-        <p>Tentang Kami &raquo;</p>
-    </a>
     <p>&copy; 2024 by JAMADAS. All rights reserved.</p>
 </div>

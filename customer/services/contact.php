@@ -12,6 +12,7 @@
 <body>
     <div class="contact-us-wrapper">
         <div class="contact-us-container">
+            <a href="../dashboard.php" class="close-button">&times;</a>
             <div class="image-container">
                 <img src="../../resources/img/icons/jamadas.jpg" alt="Logo" class="logo-image">
             </div>
@@ -49,7 +50,6 @@
                 </div>
             </div>
         </div>
-        <a href="../dashboard.php" class="back-button">&laquo; Kembali</a>
     </div>
 </body>
 
