@@ -196,9 +196,9 @@ try {
                                             <td>
                                                 <div class="product-info">
                                                     <?php if (!empty($item['gambar_satu'])): ?>
-                                                        <img src="data:image/jpeg;base64,<?= base64_encode($item['gambar_satu']) ?>" 
-                                                             class="product-image" 
-                                                             alt="<?= htmlspecialchars($item['nama_produk']) ?>">
+                                                        <img src="data:image/jpeg;base64,<?= base64_encode($item['gambar_satu']) ?>"
+                                                            class="product-image"
+                                                            alt="<?= htmlspecialchars($item['nama_produk']) ?>">
                                                     <?php else: ?>
                                                         <div class="no-image">
                                                             <i class="fas fa-image"></i>
@@ -253,9 +253,9 @@ try {
                                 <form class="resi-form" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?order_id=<?= $order['order_id'] ?>">
                                     <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
                                     <div class="input-group">
-                                        <input type="text" name="nomor_resi" class="resi-input" 
-                                               placeholder="Masukkan nomor resi"
-                                               value="<?= isset($shipments[0]['nomor_resi']) ? htmlspecialchars($shipments[0]['nomor_resi']) : '' ?>">
+                                        <input type="text" name="nomor_resi" class="resi-input"
+                                            placeholder="Masukkan nomor resi"
+                                            value="<?= isset($shipments[0]['nomor_resi']) ? htmlspecialchars($shipments[0]['nomor_resi']) : '' ?>">
                                         <button type="submit" name="update_resi" class="resi-btn">
                                             <i class="fas fa-save"></i> Simpan Resi
                                         </button>

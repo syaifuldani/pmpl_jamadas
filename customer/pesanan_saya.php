@@ -257,39 +257,6 @@ if ($targetOrderId) {
                             </div>
                         </div>
 
-                        <!-- <style>
-                            .stars {
-                                display: flex;
-                                flex-direction: row;
-                                /* Display stars from left to right */
-                                gap: 2px;
-                                justify-content: center;
-                            }
-
-                            .stars input {
-                                display: none;
-                            }
-
-                            .stars label {
-                                cursor: pointer;
-                                font-size: 30px;
-                                color: #ddd;
-                                transition: color 0.2s;
-                            }
-
-                            /* Hover effect from left to right */
-                            .stars label:hover,
-                            .stars label:hover~label,
-                            .stars input:checked~label {
-                                color: #ffd700;
-                            }
-
-                            /* Ensure stars are filled from left to right */
-                            .stars input:checked+label {
-                                color: #ffd700;
-                            }
-                        </style> -->
-
                         <div class="review-text">
                             <label for="reviewComment">Ulasan Anda:</label>
                             <textarea name="comment" id="reviewComment" rows="4" required

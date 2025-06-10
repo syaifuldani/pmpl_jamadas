@@ -28,24 +28,24 @@ $params = [];
 
 // Filter berdasarkan status
 if (isset($_GET['status']) && !empty($_GET['status'])) {
-    $where_clause .= " WHERE transaction_status = :status";
+    $where_clause .= " WHERE o.transaction_status = :status";
     $params[':status'] = $_GET['status'];
 }
 
 // Filter berdasarkan tanggal
 if (isset($_GET['start_date']) && !empty($_GET['start_date'])) {
-    $where_clause .= ($where_clause ? " AND" : " WHERE") . " DATE(transaction_time) >= :start_date";
+    $where_clause .= ($where_clause ? " AND" : " WHERE") . " DATE(o.transaction_time) >= :start_date";
     $params[':start_date'] = $_GET['start_date'];
 }
 
 if (isset($_GET['end_date']) && !empty($_GET['end_date'])) {
-    $where_clause .= ($where_clause ? " AND" : " WHERE") . " DATE(transaction_time) <= :end_date";
+    $where_clause .= ($where_clause ? " AND" : " WHERE") . " DATE(o.transaction_time) <= :end_date";
     $params[':end_date'] = $_GET['end_date'];
 }
 
 // Filter berdasarkan pencarian order ID
 if (isset($_GET['search']) && !empty($_GET['search'])) {
-    $where_clause .= ($where_clause ? " AND" : " WHERE") . " order_id LIKE :search";
+    $where_clause .= ($where_clause ? " AND" : " WHERE") . " o.order_id LIKE :search";
     $params[':search'] = "%" . $_GET['search'] . "%";
 }
 
@@ -57,7 +57,7 @@ $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Hitung total dengan filter
-$total_sql = "SELECT COUNT(*) as total FROM orders" . $where_clause;
+$total_sql = "SELECT COUNT(*) as total FROM orders o" . $where_clause;
 $total_stmt = $GLOBALS["db"]->prepare($total_sql);
 foreach ($params as $key => $value) {
     $total_stmt->bindValue($key, $value);
@@ -66,11 +66,16 @@ $total_stmt->execute();
 $total_data = $total_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 $total_pages = ceil($total_data / $limit);
 
-// Ambil data dengan filter
-$sql = "SELECT o.*, c.nama_lengkap 
+// Ambil data dengan filter - Modified query to include product information
+$sql = "SELECT o.*, c.nama_lengkap, 
+        GROUP_CONCAT(DISTINCT p.nama_produk SEPARATOR ', ') as produk_names,
+        GROUP_CONCAT(od.jumlah_order SEPARATOR ', ') as jumlah_orders
         FROM orders o 
-        LEFT JOIN users c ON o.user_id = c.user_id" . 
-        $where_clause . " 
+        LEFT JOIN users c ON o.user_id = c.user_id
+        LEFT JOIN order_details od ON o.order_id = od.order_id
+        LEFT JOIN products p ON od.product_id = p.product_id" .
+    $where_clause . " 
+        GROUP BY o.order_id
         ORDER BY o.transaction_time DESC 
         LIMIT :limit OFFSET :offset";
 
@@ -120,21 +125,21 @@ $n = 0;
                 <div class="filter-container">
                     <form action="" method="GET" class="filter-form" id="filterForm">
                         <div class="search-box">
-                            <input type="text" id="searchInput" name="search" placeholder="Cari Order ID..." 
+                            <input type="text" id="searchInput" name="search" placeholder="Cari Order ID..."
                                 value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                         </div>
                         <select name="status" onchange="this.form.submit()">
                             <option value="">Semua Status</option>
                             <?php foreach ($status_list as $status): ?>
-                                <option value="<?php echo htmlspecialchars($status); ?>" 
+                                <option value="<?php echo htmlspecialchars($status); ?>"
                                     <?php echo (isset($_GET['status']) && $_GET['status'] === $status) ? 'selected' : ''; ?>>
                                     <?php echo ucfirst(htmlspecialchars($status)); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="date" name="start_date" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date']) : ''; ?>" 
+                        <input type="date" name="start_date" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date']) : ''; ?>"
                             onchange="this.form.submit()" placeholder="Tanggal Mulai">
-                        <input type="date" name="end_date" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date']) : ''; ?>" 
+                        <input type="date" name="end_date" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date']) : ''; ?>"
                             onchange="this.form.submit()" placeholder="Tanggal Akhir">
                     </form>
                 </div>
@@ -158,7 +163,15 @@ $n = 0;
                                 <?php foreach ($orders as $order): ?>
                                     <tr>
                                         <td><?= $n += 1 ?></td>
-                                        <td>Undangan Pernikahan</td>
+                                        <td>
+                                            <?php if (!empty($order['produk_names'])): ?>
+                                                <div class="product-info">
+                                                    <?= htmlspecialchars($order['produk_names']); ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <span class="no-product">Tidak ada produk</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td>#<?= $order['order_id']; ?></td>
                                         <td><?= date('d M Y', strtotime($order['transaction_time'])); ?></td>
                                         <td><?= $order['nama_lengkap']; ?></td>
@@ -186,8 +199,8 @@ $n = 0;
                                         </td>
                                         <td>Rp <?= number_format($order['total_harga'], 0, ',', '.'); ?></td>
                                         <td>
-                                            <a href="detail_order.php?order_id=<?= htmlspecialchars($order['order_id']); ?>" 
-                                               class="btn-detail">
+                                            <a href="detail_order.php?order_id=<?= htmlspecialchars($order['order_id']); ?>"
+                                                class="btn-detail">
                                                 <i class="fas fa-eye"></i> Detail
                                             </a>
                                         </td>
@@ -209,12 +222,12 @@ $n = 0;
                     <ul>
                         <?php if ($page > 1): ?>
                             <li>
-                                <a href="?page=<?= $page - 1; ?><?php 
-                                    echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : ''; 
-                                    echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : ''; 
-                                    echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : ''; 
-                                    echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; 
-                                ?>">
+                                <a href="?page=<?= $page - 1; ?><?php
+                                                                echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                                                echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                                                echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                                                echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                                                ?>">
                                     <i class="fas fa-chevron-left"></i> Prev
                                 </a>
                             </li>
@@ -222,12 +235,12 @@ $n = 0;
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <li class="<?= ($i == $page) ? 'active' : ''; ?>">
-                                <a href="?page=<?= $i; ?><?php 
-                                    echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : ''; 
-                                    echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : ''; 
-                                    echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : ''; 
-                                    echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; 
-                                ?>">
+                                <a href="?page=<?= $i; ?><?php
+                                                            echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                                            echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                                            echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                                            echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                                            ?>">
                                     <?= $i; ?>
                                 </a>
                             </li>
@@ -235,12 +248,12 @@ $n = 0;
 
                         <?php if ($page < $total_pages): ?>
                             <li>
-                                <a href="?page=<?= $page + 1; ?><?php 
-                                    echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : ''; 
-                                    echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : ''; 
-                                    echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : ''; 
-                                    echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; 
-                                ?>">
+                                <a href="?page=<?= $page + 1; ?><?php
+                                                                echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                                                echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                                                echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                                                echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                                                ?>">
                                     Next <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>
@@ -252,25 +265,25 @@ $n = 0;
     </div>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit-id.js" crossorigin="anonymous"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const orderTable = document.getElementById('orderTable');
-        const rows = orderTable.getElementsByTagName('tr');
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const orderTable = document.getElementById('orderTable');
+            const rows = orderTable.getElementsByTagName('tr');
 
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            // Mulai dari index 1 untuk melewati header tabel
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                const orderIdCell = row.cells[2]; // Index kolom Order ID
-                const orderId = orderIdCell.textContent.toLowerCase();
-                
-                // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
-                row.style.display = orderId.includes(searchTerm) ? '' : 'none';
-            }
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+
+                // Mulai dari index 1 untuk melewati header tabel
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    const orderIdCell = row.cells[2]; // Index kolom Order ID
+                    const orderId = orderIdCell.textContent.toLowerCase();
+
+                    // Tampilkan atau sembunyikan baris berdasarkan hasil pencarian
+                    row.style.display = orderId.includes(searchTerm) ? '' : 'none';
+                }
+            });
         });
-    });
     </script>
 </body>
 

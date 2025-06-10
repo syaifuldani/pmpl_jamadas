@@ -68,7 +68,6 @@ class PaymentHandler
                 'snap_token' => $snap_token,
                 'order_id' => $order_id
             ];
-
         } catch (Exception $e) {
             return [
                 'status' => 'error',
@@ -244,7 +243,6 @@ class PaymentHandler
                 'status' => 'success',
                 'message' => "Order status updated to $order_status"
             ];
-
         } catch (Exception $e) {
             error_log("Notification Error: " . $e->getMessage());
             return [
@@ -479,7 +477,6 @@ class PaymentHandler
                 'status' => 'success',
                 'snap_token' => $snap_token,
             ];
-
         } catch (Exception $e) {
             error_log("Error processing existing order: " . $e->getMessage());
             return [
@@ -504,7 +501,6 @@ function payment_handled($data, $user_id)
         } else {
             throw new Exception($result['message']);
         }
-
     } catch (Exception $e) {
         http_response_code(400);
         throw new Exception($e->getMessage());
@@ -543,7 +539,6 @@ function process_existing_order($order_id, $user_id)
         } else {
             throw new Exception(message: $result['message'] ?? 'Unknown error occurred');
         }
-
     } catch (Exception $e) {
         error_log("Error in process_existing_order: " . $e->getMessage());
         throw new Exception($e->getMessage());

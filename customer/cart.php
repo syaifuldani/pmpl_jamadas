@@ -41,13 +41,14 @@ if (isset($_SESSION['user_id'])) {
     // Fungsi untuk memperbarui keranjang
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_cart'])) {
         if (isset($_POST['quantities']) && is_array($_POST['quantities'])) {
-            $success = updateCartItem($userId, $_POST['quantities']);
-
-            if ($success) {
-                header("Location: cart.php?updated=success");
-            } else {
-                header("Location: cart.php?error=update_failed");
-            }
+            $result = updateCartItem($userId, $_POST['quantities']);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            exit();
+        } else {
+            // Jika quantities tidak valid, kirim respons error JSON
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Data kuantitas tidak valid.']);
             exit();
         }
     }
@@ -63,16 +64,15 @@ if (isset($_SESSION['user_id'])) {
         $response = payment_handled($_POST, $userId);
     }
 
-    // Cek apakah ada permintaan untuk menghapus item dari keranjang
+    // Cek apakah ada permintaan untuk menghapus item dari keranjang (Ini mungkin dari link langsung, bukan AJAX)
+    // Blok ini harus dikonversi ke AJAX atau dihapus jika tidak ada lagi link langsung yang memicu
     if (isset($_GET['product_id'])) {
         $productId = $_GET['product_id'];
-
         // Panggil fungsi deleteCartItems untuk menghapus item
-        deleteCartItems($userId, $productId);
-
-        // Redirect kembali ke halaman keranjang setelah penghapusan
-        header("Location: cart.php");
-        exit(); // Stop eksekusi script setelah redirect
+        $result = deleteCartItems($userId, $productId);
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit();
     }
 
     // Ambil item keranjang dari database
@@ -93,9 +93,14 @@ if (isset($_SESSION['user_id'])) {
 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
     $cartId = isset($_GET['cart_id']) ? (int) $_GET['cart_id'] : 0;
     if ($cartId > 0) {
-        deleteCartItems($userId, $cartId);
+        $result = deleteCartItems($userId, $cartId);
+        header('Content-Type: application/json');
+        echo json_encode($result);
+        exit();
     } else {
-        echo "Produk tidak valid.";
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Produk tidak valid untuk dihapus.']);
+        exit();
     }
 }
 
@@ -150,7 +155,7 @@ if (isset($_POST['query'])) {
                 <div class="cart-section">
                     <h1>Keranjang Anda!</h1>
                     <!-- Form untuk update keranjang -->
-                    <form action="" method="POST">
+                    <form action="" method="POST" onsubmit="return false;">
                         <table>
                             <thead>
                                 <tr>
@@ -180,7 +185,9 @@ if (isset($_POST['query'])) {
                                                     <input type="text"
                                                         name="quantities[<?= htmlspecialchars($item['product_id']); ?>]"
                                                         value="<?= htmlspecialchars($item['jumlah']); ?>" min="1"
-                                                        id="quantityInput-<?= $item['cart_id']; ?>">
+                                                        id="quantityInput-<?= $item['cart_id']; ?>"
+                                                        data-product-id="<?= htmlspecialchars($item['product_id']); ?>"
+                                                        onchange="handleManualQuantityChange(<?= $item['cart_id']; ?>)">
                                                     <button type="button"
                                                         onclick="increaseQuantity(<?= $item['cart_id']; ?>)">+</button>
                                                 </div>
@@ -203,10 +210,7 @@ if (isset($_POST['query'])) {
                                 <?php endif; ?>
                             </tbody>
                         </table>
-                        <!-- Tombol untuk memperbarui keranjang -->
-                        <div class="update-cart-btn">
-                            <button type="submit" name="update_cart" class="update-cart-btn">Perbarui Keranjang</button>
-                        </div>
+                        <!-- Tombol untuk memperbarui keranjang (dihapus karena update real-time via AJAX) -->
                     </form>
 
                     <!-- Form untuk payment -->
@@ -342,91 +346,145 @@ if (isset($_POST['query'])) {
                     </div>
                 </div>
             </div>
-
-            <!-- Overlay Konfirmasi -->
-            <div id="deleteOverlay" class="overlay" style="display: none;">
-                <div class="overlay-content">
-                    <p>Apakah Anda yakin ingin menghapus item ini?</p>
-                    <button id="confirmDelete" class="btn-confirm">Ya, Hapus</button>
-                    <button id="cancelDelete" class="btn-cancel">Batal</button>
-                </div>
-            </div>
-
-            <!-- Overlay Konfirmasi Pembaruan Keranjang -->
-            <div id="updateOverlay" class="overlay" style="display: none;">
-                <div class="overlay-content">
-                    <p>Keranjang berhasil diperbarui!</p>
-                    <button id="closeUpdateOverlay" class="btn-cancel">OK</button>
-                </div>
-            </div>
-
-
         </div>
     </div>
 
     <script src="../resources/js/burgersidebar.js"></script>
     <script>
-        const deleteOverlay = document.getElementById('deleteOverlay');
-        const confirmDeleteBtn = document.getElementById('confirmDelete');
-        const cancelDeleteBtn = document.getElementById('cancelDelete');
-        let deleteUrl = '';
-
-        // Tambahkan event listener pada tombol hapus
-        document.querySelectorAll('.delete-item').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                deleteUrl = this.getAttribute('href'); // Simpan URL penghapusan
-                deleteOverlay.style.display = 'flex'; // Tampilkan overlay
-            });
-        });
-
-        // Tombol konfirmasi penghapusan
-        confirmDeleteBtn.addEventListener('click', function() {
-            window.location.href = deleteUrl; // Arahkan ke URL penghapusan
-        });
-
-        // Tombol batal
-        cancelDeleteBtn.addEventListener('click', function() {
-            deleteOverlay.style.display = 'none'; // Sembunyikan overlay
-        });
-    </script>
-    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const updateOverlay = document.getElementById('updateOverlay');
-            const closeUpdateOverlayBtn = document.getElementById('closeUpdateOverlay');
-
-            if (urlParams.has('updated') && urlParams.get('updated') === 'success') {
-                updateOverlay.style.display = 'flex';
+            const cartForm = document.querySelector('.cart-section form');
+            if (cartForm) {
+                cartForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Mencegah submit form
+                });
             }
-
-            // Tutup overlay saat tombol "OK" ditekan
-            closeUpdateOverlayBtn.addEventListener('click', function() {
-                updateOverlay.style.display = 'none';
-                // Menghapus parameter dari URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            });
         });
     </script>
     <script>
-        function increaseQuantity(cartId) {
+        // Fungsi untuk mengupdate kuantitas via AJAX
+        async function updateQuantity(cartId, change) {
             const quantityInput = document.getElementById(`quantityInput-${cartId}`);
             let currentValue = parseInt(quantityInput.value);
-            quantityInput.value = currentValue + 1;
+            let newQuantity = currentValue + change;
+
+            if (newQuantity < 1) {
+                newQuantity = 1; // Pastikan kuantitas tidak kurang dari 1
+            }
+            quantityInput.value = newQuantity;
+
+            const productId = quantityInput.getAttribute('data-product-id');
+            const priceElement = quantityInput.closest('tr').querySelector('.price');
+            // Hapus 'Rp.' dan titik ribuan, lalu ganti koma desimal menjadi titik
+            let productPrice = parseFloat(priceElement.innerText.replace('Rp.', '').replace(/\./g, '').replace(',', '.'));
+
+            // Buat objek FormData untuk mengirim data
+            const formData = new FormData();
+            formData.append('update_cart', 'true');
+            formData.append(`quantities[${productId}]`, newQuantity);
+
+            try {
+                const response = await fetch('cart.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update subtotal untuk item yang diubah
+                    const subtotalElement = quantityInput.closest('tr').querySelector('.subtotal');
+                    const newSubtotal = newQuantity * productPrice;
+                    subtotalElement.innerText = 'Rp.' + newSubtotal.toLocaleString('id-ID', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+
+                    // Update total pembayaran keseluruhan
+                    updateOverallTotal();
+                } else {
+                    alert('Gagal memperbarui keranjang: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memperbarui keranjang.');
+            }
+        }
+
+        function increaseQuantity(cartId) {
+            updateQuantity(cartId, 1);
         }
 
         function decreaseQuantity(cartId) {
-            const quantityInput = document.getElementById(`quantityInput-${cartId}`);
-            let currentValue = parseInt(quantityInput.value);
+            updateQuantity(cartId, -1);
+        }
 
-            if (currentValue > 1) {
-                quantityInput.value = currentValue - 1;
+        // Fungsi untuk menangani perubahan kuantitas manual
+        function handleManualQuantityChange(cartId) {
+            const quantityInput = document.getElementById(`quantityInput-${cartId}`);
+            let newQuantity = parseInt(quantityInput.value);
+
+            if (isNaN(newQuantity) || newQuantity < 1) {
+                newQuantity = 1;
+                quantityInput.value = 1; // Setel kembali ke 1 jika input tidak valid
+            }
+            updateQuantity(cartId, 0); // Panggil updateQuantity dengan perubahan 0 untuk memicu AJAX
+        }
+
+        // Fungsi untuk memperbarui total pembayaran keseluruhan
+        function updateOverallTotal() {
+            let overallTotal = 0;
+            document.querySelectorAll('.subtotal').forEach(element => {
+                const subtotalValue = parseFloat(element.innerText.replace('Rp.', '').replace(/\./g, '').replace(',', '.'));
+                overallTotal += subtotalValue;
+            });
+
+            const totalPaymentElement = document.querySelector('.total-payment-amount'); // Asumsi ada elemen ini
+            if (totalPaymentElement) {
+                totalPaymentElement.innerText = 'Rp.' + overallTotal.toLocaleString('id-ID', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
             }
         }
+
+        // Panggil updateOverallTotal saat halaman dimuat pertama kali
+        document.addEventListener('DOMContentLoaded', updateOverallTotal);
     </script>
-    <script src="..\resources\js\Order.js"></script>
-    <script src="..\resources\js\CheckOngkir.js"></script>
-    <script src="..\resources\js\validateInputCart.js"></script>
+    <script>
+        // Hapus event listener dan variabel terkait overlay penghapusan
+        document.querySelectorAll('.delete-item').forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const cartId = this.getAttribute('href').split('cart_id=')[1];
+
+                if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+                    try {
+                        const response = await fetch(`cart.php?action=delete&cart_id=${cartId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Hapus baris dari tabel HTML
+                            this.closest('tr').remove();
+                            updateOverallTotal(); // Perbarui total keseluruhan
+                        } else {
+                            alert('Gagal menghapus item: ' + data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat menghapus item.');
+                    }
+                }
+            });
+        });
+    </script>
+    <script src="../resources/js/Order.js"></script>
+    <script src="../resources/js/CheckOngkir.js"></script>
+    <script src="../resources/js/validateInputCart.js"></script>
 </body>
 
 </html>

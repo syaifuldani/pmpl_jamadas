@@ -2,7 +2,7 @@
 
 // config.php
 $host = 'localhost';
-$dbname = 'jamadas3';
+$dbname = 'jamadasdb';
 $username = 'root';  // Atur sesuai dengan konfigurasi database Anda
 $password = '';      // Atur sesuai dengan password database Anda
 
