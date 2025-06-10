@@ -11,6 +11,7 @@
 
 <body>
     <div class="about-us-container">
+        <a href="../dashboard.php" class="close-button">&times;</a>
         <h1>Tentang Kami</h1>
         <div class="about-us-content">
             <div class="image-container">
@@ -47,7 +48,6 @@
                 <!-- <p>to completed the final project of the software design lesson</p> -->
             </div>
         </div>
-        <a href="../dashboard.php" class="back-button">&laquo; Kembali</a>
     </div>
 </body>
 
