@@ -157,11 +157,13 @@ if (isset($_POST['query'])) {
   <!-- Footers Promotions -->
   <footer class="footer animate-slide-top animate-delay-2">
     <?php include 'layout/cusmrLayout/footer.php'; ?>
-  </footer>  </div>
-    <!-- Chatbot -->
+  </footer>
+  </div>
+  <!-- Chatbot -->
   <div class="chat-toggle" onclick="toggleChat()">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
-  </div><div class="chat-container">
+  </div>
+  <div class="chat-container">
     <div class="chat-header">
       <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
       <h3>Asisten Jamu</h3>
