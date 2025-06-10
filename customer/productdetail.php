@@ -261,9 +261,9 @@ try {
                                     <input type="hidden" name="user_id"
                                         value="<?= htmlspecialchars($_SESSION['user_id']); ?>">
 
-                                    <button type="button" onclick="decreaseQuantity()">-</button>
+                                    <button type="button" class="inp-qty" onclick="decreaseQuantity()">-</button>
                                     <input type="number" name="quantity" id="quantityInput" value="1">
-                                    <button type="button" onclick="increaseQuantity()">+</button>
+                                    <button type="button" class="inp-qty" onclick="increaseQuantity()">+</button>
 
                                     <button type="submit" class="order-btn">
                                         <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
