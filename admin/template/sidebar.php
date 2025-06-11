@@ -35,7 +35,7 @@
 
     <div class="sidebar-footer">
         <div class="user-info">
-            <img src="./style/img/admin-avatar.png" alt="Admin" class="user-avatar">
+            <!-- <img src="./style/img/admin-avatar.png" alt="Admin" class="user-avatar"> -->
             <div class="user-details">
                 <div class="user-name"><?php echo isset($_SESSION['user_email']) ? $_SESSION['user_email'] : 'Admin'; ?></div>
                 <div class="user-role">Administrator</div>
@@ -48,39 +48,40 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const categoryToggle = document.querySelector('.category-toggle');
-    const categoryDropdown = document.querySelector('.category-dropdown');
-    const categoryMenu = document.querySelector('.category-menu');
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryToggle = document.querySelector('.category-toggle');
+        const categoryDropdown = document.querySelector('.category-dropdown');
+        const categoryMenu = document.querySelector('.category-menu');
 
-    // Toggle dropdown
-    categoryToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        categoryDropdown.classList.toggle('active');
-    });
+        // Toggle dropdown
+        categoryToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            categoryDropdown.classList.toggle('active');
+        });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!categoryDropdown.contains(e.target)) {
-            categoryDropdown.classList.remove('active');
-        }
-    });
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!categoryDropdown.contains(e.target)) {
+                categoryDropdown.classList.remove('active');
+            }
+        });
 
-    // Handle category selection
-    const categoryLinks = document.querySelectorAll('.category-menu a');
-    categoryLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Remove active class from all links
-            categoryLinks.forEach(l => l.parentElement.classList.remove('active'));
-            // Add active class to clicked link
-            this.parentElement.classList.add('active');
-            // Update toggle button text
-            categoryToggle.querySelector('span').textContent = this.textContent;
-            // Close dropdown
-            categoryDropdown.classList.remove('active');
+        // Handle category selection
+        const categoryLinks = document.querySelectorAll('.category-menu a');
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Remove active class from all links
+                categoryLinks.forEach(l => l.parentElement.classList.remove('active'));
+                // Add active class to clicked link
+                this.parentElement.classList.add('active');
+                // Update toggle button text
+                categoryToggle.querySelector('span').textContent = this.textContent;
+                // Close dropdown
+                categoryDropdown.classList.remove('active');
+            });
         });
     });
-});
 </script>
 </body>
+
 </html>

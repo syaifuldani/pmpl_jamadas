@@ -250,13 +250,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </h1>
         <div class="content-wrapper">
             <div class="profile-info">
-                <div class="profile-pic">
+                <!-- <div class="profile-pic">
                     <img id="profileImage"
                         src="<?= isset($_SESSION['user_profile']) ? $_SESSION['user_profile'] : '../resources/img/profiledefault.png' ?>"
                         alt="Profile Picture">
                     <span class="edit-text">Klik untuk mengubah foto</span>
                     <input type="file" id="imageUpload" name="profile-image" accept="image/*" style="display: none;">
-                </div>
+                </div> -->
                 <h2 class="profile-name"><?= $_SESSION['user_name'] ?></h2>
                 <p class="profile-role">Administrator</p>
             </div>
@@ -327,15 +327,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             });
         <?php endif; ?>
 
-        document.querySelector('.profile-pic').addEventListener('click', function () {
+        document.querySelector('.profile-pic').addEventListener('click', function() {
             document.querySelector('#imageUpload').click();
         });
 
-        document.querySelector('#imageUpload').addEventListener('change', function () {
+        document.querySelector('#imageUpload').addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     document.querySelector('#profileImage').src = e.target.result;
                 };
                 reader.readAsDataURL(file);
