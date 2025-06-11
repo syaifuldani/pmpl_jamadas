@@ -174,7 +174,7 @@ $n = 0;
                                         </td>
                                         <td>#<?= $order['order_id']; ?></td>
                                         <td><?= date('d M Y', strtotime($order['transaction_time'])); ?></td>
-                                        <td><?= $order['nama_lengkap']; ?></td>
+                                        <td><?= $order['nama_penerima']; ?></td>
                                         <td>
                                             <span class="status-badge <?= strtolower($order['transaction_status']); ?>">
                                                 <?php

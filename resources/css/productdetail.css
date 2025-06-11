@@ -405,12 +405,12 @@ input::-webkit-inner-spin-button {
 }
 
 .be-first {
-  color: #4CAF50 !important;
+  color: #4caf50 !important;
   font-weight: 500;
 }
 
 .be-first a {
-  color: #4CAF50;
+  color: #4caf50;
   text-decoration: none;
 }
 
@@ -446,7 +446,7 @@ input::-webkit-inner-spin-button {
 .reviewer-avatar {
   width: 40px;
   height: 40px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -580,137 +580,137 @@ input::-webkit-inner-spin-button {
 /* Responsif untuk layar tablet (max-width: 768px) */
 @media only screen and (max-width: 768px) {
   .content {
-      padding-top: 50px;
-      margin-right: 10px;
-      margin-left: 10px;
+    padding-top: 50px;
+    margin-right: 10px;
+    margin-left: 10px;
   }
 
   .product-detail {
-      flex-direction: column;
-      gap: 10px;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .image-zoom {
-      width: 100%;
-      height: auto;
+    width: 100%;
+    height: auto;
   }
 
   .thumbnail-images img {
-      width: 60px;
+    width: 60px;
   }
 
   .product-info {
-      padding-left: 0;
-      max-width: 100%;
+    padding-left: 0;
+    max-width: 100%;
   }
 
   .quantity button,
   .quantity input[type="text"],
   .quantity .order-btn {
-      width: auto;
-      margin: 5px 0;
+    width: auto;
+    margin: 5px 0;
   }
 
   .product-container {
-      max-width: 460px;
+    max-width: 460px;
   }
 }
 
 /* Responsif untuk layar mobile (max-width: 480px) */
 @media only screen and (max-width: 480px) {
   .content {
-      margin-left: 20px;
-      margin-right: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
 
   .product-detail {
-      flex-direction: column;
+    flex-direction: column;
   }
 
   .image-zoom {
-      width: 100%;
-      height: auto;
+    width: 100%;
+    height: auto;
   }
 
   .thumbnail-images {
-      justify-content: center;
+    justify-content: center;
   }
 
   .thumbnail-images img {
-      width: 50px;
+    width: 50px;
   }
 
   .product-info {
-      padding-left: 0;
+    padding-left: 0;
   }
 
   .product-info h1 {
-      font-size: 20px;
+    font-size: 20px;
   }
 
   .price {
-      font-size: 18px;
+    font-size: 18px;
   }
 
   .quantity button {
-      padding: 8px;
-      font-size: 14px;
+    padding: 8px;
+    font-size: 14px;
   }
 
   .quantity input[type="text"] {
-      width: 40px;
-      font-size: 14px;
+    width: 40px;
+    font-size: 14px;
   }
 
   .quantity .order-btn {
-      padding: 10px;
-      font-size: 16px;
-      width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
   }
 
   .product-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .product-card {
-      max-width: 100%;
-      min-width: 0;
-      box-shadow: none;
-      padding: 10px;
+    max-width: 100%;
+    min-width: 0;
+    box-shadow: none;
+    padding: 10px;
   }
 
   .product-card img {
-      max-width: 100%;
-      height: auto;
+    max-width: 100%;
+    height: auto;
   }
 
   .product-name {
-      font-size: 14px;
-      margin: 8px 0;
+    font-size: 14px;
+    margin: 8px 0;
   }
 
   .product-price {
-      font-size: 14px;
-      margin-top: 5px;
+    font-size: 14px;
+    margin-top: 5px;
   }
 
   .detail-button {
-      padding: 8px;
-      font-size: 12px;
+    padding: 8px;
+    font-size: 12px;
   }
 
   .reviews-product h3 {
-      margin-top: 10px;
+    margin-top: 10px;
   }
 
   .review-item strong {
-      font-size: 16px;
+    font-size: 16px;
   }
 
   .review-item p {
-      font-size: 14px;
+    font-size: 14px;
   }
 }
 
