@@ -336,31 +336,42 @@ function getRandomProducts($limit = 2)
 
 function addToCart($product_id, $user_id, $quantity = 1, $total_price = 0.00)
 {
-    // Query untuk menyimpan data ke tabel carts
-    $query = "INSERT INTO carts (product_id, user_id, jumlah, total_harga) VALUES (:product_id, :user_id, :jumlah, :total_harga)";
+    try {
+        // Cek apakah produk sudah ada di keranjang
+        $checkQuery = "SELECT cart_id, jumlah FROM carts WHERE product_id = :product_id AND user_id = :user_id";
+        $checkStmt = $GLOBALS['db']->prepare($checkQuery);
+        $checkStmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $checkStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $checkStmt->execute();
 
-    // Mempersiapkan statement
-    $stmt = $GLOBALS['db']->prepare($query);
+        $existingItem = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-    // Bind parameter
-    $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindParam(':jumlah', $quantity, PDO::PARAM_INT);
-    $stmt->bindParam(':total_harga', $total_price, PDO::PARAM_STR);
+        if ($existingItem) {
+            // Jika produk sudah ada, update kuantitasnya
+            $newQuantity = $existingItem['jumlah'] + $quantity;
+            $newTotalPrice = $newQuantity * ($total_price / $quantity); // Hitung ulang total harga
 
-    // Eksekusi statement
-    if ($stmt->execute()) {
-        return true; // Berhasil
-    } else {
-        // Jika produk belum ada di keranjang, tambahkan sebagai data baru
-        $queryInsert = "INSERT INTO carts (product_id, user_id, jumlah, total_harga) VALUES (:product_id, :user_id, :jumlah, :total_harga)";
-        $stmtInsert = $GLOBALS['db']->prepare($queryInsert);
-        $stmtInsert->bindParam(':product_id', $product_id, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':jumlah', $quantity, PDO::PARAM_INT);
-        $stmtInsert->bindParam(':total_harga', $total_price, PDO::PARAM_STR);
+            $updateQuery = "UPDATE carts SET jumlah = :jumlah, total_harga = :total_harga WHERE cart_id = :cart_id";
+            $updateStmt = $GLOBALS['db']->prepare($updateQuery);
+            $updateStmt->bindParam(':jumlah', $newQuantity, PDO::PARAM_INT);
+            $updateStmt->bindParam(':total_harga', $newTotalPrice, PDO::PARAM_STR);
+            $updateStmt->bindParam(':cart_id', $existingItem['cart_id'], PDO::PARAM_INT);
 
-        return $stmtInsert->execute(); // Berhasil ditambahkan
+            return $updateStmt->execute();
+        } else {
+            // Jika produk belum ada, tambahkan sebagai data baru
+            $insertQuery = "INSERT INTO carts (product_id, user_id, jumlah, total_harga) VALUES (:product_id, :user_id, :jumlah, :total_harga)";
+            $insertStmt = $GLOBALS['db']->prepare($insertQuery);
+            $insertStmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+            $insertStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $insertStmt->bindParam(':jumlah', $quantity, PDO::PARAM_INT);
+            $insertStmt->bindParam(':total_harga', $total_price, PDO::PARAM_STR);
+
+            return $insertStmt->execute();
+        }
+    } catch (PDOException $e) {
+        error_log("Error in addToCart: " . $e->getMessage());
+        return false;
     }
 }
 
@@ -1440,6 +1451,159 @@ function generateRatingResponse($products, $title, $category_filter = null)
     $response .= "<em>Tip: Klik 'Lihat Detail & Ulasan' untuk membaca review lengkap dari pelanggan lain!</em>";
 
     return $response;
+}
+
+function cancelExpiredPendingOrders()
+{
+    // ... (fungsi yang sudah ada)
+}
+
+// New function to get total revenue by month for delivered orders
+function getTotalRevenueByMonth()
+{
+    global $db;
+    try {
+        $stmt = $db->prepare("
+            SELECT
+                DATE_FORMAT(created_at, '%Y-%m') AS bulan,
+                SUM(total_harga) AS total_pendapatan
+            FROM orders
+            WHERE transaction_status = 'delivered'
+            GROUP BY bulan
+            ORDER BY bulan ASC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error getting total revenue by month: " . $e->getMessage());
+        return [];
+    }
+}
+
+// New function to get total undelivered orders
+function getTotalUndeliveredOrders()
+{
+    global $db;
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM orders WHERE transaction_status != 'delivered'");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log("Error getting total undelivered orders: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// New function to get total cancelled orders
+function getTotalCancelledOrders()
+{
+    global $db;
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM orders WHERE transaction_status = 'cancelled'");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log("Error getting total cancelled orders: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// Function to get sales data by period (daily, weekly, monthly)
+function getPenjualanByPeriod($period = 'monthly')
+{
+    global $db;
+    try {
+        switch ($period) {
+            case 'daily':
+                $sql = "SELECT DATE(created_at) as period, COUNT(*) as total 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                        GROUP BY DATE(created_at) 
+                        ORDER BY period";
+                break;
+            case 'weekly':
+                $sql = "SELECT YEARWEEK(created_at) as period, COUNT(*) as total 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 12 WEEK)
+                        GROUP BY YEARWEEK(created_at) 
+                        ORDER BY period";
+                break;
+            case 'monthly':
+            default:
+                $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') as period, COUNT(*) as total 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                        GROUP BY DATE_FORMAT(created_at, '%Y-%m') 
+                        ORDER BY period";
+                break;
+        }
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error getting sales data by period: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to get revenue data by period (daily, weekly, monthly)
+function getRevenueByPeriod($period = 'monthly')
+{
+    global $db;
+    try {
+        switch ($period) {
+            case 'daily':
+                $sql = "SELECT DATE(created_at) as period, SUM(total_harga) as total_pendapatan 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                        GROUP BY DATE(created_at) 
+                        ORDER BY period";
+                break;
+            case 'weekly':
+                $sql = "SELECT YEARWEEK(created_at) as period, SUM(total_harga) as total_pendapatan 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 12 WEEK)
+                        GROUP BY YEARWEEK(created_at) 
+                        ORDER BY period";
+                break;
+            case 'monthly':
+            default:
+                $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') as period, SUM(total_harga) as total_pendapatan 
+                        FROM orders 
+                        WHERE transaction_status = 'delivered' 
+                        AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                        GROUP BY DATE_FORMAT(created_at, '%Y-%m') 
+                        ORDER BY period";
+                break;
+        }
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error getting revenue data by period: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to get total users
+function getTotalUsers()
+{
+    global $db;
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE jenis_pengguna = 'customer'");
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log("Error getting total users: " . $e->getMessage());
+        return 0;
+    }
 }
 
 // END RATING-BASED SEARCH FUNCTIONS

@@ -12,18 +12,53 @@ if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
 require '../config/connection.php';
 require '../config/function.php';
 
+// Handle AJAX request for chart data
+if (isset($_GET['action']) && $_GET['action'] === 'get_chart_data') {
+    $period = $_GET['period'] ?? 'monthly';
+
+    $salesData = getPenjualanByPeriod($period);
+    $revenueData = getRevenueByPeriod($period);
+
+    // Format data for charts
+    $formattedSalesData = [];
+    $formattedRevenueData = [];
+
+    foreach ($salesData as $item) {
+        $formattedSalesData[] = [
+            'period' => $item['period'],
+            'total' => (int)$item['total']
+        ];
+    }
+
+    foreach ($revenueData as $item) {
+        $formattedRevenueData[] = [
+            'period' => $item['period'],
+            'total_pendapatan' => (float)$item['total_pendapatan']
+        ];
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        'sales' => $formattedSalesData,
+        'revenue' => $formattedRevenueData
+    ]);
+    exit;
+}
+
 // Data untuk halaman
-$title = "PleeART";
+$title = "Jamadas";
 $jenishalaman = "Dashboard";
 $user_email = $_SESSION['user_email']; // Email user yang diambil dari session
 
 // Mengambil data menggunakan fungsi yang sudah dibuat
-$total_pemesanan = getTotalPemesanan();
+$total_pemesanan = getTotalCancelledOrders();
 $total_penjualan_selesai = getTotalPenjualanSelesai();
+$total_pengguna = getTotalUsers();
 $penjualan_per_bulan = getPenjualanPerBulan();
 $penjualan_terbanyak = getPenjualanTerbanyak();
 $pesanan_terbaru = getPesananTerbaru();
 $penjualan_chart = getPenjualanChart();
+$total_pendapatan_per_bulan = getTotalRevenueByMonth();
 ?>
 
 <!DOCTYPE html>
@@ -47,24 +82,41 @@ $penjualan_chart = getPenjualanChart();
             <!-- Dashboard Cards -->
             <section class="dashboard-cards">
                 <div class="card">
-                    <h3>Total Orders</h3>
+                    <h3>Total Pesanan Dibatalkan</h3>
                     <p><?= htmlspecialchars($total_pemesanan) ?></p>
                 </div>
                 <div class="card">
                     <h3>Pesanan Selesai</h3>
                     <p><?= htmlspecialchars($total_penjualan_selesai) ?></p>
                 </div>
+                <div class="card">
+                    <h3>Total Pengguna</h3>
+                    <p><?= htmlspecialchars($total_pengguna) ?></p>
+                </div>
             </section>
 
             <!-- Chart Section -->
             <section class="chart-section">
-                <h3>Grafik Penjualan</h3>
-                <div class="charts">
-                    <div class="chart">
-                        <canvas id="myChart1"></canvas>
+                <div class="chart-header">
+                    <h3>Grafik Penjualan</h3>
+                    <div class="chart-filters">
+                        <label for="period-filter">Filter Periode:</label>
+                        <select id="period-filter">
+                            <option value="monthly">Per Bulan</option>
+                            <option value="weekly">Per Minggu</option>
+                            <option value="daily">Per Hari</option>
+                        </select>
                     </div>
+                </div>
+                <div class="charts">
+                    <!-- <div class="chart">
+                        <canvas id="myChart1"></canvas>
+                    </div> -->
                     <div class="chart">
                         <canvas id="myChart2"></canvas>
+                    </div>
+                    <div class="chart">
+                        <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
             </section>
@@ -157,63 +209,174 @@ $penjualan_chart = getPenjualanChart();
     </div>
 
     <script>
-        // Ambil data dari PHP ke dalam JavaScript
-        const bulan = <?php echo json_encode(array_column($penjualan_chart, 'bulan')); ?>;
-        const totalPenjualan = <?php echo json_encode(array_column($penjualan_chart, 'total')); ?>;
+        // Global variables for charts
+        // let myChart1, myChart2, revenueChart;
+        let myChart2, revenueChart;
 
-        // Inisialisasi grafik garis dengan Chart.js
-        const ctx1 = document.getElementById('myChart1').getContext('2d');
-        const myChart1 = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: bulan,
-                datasets: [{
-                    label: 'Total Penjualan',
-                    data: totalPenjualan,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+        // Function to format period labels
+        function formatPeriodLabel(period, periodType) {
+            switch (periodType) {
+                case 'daily':
+                    return new Date(period).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short'
+                    });
+                case 'weekly':
+                    // Convert YEARWEEK to readable format
+                    const yearWeek = period.substring(0, 4);
+                    const weekNum = period.substring(4);
+                    return `Minggu ${weekNum} ${yearWeek}`;
+                case 'monthly':
+                default:
+                    const [yearMonth, monthNum] = period.split('-');
+                    return new Date(yearMonth, monthNum - 1).toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'long'
+                    });
+            }
+        }
+
+        // Function to update charts
+        function updateCharts(period) {
+            fetch(`dashboard.php?action=get_chart_data&period=${period}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Format labels
+                    const salesLabels = data.sales.map(item => formatPeriodLabel(item.period, period));
+                    const salesData = data.sales.map(item => item.total);
+                    const revenueLabels = data.revenue.map(item => formatPeriodLabel(item.period, period));
+                    const revenueData = data.revenue.map(item => item.total_pendapatan);
+
+                    // Update sales charts
+                    // if (myChart1) {
+                    //     myChart1.data.labels = salesLabels;
+                    //     myChart1.data.datasets[0].data = salesData;
+                    //     myChart1.update();
+                    // }
+
+                    if (myChart2) {
+                        myChart2.data.labels = salesLabels;
+                        myChart2.data.datasets[0].data = salesData;
+                        myChart2.update();
+                    }
+
+                    // Update revenue chart
+                    if (revenueChart) {
+                        revenueChart.data.labels = revenueLabels;
+                        revenueChart.data.datasets[0].data = revenueData;
+                        revenueChart.update();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                });
+        }
+
+        // Initialize charts with default data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get initial data from PHP
+            const bulan = <?php echo json_encode(array_column($penjualan_chart, 'bulan')); ?>;
+            const totalPenjualan = <?php echo json_encode(array_column($penjualan_chart, 'total')); ?>;
+            const revenueData = <?php echo json_encode($total_pendapatan_per_bulan); ?>;
+            const revenueMonths = revenueData.map(item => item.bulan);
+            const totalRevenue = revenueData.map(item => item.total_pendapatan);
+
+            // Initialize line chart
+            // const ctx1 = document.getElementById('myChart1').getContext('2d');
+            // myChart1 = new Chart(ctx1, {
+            //     type: 'bar',
+            //     data: {
+            //         labels: bulan,
+            //         datasets: [{
+            //             label: 'Produk Terlaris',
+            //             data: totalPenjualan,
+            //             borderColor: 'rgba(75, 192, 192, 1)',
+            //             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            //             borderWidth: 1
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         scales: {
+            //             y: {
+            //                 beginAtZero: true
+            //             }
+            //         }
+            //     }
+            // });
+
+            // Initialize bar chart
+            const ctx2 = document.getElementById('myChart2').getContext('2d');
+            myChart2 = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: bulan,
+                    datasets: [{
+                        label: 'Total Produk Terjual',
+                        data: totalPenjualan,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        // Inisialisasi grafik batang dengan Chart.js
-        const ctx2 = document.getElementById('myChart2').getContext('2d');
-        const myChart2 = new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: bulan,
-                datasets: [{
-                    label: 'Total Penjualan',
-                    data: totalPenjualan,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            // Initialize revenue chart
+            const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctxRevenue, {
+                type: 'line',
+                data: {
+                    labels: revenueMonths,
+                    datasets: [{
+                        label: 'Total Pendapatan (Pesanan Selesai)',
+                        data: totalRevenue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + value.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                return data.datasets[tooltipItem.datasetIndex].label + ': Rp ' + tooltipItem.yLabel.toLocaleString('id-ID');
+                            }
+                        }
                     }
                 }
-            }
+            });
+
+            // Add event listener for period filter
+            document.getElementById('period-filter').addEventListener('change', function() {
+                const selectedPeriod = this.value;
+                updateCharts(selectedPeriod);
+            });
         });
     </script>
 
     <script>
         // Fungsi untuk mengunduh halaman sebagai PDF
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('download-pdf').addEventListener('click', function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('download-pdf').addEventListener('click', function() {
                 const element = document.getElementById(
                     'content-to-download'); // Tentukan elemen khusus untuk diunduh
                 const options = {
@@ -240,10 +403,6 @@ $penjualan_chart = getPenjualanChart();
             });
         });
     </script>
-
-
-
-
 
 </body>
 
