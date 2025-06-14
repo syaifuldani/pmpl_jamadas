@@ -30,8 +30,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Panggil fungsi untuk menyimpan ke database
         if (addToCart($product_id, $user_id, $quantity, $total_price)) {
             // Simpan pesan sukses ke dalam session
-            $_SESSION['cart_status'] = 'success';
-            $_SESSION['cart_message'] = 'Produk berhasil ditambahkan ke keranjang.';
+            // Cek apakah produk sudah ada di keranjang
+            $checkQuery = "SELECT jumlah FROM carts WHERE product_id = :product_id AND user_id = :user_id";
+            $checkStmt = $GLOBALS['db']->prepare($checkQuery);
+            $checkStmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+            $checkStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $checkStmt->execute();
+            $existingItem = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingItem && $existingItem['jumlah'] > $quantity) {
+                $_SESSION['cart_status'] = 'success';
+                $_SESSION['cart_message'] = 'Kuantitas produk berhasil diperbarui di keranjang.';
+            } else {
+                $_SESSION['cart_status'] = 'success';
+                $_SESSION['cart_message'] = 'Produk berhasil ditambahkan ke keranjang.';
+            }
 
             // Redirect ke halaman productdetail.php dengan ID produk
             header("Location: productdetail.php?id=$product_id");
@@ -120,7 +133,9 @@ try {
             gap: 10px;
             flex-wrap: wrap;
         }
-        .category-badge, .subcategory-badge {
+
+        .category-badge,
+        .subcategory-badge {
             display: inline-block;
             padding: 5px 12px;
             border-radius: 15px;
@@ -128,24 +143,29 @@ try {
             font-weight: 500;
             text-transform: capitalize;
         }
+
         .category-badge {
             background-color: #4CAF50;
             color: white;
         }
+
         .subcategory-badge {
             background-color: #e8f5e8;
             color: #2e7d32;
             border: 1px solid #4CAF50;
         }
+
         .price {
             font-size: 24px;
             font-weight: bold;
             color: #4CAF50;
             margin: 15px 0;
         }
+
         .quantity {
             margin: 20px 0;
         }
+
         .quantity button {
             padding: 8px 15px;
             margin: 0 5px;
@@ -154,9 +174,11 @@ try {
             cursor: pointer;
             border-radius: 5px;
         }
+
         .quantity button:hover {
             background: #e9ecef;
         }
+
         .quantity input[type="number"] {
             width: 60px;
             text-align: center;
@@ -164,6 +186,7 @@ try {
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+
         .order-btn {
             background: #4CAF50;
             color: white;
@@ -180,9 +203,11 @@ try {
             margin-top: 15px;
             transition: background 0.3s ease;
         }
+
         .order-btn:hover {
             background: #45a049;
         }
+
         .cart-icon {
             width: 18px;
             height: 18px;
@@ -224,7 +249,7 @@ try {
                                     onclick="changeImage(this)">
                             <?php endif; ?>
                         </div>
-                    </div>                    <!-- Section Informasi Produk -->
+                    </div> <!-- Section Informasi Produk -->
                     <div class="product-info">
                         <?php if ($product): ?>
                             <!-- Nama produk -->
@@ -245,6 +270,26 @@ try {
                                 <h4>Deskripsi Produk</h4>
                                 <p><?= htmlspecialchars($product['deskripsi']); ?></p>
                             </div>
+                            <div class="benefits">
+                                <h4>Manfaat Produk</h4>
+                                <?php
+                                if (strpos($product['manfaat_produk'], ',') !== false) {
+                                    $benefits = explode(',', $product['manfaat_produk']);
+                                    echo '<ul class="benefits-list">';
+                                    foreach ($benefits as $benefit) {
+                                        echo '<li>' . htmlspecialchars(trim($benefit)) . '</li>';
+                                    }
+                                    echo '</ul>';
+                                } else {
+                                    echo '<p>' . htmlspecialchars($product['manfaat_produk']) . '</p>';
+                                }
+                                ?>
+                            </div>
+
+                            <div class="composition">
+                                <h4>Komposisi Produk</h4>
+                                <p><?= htmlspecialchars($product['komposisi_produk']); ?></p>
+                            </div>
                         <?php else: ?>
                             <h1>Produk tidak ditemukan.</h1>
                         <?php endif; ?>
@@ -261,9 +306,9 @@ try {
                                     <input type="hidden" name="user_id"
                                         value="<?= htmlspecialchars($_SESSION['user_id']); ?>">
 
-                                    <button type="button" class="inp-qty" onclick="decreaseQuantity()">-</button>
+                                    <button type="button" onclick="decreaseQuantity()">-</button>
                                     <input type="number" name="quantity" id="quantityInput" value="1">
-                                    <button type="button" class="inp-qty" onclick="increaseQuantity()">+</button>
+                                    <button type="button" onclick="increaseQuantity()">+</button>
 
                                     <button type="submit" class="order-btn">
                                         <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
@@ -276,12 +321,13 @@ try {
                                     </a>
                                 <?php endif; ?>
                             </form>
-                        </div>                        <h2>Produk Jamu Lainnya</h2>
+                        </div>
+                        <h2>Produk Jamu Lainnya</h2>
                         <div class="product-container">
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                                    ?>
+                            ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
@@ -296,7 +342,7 @@ try {
                                             </a>
                                         </div>
                                     </div>
-                                    <?php
+                                <?php
                                 endforeach;
                             else:
                                 ?>
@@ -318,7 +364,6 @@ try {
                             <div class="rating-number"><?= $average_rating ?></div>
                             <div class="rating-stars">
                                 <?php
-                                // Display average rating stars (1-5 from left to right)
                                 for ($i = 1; $i <= 5; $i++) {
                                     if ($i <= $average_rating) {
                                         echo '<span class="star filled">★</span>';
@@ -331,25 +376,39 @@ try {
                             <div class="rating-count"><?= count($reviews) ?> ulasan</div>
                         </div>
                     <?php endif; ?>
-                    <hr color="black">
                 </div>
 
                 <div class="reviews">
                     <?php if (empty($reviews)): ?>
-                        <p class="no-reviews">Belum ada ulasan untuk produk ini.</p>
+                        <div class="no-reviews">
+                            <img src="../resources/img/icons/no-reviews.png" alt="No Reviews" class="no-reviews-icon">
+                            <p>Belum ada ulasan untuk produk ini.</p>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <p class="be-first">Jadilah yang pertama memberikan ulasan!</p>
+                            <?php else: ?>
+                                <p class="be-first">Silakan <a href="login.php">login</a> untuk memberikan ulasan.</p>
+                            <?php endif; ?>
+                        </div>
                     <?php else: ?>
                         <?php foreach ($reviews as $review): ?>
                             <div class="review-item">
                                 <div class="review-header">
                                     <div class="reviewer-info">
-                                        <strong><?= htmlspecialchars($review['nama_lengkap']) ?></strong>
-                                        <div class="review-date">
-                                            <?= date('d F Y', strtotime($review['review_date'])) ?>
+                                        <div class="reviewer-avatar">
+                                            <?php
+                                            $initial = strtoupper(substr($review['nama_lengkap'], 0, 1));
+                                            echo '<span>' . $initial . '</span>';
+                                            ?>
+                                        </div>
+                                        <div class="reviewer-details">
+                                            <strong><?= htmlspecialchars($review['nama_lengkap']) ?></strong>
+                                            <div class="review-date">
+                                                <?= date('d F Y', strtotime($review['review_date'])) ?>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="review-rating">
                                         <?php
-                                        // Display stars based on rating (1-5 from left to right)
                                         for ($i = 1; $i <= 5; $i++) {
                                             if ($i <= $review['rating']) {
                                                 echo '<span class="star filled">★</span>';
@@ -360,27 +419,31 @@ try {
                                         ?>
                                     </div>
                                 </div>
-                                <p class="review-comment">
-                                    <?= nl2br(htmlspecialchars($review['comment'])) ?>
-                                </p>
+                                <div class="review-content">
+                                    <p class="review-comment">
+                                        <?= nl2br(htmlspecialchars($review['comment'])) ?>
+                                    </p>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Overlay -->
-        <div id="overlay" class="overlay">
-            <div class="overlay-content">
-                <div class="checkmark-container">
-                    <div class="checkmark-circle">
-                        <div class="checkmark">✓</div>
-                    </div>
+    <!-- Overlay -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="checkmark-container">
+                <div class="checkmark-circle">
+                    <div class="checkmark">✓</div>
                 </div>
-                <p id="overlayMessage"></p>
-                <a href="javascript:hideOverlay()" class="btn-lanjut">Lanjut Belanja</a>
-            </div>        </div>
+            </div>
+            <p id="overlayMessage"></p>
+            <a href="javascript:hideOverlay()" class="btn-lanjut">Lanjut Belanja</a>
+        </div>
+    </div>
     </div>
 
     <script src="../resources/js/thumnail.js"></script>
@@ -417,7 +480,7 @@ try {
             unset($_SESSION['cart_message']);
             ?>
         <?php endif; ?>
-    </script>    <!-- Chatbot -->
+    </script> <!-- Chatbot -->
     <div class="chat-toggle" id="chatToggleBtn">
         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
     </div>
@@ -432,32 +495,33 @@ try {
             <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
             <button onclick="sendMessage()">Kirim</button>
         </div>
-    </div>    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+    </div>
+    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
     <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
-    
+
     <script>
         // Pastikan chat toggle berfungsi setelah clear cache
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Product detail page chat initializing...');
-            
+
             // Tunggu sebentar untuk memastikan semua script ter-load
             setTimeout(function() {
                 const chatToggle = document.getElementById('chatToggleBtn');
-                
+
                 if (chatToggle) {
                     console.log('Chat toggle button found');
-                    
+
                     // Hapus event listener yang mungkin sudah ada
                     chatToggle.removeEventListener('click', toggleChat);
-                    
+
                     // Tambahkan event listener baru
                     chatToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Chat toggle clicked!');
-                        
+
                         // Pastikan function toggleChat tersedia
                         if (typeof toggleChat === 'function') {
                             toggleChat();
@@ -470,12 +534,12 @@ try {
                             }
                         }
                     });
-                    
+
                     console.log('Chat toggle event listener attached');
                 } else {
                     console.error('Chat toggle button not found');
                 }
-                
+
                 // Setup chat input event listener
                 const chatInput = document.getElementById('chat-input');
                 if (chatInput) {
@@ -486,12 +550,12 @@ try {
                     });
                     console.log('Chat input event listener added');
                 }
-                
+
                 // Load chat history
                 loadChatHistory();
             }, 500);
         });
-        
+
         // Tambahkan fallback jika semua gagal
         window.addEventListener('load', function() {
             setTimeout(function() {
@@ -509,7 +573,7 @@ try {
                 }
             }, 1000);
         });
-        
+
         // Function to load chat history
         function loadChatHistory() {
             fetch('../config/process_chat.php')
