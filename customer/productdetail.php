@@ -270,6 +270,26 @@ try {
                                 <h4>Deskripsi Produk</h4>
                                 <p><?= htmlspecialchars($product['deskripsi']); ?></p>
                             </div>
+                            <div class="benefits">
+                                <h4>Manfaat Produk</h4>
+                                <?php
+                                if (strpos($product['manfaat_produk'], ',') !== false) {
+                                    $benefits = explode(',', $product['manfaat_produk']);
+                                    echo '<ul class="benefits-list">';
+                                    foreach ($benefits as $benefit) {
+                                        echo '<li>' . htmlspecialchars(trim($benefit)) . '</li>';
+                                    }
+                                    echo '</ul>';
+                                } else {
+                                    echo '<p>' . htmlspecialchars($product['manfaat_produk']) . '</p>';
+                                }
+                                ?>
+                            </div>
+
+                            <div class="composition">
+                                <h4>Komposisi Produk</h4>
+                                <p><?= htmlspecialchars($product['komposisi_produk']); ?></p>
+                            </div>
                         <?php else: ?>
                             <h1>Produk tidak ditemukan.</h1>
                         <?php endif; ?>
@@ -344,7 +364,6 @@ try {
                             <div class="rating-number"><?= $average_rating ?></div>
                             <div class="rating-stars">
                                 <?php
-                                // Display average rating stars (1-5 from left to right)
                                 for ($i = 1; $i <= 5; $i++) {
                                     if ($i <= $average_rating) {
                                         echo '<span class="star filled">★</span>';
@@ -357,25 +376,39 @@ try {
                             <div class="rating-count"><?= count($reviews) ?> ulasan</div>
                         </div>
                     <?php endif; ?>
-                    <hr color="black">
                 </div>
 
                 <div class="reviews">
                     <?php if (empty($reviews)): ?>
-                        <p class="no-reviews">Belum ada ulasan untuk produk ini.</p>
+                        <div class="no-reviews">
+                            <img src="../resources/img/icons/no-reviews.png" alt="No Reviews" class="no-reviews-icon">
+                            <p>Belum ada ulasan untuk produk ini.</p>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <p class="be-first">Jadilah yang pertama memberikan ulasan!</p>
+                            <?php else: ?>
+                                <p class="be-first">Silakan <a href="login.php">login</a> untuk memberikan ulasan.</p>
+                            <?php endif; ?>
+                        </div>
                     <?php else: ?>
                         <?php foreach ($reviews as $review): ?>
                             <div class="review-item">
                                 <div class="review-header">
                                     <div class="reviewer-info">
-                                        <strong><?= htmlspecialchars($review['nama_lengkap']) ?></strong>
-                                        <div class="review-date">
-                                            <?= date('d F Y', strtotime($review['review_date'])) ?>
+                                        <div class="reviewer-avatar">
+                                            <?php
+                                            $initial = strtoupper(substr($review['nama_lengkap'], 0, 1));
+                                            echo '<span>' . $initial . '</span>';
+                                            ?>
+                                        </div>
+                                        <div class="reviewer-details">
+                                            <strong><?= htmlspecialchars($review['nama_lengkap']) ?></strong>
+                                            <div class="review-date">
+                                                <?= date('d F Y', strtotime($review['review_date'])) ?>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="review-rating">
                                         <?php
-                                        // Display stars based on rating (1-5 from left to right)
                                         for ($i = 1; $i <= 5; $i++) {
                                             if ($i <= $review['rating']) {
                                                 echo '<span class="star filled">★</span>';
@@ -386,28 +419,31 @@ try {
                                         ?>
                                     </div>
                                 </div>
-                                <p class="review-comment">
-                                    <?= nl2br(htmlspecialchars($review['comment'])) ?>
-                                </p>
+                                <div class="review-content">
+                                    <p class="review-comment">
+                                        <?= nl2br(htmlspecialchars($review['comment'])) ?>
+                                    </p>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Overlay -->
-        <div id="overlay" class="overlay">
-            <div class="overlay-content">
-                <div class="checkmark-container">
-                    <div class="checkmark-circle">
-                        <div class="checkmark">✓</div>
-                    </div>
+    <!-- Overlay -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">
+            <div class="checkmark-container">
+                <div class="checkmark-circle">
+                    <div class="checkmark">✓</div>
                 </div>
-                <p id="overlayMessage"></p>
-                <a href="javascript:hideOverlay()" class="btn-lanjut">Lanjut Belanja</a>
             </div>
+            <p id="overlayMessage"></p>
+            <a href="javascript:hideOverlay()" class="btn-lanjut">Lanjut Belanja</a>
         </div>
+    </div>
     </div>
 
     <script src="../resources/js/thumnail.js"></script>
