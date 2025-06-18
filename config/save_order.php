@@ -155,12 +155,25 @@ try {
             ':biaya_ongkir' => $data['shipping_cost'] ?? null,
             ':estimasi_sampai' => $data['shipping_eta'] ?? null,
             ':alamat_pengiriman' => $full_address
-        ];
-
-        $stmt = $db->prepare($sql);
+        ];        $stmt = $db->prepare($sql);
         $stmt->execute($shipping_params);
 
-        // 4. Hapus items dari cart
+        // 4. Deduct stock for ordered items
+        $stockUpdateSql = "UPDATE products SET stok = stok - :quantity WHERE product_id = :product_id AND stok >= :quantity";
+        $stockStmt = $db->prepare($stockUpdateSql);
+        
+        foreach ($pendingOrder['cart_items'] as $item) {
+            $stockResult = $stockStmt->execute([
+                ':quantity' => $item['jumlah'],
+                ':product_id' => $item['product_id']
+            ]);
+            
+            // Check if stock deduction was successful
+            if ($stockStmt->rowCount() == 0) {
+                // Stock insufficient, rollback transaction
+                throw new Exception("Stok tidak mencukupi untuk produk ID: " . $item['product_id']);
+            }
+        }        // 5. Hapus items dari cart
         $sql = "DELETE FROM carts WHERE user_id = :user_id";
         $stmt = $db->prepare($sql);
         $stmt->execute([':user_id' => $_SESSION['user_id']]);

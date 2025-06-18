@@ -159,10 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                         </div>
-                    </div>
-
-                    <!-- Harga Produk -->
-                    <div class="form-group price-group">
+                    </div>                    <!-- Harga Produk dan Stok -->
+                    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="price-field">
                             <label for="product-price">
                                 <i class="fas fa-tag"></i> Stok Produk
@@ -182,9 +180,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </label>
                             <input type="text" id="product-price" name="product_price"
                                 placeholder="Masukkan harga produk">
+                            <span
+                                class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                         </div>
-                        <span
-                            class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
+                        
+                        <div class="stock-field">
+                            <label for="product-stock">
+                                <i class="fas fa-warehouse"></i> Stok Produk
+                            </label>
+                            <input type="number" id="product-stock" name="product_stock" min="0"
+                                placeholder="Masukkan jumlah stok">
+                            <span
+                                class="error-message"><?= isset($responseAddItems['stock']) ? $responseAddItems['stock'] : ''; ?></span>
+                        </div>
                     </div>
 
                     <!-- Product Gallery -->

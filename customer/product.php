@@ -724,7 +724,7 @@ if (isset($_POST['query'])) {
                                     <span class="stock-status low-stock">Terbatas</span>
                                 <?php endif; ?>
                             </div>
-                            <a href="productdetail.php?id=<?= htmlspecialchars($produk['product_id']) ?>" class="detail-button">
+                            <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
                                 <p>Lihat Detail</p>
                             </a>
                         </div>

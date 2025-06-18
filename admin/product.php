@@ -61,7 +61,7 @@ try {
 }
 
 // Ambil data untuk halaman saat ini dengan filter
-$sql = "SELECT product_id, nama_produk, deskripsi, stok, harga_produk, gambar_satu, kategori, sub_kategori 
+$sql = "SELECT product_id, nama_produk, deskripsi, harga_produk, stok, gambar_satu, kategori, sub_kategori 
         FROM products" . $where_clause . " LIMIT :limit OFFSET :offset";
 
 try {
@@ -166,6 +166,7 @@ try {
                                 <th><i class="fas fa-align-left"></i> Deskripsi</th>
                                 <th><i class="fas fa-tag"></i> Stok</th>
                                 <th><i class="fas fa-tag"></i> Harga</th>
+                                <th><i class="fas fa-warehouse"></i> Stok</th>
                                 <th><i class="fas fa-tags"></i> Kategori</th>
                                 <th><i class="fas fa-tags"></i> Sub Kategori</th>
                                 <th><i class="fas fa-cogs"></i> Aksi</th>
@@ -191,10 +192,14 @@ try {
                                 <td class="small-text"><?php echo htmlspecialchars($product['nama_produk']); ?></td>
                                 <td class="small-text">
                                     <?php echo htmlspecialchars(substr($product['deskripsi'], 0, 50)) . '...'; ?></td>
-                                <td class="small-text">
-                                    <?php echo htmlspecialchars($product['stok']); ?></td>
                                 <td class="small-text">Rp
                                     <?php echo number_format($product['harga_produk'], 0, ',', '.'); ?></td>
+                                <td class="small-text">
+                                    <span
+                                        class="stock-badge <?php echo ($product['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                        <?php echo ($product['stok'] ?? 0); ?>
+                                    </span>
+                                </td>
                                 <td class="small-text"><?php echo htmlspecialchars($product['kategori']); ?></td>
                                 <td class="small-text"><?php echo htmlspecialchars($product['sub_kategori']); ?></td>
                                 <td>
@@ -215,7 +220,7 @@ try {
                             <?php endforeach; ?>
                             <?php else: ?>
                             <tr>
-                                <td colspan="8" style="text-align: center; padding: 30px;">
+                                <td colspan="9" style="text-align: center; padding: 30px;">
                                     <i class="fas fa-box-open"
                                         style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
                                     <p>Tidak ada produk ditemukan.</p>

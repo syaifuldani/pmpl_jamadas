@@ -41,20 +41,25 @@ try {
 }
 
 // Proses form saat di-submit
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ambil dan sanitasi data dari form
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari form
     $nama_produk = trim($_POST['product_name']);
     $deskripsi = trim($_POST['description']);
     $manfaat = trim($_POST['manfaat']);
     $komposisi = trim($_POST['komposisi']);
     $kategori = trim($_POST['category']);
     $subkategori = trim($_POST['subcategory']);
-    $stok_product = trim($_POST['product_stock']);
     $harga_product = trim($_POST['product_price']);
+    $stok = isset($_POST['product_stock']) ? (int) trim($_POST['product_stock']) : 0;
 
     // Validasi input
     if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($stok_product) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
         $errors['field'] = 'Semua field wajib diisi!';
+    }
+
+    // Validasi stok
+    if ($stok < 0) {
+        echo "Stok tidak boleh negatif!";
+        exit();
     }
 
     // Validasi harga_product adalah angka
@@ -101,9 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if ($delete_gambar_tiga) {
         $gambar_tiga = null;
-    }
-
-    // Update data ke database
+    }    // Update data ke database
     $sql = "UPDATE products SET 
                 nama_produk = :nama_produk, 
                 deskripsi = :deskripsi, 
@@ -111,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 komposisi_produk = :komposisi_produk, 
                 stok = :stok_produk, 
                 harga_produk = :harga_produk, 
+                stok = :stok,
                 gambar_satu = :gambar_satu, 
                 gambar_dua = :gambar_dua, 
                 gambar_tiga = :gambar_tiga, 
@@ -126,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
         $stmt->bindParam(':stok_produk', $stok_product, PDO::PARAM_STR);
         $stmt->bindParam(':harga_produk', $harga_product, PDO::PARAM_STR);
+        $stmt->bindParam(':stok', $stok, PDO::PARAM_INT);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_dua', $gambar_dua, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_tiga', $gambar_tiga, PDO::PARAM_LOB);
@@ -283,19 +288,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
                     </div>
 
-                    <div class="form-group price-group">
-                        <div class="price-field">
-                            <label for="product-price">Stok Produk</label>
-                            <input type="text" id="product-price" name="product_stock"
-                                value="<?php echo htmlspecialchars($product['stok']); ?>" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group price-group">
+                    <!-- Harga Produk dan Stok -->
+                    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="price-field">
                             <label for="product-price">Harga Produk</label>
                             <input type="text" id="product-price" name="product_price"
                                 value="<?php echo htmlspecialchars($product['harga_produk']); ?>" required>
+                        </div>
+
+                        <div class="stock-field">
+                            <label for="product-stock">
+                                <i class="fas fa-warehouse"></i> Stok Produk
+                            </label>
+                            <input type="number" id="product-stock" name="product_stock" min="0"
+                                value="<?php echo htmlspecialchars($product['stok'] ?? 0); ?>" required>
                         </div>
                     </div>
 
