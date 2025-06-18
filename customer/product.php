@@ -474,7 +474,9 @@ if (isset($_POST['query'])) {
     .detail-button:hover {
         background-color: #77dd77;
         color: white;
-    }    .detail-button p {
+    }
+
+    .detail-button p {
         margin: 0;
         font-size: 14px;
         font-weight: 500;
@@ -707,7 +709,8 @@ if (isset($_POST['query'])) {
                             alt="<?= htmlspecialchars($produk['nama_produk']) ?>">
                         <div class="description">
                             <p><?= htmlspecialchars($produk['deskripsi']) ?></p>
-                        </div>                        <div class="product-info">
+                        </div>
+                        <div class="product-info">
                             <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
                             <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
                             <div class="stock-info-card">
@@ -728,13 +731,14 @@ if (isset($_POST['query'])) {
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>    </div>
+        </div>
+    </div>
 
     <!-- Chatbot -->
     <div class="chat-toggle" id="chatToggleBtn">
         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
     </div>
-    
+
     <div class="chat-container">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
@@ -745,32 +749,33 @@ if (isset($_POST['query'])) {
             <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
             <button onclick="sendMessage()">Kirim</button>
         </div>
-    </div>    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+    </div>
+    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
     <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
-    
+
     <script>
         // Pastikan chat toggle berfungsi setelah clear cache
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Product page chat initializing...');
-            
+
             // Tunggu sebentar untuk memastikan semua script ter-load
-            setTimeout(function() {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
-                
+
                 if (chatToggle) {
                     console.log('Chat toggle button found');
-                    
+
                     // Hapus event listener yang mungkin sudah ada
                     chatToggle.removeEventListener('click', toggleChat);
-                    
+
                     // Tambahkan event listener baru
-                    chatToggle.addEventListener('click', function(e) {
+                    chatToggle.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Chat toggle clicked!');
-                        
+
                         // Pastikan function toggleChat tersedia
                         if (typeof toggleChat === 'function') {
                             toggleChat();
@@ -783,21 +788,21 @@ if (isset($_POST['query'])) {
                             }
                         }
                     });
-                    
+
                     console.log('Chat toggle event listener attached');
                 } else {
                     console.error('Chat toggle button not found');
                 }
             }, 500);
         });
-        
+
         // Tambahkan fallback jika semua gagal
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+        window.addEventListener('load', function () {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
                 if (chatToggle && !chatToggle.onclick) {
                     console.log('Adding fallback onclick handler');
-                    chatToggle.onclick = function() {
+                    chatToggle.onclick = function () {
                         console.log('Fallback chat toggle activated');
                         const chatContainer = document.querySelector('.chat-container');
                         if (chatContainer) {

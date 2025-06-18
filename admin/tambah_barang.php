@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
                                 <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
                                 <option value="Reproduksi Wanita">Reproduksi Wanita</option>
+                                <option value="Vitalitas Pria">Vitalitas Pria</option>
                                 <option value="Kesehatan Pencernaan">Kesehatan Pencernaan</option>
                                 <option value="Kesehatan Umum & Imunitas">Kesehatan Umum & Imunitas</option>
                                 <option value="Kesehatan Tulang & Sendi">Kesehatan Tulang & Sendi</option>
@@ -158,8 +159,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                         </div>
-                    </div>                    <!-- Harga Produk dan Stok -->
+                    </div> <!-- Harga Produk dan Stok -->
                     <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="price-field">
+                            <label for="product-price">
+                                <i class="fas fa-tag"></i> Stok Produk
+                            </label>
+                            <input type="text" id="product-price" name="product_stock"
+                                placeholder="Masukkan stok produk">
+                        </div>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
+                    </div>
+
+                    <!-- Harga Produk -->
+                    <div class="form-group price-group">
                         <div class="price-field">
                             <label for="product-price">
                                 <i class="fas fa-tag"></i> Harga Produk
@@ -169,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                         </div>
-                        
+
                         <div class="stock-field">
                             <label for="product-stock">
                                 <i class="fas fa-warehouse"></i> Stok Produk

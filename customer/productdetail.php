@@ -202,7 +202,9 @@ try {
             gap: 8px;
             margin-top: 15px;
             transition: background 0.3s ease;
-        }        .order-btn:hover {
+        }
+
+        .order-btn:hover {
             background: #45a049;
         }
 
@@ -214,7 +216,9 @@ try {
 
         .order-btn.disabled:hover {
             background: #6c757d;
-        }.cart-icon {
+        }
+
+        .cart-icon {
             width: 18px;
             height: 18px;
         }
@@ -305,13 +309,15 @@ try {
                                     <span class="category-badge"><?= htmlspecialchars($product['kategori']); ?></span>
                                     <span class="subcategory-badge"><?= htmlspecialchars($product['sub_kategori']); ?></span>
                                 </div>
-                            <?php endif; ?>                            <!-- Harga produk -->
+                            <?php endif; ?>
+                            <!-- Harga produk -->
                             <p class="price">Rp. <?= number_format($product['harga_produk'], 0, ',', '.'); ?></p>
 
                             <!-- Stok produk -->
                             <div class="stock-info">
                                 <span class="stock-label">Stok tersedia:</span>
-                                <span class="stock-value <?= ($product['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                <span
+                                    class="stock-value <?= ($product['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
                                     <?= ($product['stok'] ?? 0); ?> unit
                                 </span>
                                 <?php if (($product['stok'] ?? 0) <= 5 && ($product['stok'] ?? 0) > 0): ?>
@@ -359,8 +365,10 @@ try {
 
                                 <?php if (isset($_SESSION['user_id'])): ?>
                                     <input type="hidden" name="user_id"
-                                        value="<?= htmlspecialchars($_SESSION['user_id']); ?>">                                    <button type="button" onclick="decreaseQuantity()">-</button>
-                                    <input type="number" name="quantity" id="quantityInput" value="1" min="1" max="<?= ($product['stok'] ?? 0); ?>">
+                                        value="<?= htmlspecialchars($_SESSION['user_id']); ?>"> <button type="button"
+                                        onclick="decreaseQuantity()">-</button>
+                                    <input type="number" name="quantity" id="quantityInput" value="1" min="1"
+                                        max="<?= ($product['stok'] ?? 0); ?>">
                                     <button type="button" onclick="increaseQuantity()">+</button>
 
                                     <?php if (($product['stok'] ?? 0) > 0): ?>
@@ -387,7 +395,7 @@ try {
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                            ?>
+                                    ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
@@ -396,13 +404,16 @@ try {
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name"><?= htmlspecialchars($product['nama_produk']); ?></p>
-                                            <p class="product-price">Rp. <?= htmlspecialchars(number_format($product['harga_produk'], 0, ',', '.')); ?></p>
-                                            <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>" class="detail-button">
+                                            <p class="product-price">Rp.
+                                                <?= htmlspecialchars(number_format($product['harga_produk'], 0, ',', '.')); ?>
+                                            </p>
+                                            <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>"
+                                                class="detail-button">
                                                 <p>Lihat Detail</p>
                                             </a>
                                         </div>
                                     </div>
-                                <?php
+                                    <?php
                                 endforeach;
                             else:
                                 ?>
@@ -509,12 +520,13 @@ try {
     <script src="../resources/js/thumnail.js"></script>
     <script src="../resources/js/zoomimage.js"></script>
     <script src="../resources/js/overlay.js"></script>
-    <script>        // Fungsi untuk quantity buttons
+    <script>
+        // Fungsi untuk quantity buttons
         function increaseQuantity() {
             const input = document.getElementById('quantityInput');
             const maxStock = parseInt(input.getAttribute('max'));
             const currentValue = parseInt(input.value);
-            
+
             if (currentValue < maxStock) {
                 input.value = currentValue + 1;
             } else {
@@ -525,7 +537,7 @@ try {
         function decreaseQuantity() {
             const input = document.getElementById('quantityInput');
             const currentValue = parseInt(input.value);
-            
+
             if (currentValue > 1) {
                 input.value = currentValue - 1;
             }
@@ -571,11 +583,11 @@ try {
 
     <script>
         // Pastikan chat toggle berfungsi setelah clear cache
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Product detail page chat initializing...');
 
             // Tunggu sebentar untuk memastikan semua script ter-load
-            setTimeout(function() {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
 
                 if (chatToggle) {
@@ -585,7 +597,7 @@ try {
                     chatToggle.removeEventListener('click', toggleChat);
 
                     // Tambahkan event listener baru
-                    chatToggle.addEventListener('click', function(e) {
+                    chatToggle.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Chat toggle clicked!');
@@ -611,7 +623,7 @@ try {
                 // Setup chat input event listener
                 const chatInput = document.getElementById('chat-input');
                 if (chatInput) {
-                    chatInput.addEventListener('keypress', function(e) {
+                    chatInput.addEventListener('keypress', function (e) {
                         if (e.key === 'Enter') {
                             sendMessage();
                         }
@@ -625,12 +637,12 @@ try {
         });
 
         // Tambahkan fallback jika semua gagal
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+        window.addEventListener('load', function () {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
                 if (chatToggle && !chatToggle.onclick) {
                     console.log('Adding fallback onclick handler');
-                    chatToggle.onclick = function() {
+                    chatToggle.onclick = function () {
                         console.log('Fallback chat toggle activated');
                         const chatContainer = document.querySelector('.chat-container');
                         if (chatContainer) {

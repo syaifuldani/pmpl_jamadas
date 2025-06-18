@@ -4,11 +4,12 @@ require '../config/connection.php'; // Pastikan path sesuai dengan struktur fold
 require '../config/function.php'; // Pastikan path sesuai dengan struktur folder Anda
 
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
 }
+
 $user_id = $_SESSION['user_id'];
 $jenishalaman = "Order list";
 
@@ -103,6 +104,7 @@ $n = 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order List</title>
     <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/statusOrderList.css">
 </head>
 
 <body>
@@ -131,15 +133,16 @@ $n = 0;
                         <select name="status" onchange="this.form.submit()">
                             <option value="">Semua Status</option>
                             <?php foreach ($status_list as $status): ?>
-                                <option value="<?php echo htmlspecialchars($status); ?>"
-                                    <?php echo (isset($_GET['status']) && $_GET['status'] === $status) ? 'selected' : ''; ?>>
+                                <option value="<?php echo htmlspecialchars($status); ?>" <?php echo (isset($_GET['status']) && $_GET['status'] === $status) ? 'selected' : ''; ?>>
                                     <?php echo ucfirst(htmlspecialchars($status)); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <input type="date" name="start_date" value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date']) : ''; ?>"
+                        <input type="date" name="start_date"
+                            value="<?php echo isset($_GET['start_date']) ? htmlspecialchars($_GET['start_date']) : ''; ?>"
                             onchange="this.form.submit()" placeholder="Tanggal Mulai">
-                        <input type="date" name="end_date" value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date']) : ''; ?>"
+                        <input type="date" name="end_date"
+                            value="<?php echo isset($_GET['end_date']) ? htmlspecialchars($_GET['end_date']) : ''; ?>"
                             onchange="this.form.submit()" placeholder="Tanggal Akhir">
                     </form>
                 </div>
@@ -162,7 +165,11 @@ $n = 0;
                             <?php if (!empty($orders)): ?>
                                 <?php foreach ($orders as $order): ?>
                                     <tr>
+                                        <!-- Nomor -->
                                         <td><?= $n += 1 ?></td>
+                                        <!-- End Nomor -->
+
+                                        <!-- Nama Produk -->
                                         <td>
                                             <?php if (!empty($order['produk_names'])): ?>
                                                 <div class="product-info">
@@ -172,38 +179,58 @@ $n = 0;
                                                 <span class="no-product">Tidak ada produk</span>
                                             <?php endif; ?>
                                         </td>
+                                        <!-- End Nama Produk -->
+
+                                        <!-- Order Id -->
                                         <td>#<?= $order['order_id']; ?></td>
+                                        <!-- End Order Id -->
+
+                                        <!-- Tanggal -->
                                         <td><?= date('d M Y', strtotime($order['transaction_time'])); ?></td>
+                                        <!-- End Tanggal -->
+
+                                        <!-- Nama Penerima -->
                                         <td><?= $order['nama_penerima']; ?></td>
+                                        <!-- End Nama Penerima -->
+
+                                        <!-- Status -->
                                         <td>
-                                            <span class="status-badge <?= strtolower($order['transaction_status']); ?>">
-                                                <?php
-                                                $status_icon = '';
-                                                switch (strtolower($order['transaction_status'])) {
-                                                    case 'pending':
-                                                        $status_icon = 'fa-clock';
-                                                        break;
-                                                    case 'success':
-                                                        $status_icon = 'fa-check-circle';
-                                                        break;
-                                                    case 'failed':
-                                                        $status_icon = 'fa-times-circle';
-                                                        break;
-                                                    default:
-                                                        $status_icon = 'fa-info-circle';
-                                                }
-                                                ?>
-                                                <i class="fas <?= $status_icon ?>"></i>
-                                                <?= ucfirst($order['transaction_status']); ?>
+                                            <span class="status-badge <?= getStatusClass($order['transaction_status']); ?>"
+                                                data-status="<?= strtolower($order['transaction_status']); ?>"
+                                                style="--status-color: <?= getStatusColor($order['transaction_status']); ?>">
+                                                <i class="fas <?= getStatusIcon($order['transaction_status']); ?>"></i>
+                                                <span
+                                                    class="status-text"><?= getStatusLabel($order['transaction_status']); ?></span>
+
+                                                <?php if (strtolower($order['transaction_status']) === 'pending'): ?>
+                                                    <span class="status-pulse"></span>
+                                                <?php endif; ?>
                                             </span>
+
+                                            <?php
+                                            // Tambahan info untuk status tertentu
+                                            if (isset($order['updated_at']) && in_array(strtolower($order['transaction_status']), ['settlement', 'delivered', 'cancelled'])):
+                                                ?>
+                                                <div class="status-timestamp">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                    <?= date('d/m/Y H:i', strtotime($order['updated_at'])); ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </td>
+                                        <!-- End Status -->
+
+                                        <!-- Total harga -->
                                         <td>Rp <?= number_format($order['total_harga'], 0, ',', '.'); ?></td>
+                                        <!-- End Total harga -->
+
+                                        <!-- Detail -->
                                         <td>
                                             <a href="detail_order.php?order_id=<?= htmlspecialchars($order['order_id']); ?>"
                                                 class="btn-detail">
                                                 <i class="fas fa-eye"></i> Detail
                                             </a>
                                         </td>
+                                        <!-- End Detail -->
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -223,11 +250,11 @@ $n = 0;
                         <?php if ($page > 1): ?>
                             <li>
                                 <a href="?page=<?= $page - 1; ?><?php
-                                                                echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
-                                                                echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
-                                                                echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
-                                                                echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
-                                                                ?>">
+                                    echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                    echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                    echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                    echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">
                                     <i class="fas fa-chevron-left"></i> Prev
                                 </a>
                             </li>
@@ -236,11 +263,11 @@ $n = 0;
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <li class="<?= ($i == $page) ? 'active' : ''; ?>">
                                 <a href="?page=<?= $i; ?><?php
-                                                            echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
-                                                            echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
-                                                            echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
-                                                            echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
-                                                            ?>">
+                                  echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                  echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                  echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                  echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                  ?>">
                                     <?= $i; ?>
                                 </a>
                             </li>
@@ -249,11 +276,11 @@ $n = 0;
                         <?php if ($page < $total_pages): ?>
                             <li>
                                 <a href="?page=<?= $page + 1; ?><?php
-                                                                echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
-                                                                echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
-                                                                echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
-                                                                echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
-                                                                ?>">
+                                    echo isset($_GET['status']) ? '&status=' . urlencode($_GET['status']) : '';
+                                    echo isset($_GET['start_date']) ? '&start_date=' . urlencode($_GET['start_date']) : '';
+                                    echo isset($_GET['end_date']) ? '&end_date=' . urlencode($_GET['end_date']) : '';
+                                    echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">
                                     Next <i class="fas fa-chevron-right"></i>
                                 </a>
                             </li>
@@ -265,12 +292,12 @@ $n = 0;
     </div>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit-id.js" crossorigin="anonymous"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');
             const orderTable = document.getElementById('orderTable');
             const rows = orderTable.getElementsByTagName('tr');
 
-            searchInput.addEventListener('input', function() {
+            searchInput.addEventListener('input', function () {
                 const searchTerm = this.value.toLowerCase();
 
                 // Mulai dari index 1 untuk melewati header tabel

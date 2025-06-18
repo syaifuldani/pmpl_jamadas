@@ -2,7 +2,7 @@
 session_start();
 
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -47,11 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari f
     $manfaat = trim($_POST['manfaat']);
     $komposisi = trim($_POST['komposisi']);
     $kategori = trim($_POST['category']);
-    $subkategori = trim($_POST['subcategory']);    $harga_product = trim($_POST['product_price']);
-    $stok = isset($_POST['product_stock']) ? (int)trim($_POST['product_stock']) : 0;
+    $subkategori = trim($_POST['subcategory']);
+    $harga_product = trim($_POST['product_price']);
+    $stok = isset($_POST['product_stock']) ? (int) trim($_POST['product_stock']) : 0;
 
     // Validasi input
-    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
+    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($stok_product) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
         $errors['field'] = 'Semua field wajib diisi!';
     }
 
@@ -111,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari f
                 deskripsi = :deskripsi, 
                 manfaat_produk = :manfaat_produk, 
                 komposisi_produk = :komposisi_produk, 
+                stok = :stok_produk, 
                 harga_produk = :harga_produk, 
                 stok = :stok,
                 gambar_satu = :gambar_satu, 
@@ -122,9 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari f
 
     try {
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':nama_produk', $nama_produk, PDO::PARAM_STR);        $stmt->bindParam(':deskripsi', $deskripsi, PDO::PARAM_STR);
+        $stmt->bindParam(':nama_produk', $nama_produk, PDO::PARAM_STR);
+        $stmt->bindParam(':deskripsi', $deskripsi, PDO::PARAM_STR);
         $stmt->bindParam(':manfaat_produk', $manfaat, PDO::PARAM_STR);
         $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
+        $stmt->bindParam(':stok_produk', $stok_product, PDO::PARAM_STR);
         $stmt->bindParam(':harga_produk', $harga_product, PDO::PARAM_STR);
         $stmt->bindParam(':stok', $stok, PDO::PARAM_INT);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
@@ -281,7 +285,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari f
                                 Aromaterapi</option>
                             <option value="Lainnya" <?php echo ($product['sub_kategori'] == 'Lainnya') ? 'selected' : ''; ?>>
                                 Lainnya</option>
-                        </select>                </div>
+                        </select>
+                    </div>
 
                     <!-- Harga Produk dan Stok -->
                     <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -290,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {    // Ambil dan sanitasi data dari f
                             <input type="text" id="product-price" name="product_price"
                                 value="<?php echo htmlspecialchars($product['harga_produk']); ?>" required>
                         </div>
-                        
+
                         <div class="stock-field">
                             <label for="product-stock">
                                 <i class="fas fa-warehouse"></i> Stok Produk

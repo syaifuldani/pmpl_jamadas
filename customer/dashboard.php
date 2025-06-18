@@ -30,7 +30,8 @@ if (isset($_POST['query'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>  <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
+  <title>Dashboard</title>
+  <link rel="icon" href="../resources/img/icons/jamadas2.png" type="image/png">
   <link rel="stylesheet" href="../resources/css/dashboard.css?v=<?= time() ?>">
   <link rel="stylesheet" href="../resources/css/navbar.css?v=<?= time() ?>">
   <link rel="stylesheet" href="../resources/css/chat.css?v=<?= time() ?>">
@@ -156,11 +157,11 @@ if (isset($_POST['query'])) {
   <footer class="footer animate-slide-top animate-delay-2">
     <?php include 'layout/cusmrLayout/footer.php'; ?>
   </footer>
-  </div>  <!-- Chatbot -->
+  </div> <!-- Chatbot -->
   <div class="chat-toggle" id="chatToggleBtn">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
   </div>
-  
+
   <div class="chat-container">
     <div class="chat-header">
       <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
@@ -176,63 +177,63 @@ if (isset($_POST['query'])) {
   <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
   <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
   <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
-    <script>
-  // Pastikan chat toggle berfungsi setelah clear cache
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard chat initializing...');
-    
-    // Tunggu sebentar untuk memastikan semua script ter-load
-    setTimeout(function() {
-      const chatToggle = document.getElementById('chatToggleBtn');
-      
-      if (chatToggle) {
-        console.log('Chat toggle button found');
-        
-        // Hapus event listener yang mungkin sudah ada
-        chatToggle.removeEventListener('click', toggleChat);
-        
-        // Tambahkan event listener baru
-        chatToggle.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Chat toggle clicked!');
-          
-          // Pastikan function toggleChat tersedia
-          if (typeof toggleChat === 'function') {
-            toggleChat();
-          } else {
-            console.error('toggleChat function not found');
-            // Fallback manual toggle
+  <script>
+    // Pastikan chat toggle berfungsi setelah clear cache
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('Dashboard chat initializing...');
+
+      // Tunggu sebentar untuk memastikan semua script ter-load
+      setTimeout(function () {
+        const chatToggle = document.getElementById('chatToggleBtn');
+
+        if (chatToggle) {
+          console.log('Chat toggle button found');
+
+          // Hapus event listener yang mungkin sudah ada
+          chatToggle.removeEventListener('click', toggleChat);
+
+          // Tambahkan event listener baru
+          chatToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Chat toggle clicked!');
+
+            // Pastikan function toggleChat tersedia
+            if (typeof toggleChat === 'function') {
+              toggleChat();
+            } else {
+              console.error('toggleChat function not found');
+              // Fallback manual toggle
+              const chatContainer = document.querySelector('.chat-container');
+              if (chatContainer) {
+                chatContainer.classList.toggle('active');
+              }
+            }
+          });
+
+          console.log('Chat toggle event listener attached');
+        } else {
+          console.error('Chat toggle button not found');
+        }
+      }, 500);
+    });
+
+    // Tambahkan fallback jika semua gagal
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        const chatToggle = document.getElementById('chatToggleBtn');
+        if (chatToggle && !chatToggle.onclick) {
+          console.log('Adding fallback onclick handler');
+          chatToggle.onclick = function () {
+            console.log('Fallback chat toggle activated');
             const chatContainer = document.querySelector('.chat-container');
             if (chatContainer) {
               chatContainer.classList.toggle('active');
+              console.log('Chat toggled via fallback');
             }
-          }
-        });
-        
-        console.log('Chat toggle event listener attached');
-      } else {
-        console.error('Chat toggle button not found');
-      }
-    }, 500);
-  });
-  
-  // Tambahkan fallback jika semua gagal
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      const chatToggle = document.getElementById('chatToggleBtn');
-      if (chatToggle && !chatToggle.onclick) {
-        console.log('Adding fallback onclick handler');
-        chatToggle.onclick = function() {
-          console.log('Fallback chat toggle activated');
-          const chatContainer = document.querySelector('.chat-container');
-          if (chatContainer) {
-            chatContainer.classList.toggle('active');
-            console.log('Chat toggled via fallback');
-          }
-        };
-      }
-    }, 1000);
-  });
+          };
+        }
+      }, 1000);
+    });
   </script>
 </body>

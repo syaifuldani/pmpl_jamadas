@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password">
                     <span class="error-message"><?= isset($errors['password']) ? $errors['password'] : ''; ?></span>
+                    <span class="error-message"><?= isset($errors['login']) ? $errors['login'] : ''; ?></span>
                 </div>
                 <button type="submit">Login</button>
             </form>

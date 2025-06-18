@@ -5,7 +5,7 @@
     width: 350px;
     background: #fff;
     border-radius: 15px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
     transform: translateY(100%);
     opacity: 0;
     transition: all 0.3s ease;
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     padding: 15px;
-    background: #4CAF50;
+    background: #4caf50;
     border-radius: 15px 15px 0 0;
     color: #fff;
 }
@@ -39,7 +39,7 @@
     padding: 15px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #4CAF50 #f3f4f6;
+    scrollbar-color: #4caf50 #f3f4f6;
 }
 
 .chat-message {
@@ -60,7 +60,7 @@
 }
 
 .bot-message {
-    background: #4CAF50;
+    background: #4caf50;
     color: #ffffff;
     margin-right: auto;
     border-radius: 15px 15px 15px 0;
@@ -95,11 +95,11 @@
 
 .chat-input input:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #4caf50;
 }
 
 .chat-input button {
-    background: #4CAF50;
+    background: #4caf50;
     color: #fff;
     border: none;
     padding: 12px 20px;
@@ -121,13 +121,13 @@
     right: 20px !important;
     width: 60px !important;
     height: 60px !important;
-    background: #4CAF50 !important;
+    background: #4caf50 !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
     transition: transform 0.3s ease !important;
     z-index: 1500 !important;
     border: 2px solid #fff !important;
@@ -158,13 +158,13 @@
     display: inline-block;
     margin-top: 8px;
     padding: 4px 8px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     transition: all 0.3s ease;
 }
 
 .jamu-link:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     text-decoration: none;
     opacity: 0.8;
 }
@@ -183,7 +183,7 @@
 
 /* Pastikan tidak ada elemen yang menghalangi */
 body::after {
-    content: '';
+    content: "";
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -214,12 +214,24 @@ body::after {
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
