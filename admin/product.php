@@ -2,7 +2,7 @@
 session_start();
 
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();

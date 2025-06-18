@@ -105,6 +105,7 @@ function loginCustomer($data)
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_name'] = $user['nama_lengkap'];
                 $_SESSION['user_profile'] = $user['profile_image'];
+                $_SESSION['jenis_pengguna'] = $user['jenis_pengguna'];
 
                 // Redirect ke halaman dashboard
                 header("Location: dashboard.php");
@@ -983,6 +984,54 @@ function getStatusLabel($status)
     return $labels[$status] ?? $status;
 }
 
+function getStatusIcon($status)
+{
+    $icons = [
+        'pending' => 'fa-clock',
+        'settlement' => 'fa-check-circle',
+        'processing' => 'fa-box',
+        'shipped' => 'fa-shipping-fast',
+        'delivered' => 'fa-check-double',
+        'cancelled' => 'fa-times-circle',
+        'failed' => 'fa-exclamation-triangle',
+        'expire' => 'fa-hourglass-end'
+    ];
+
+    return $icons[strtolower($status)] ?? 'fa-info-circle';
+}
+
+function getStatusClass($status)
+{
+    $classes = [
+        'pending' => 'pending',
+        'settlement' => 'success',
+        'processing' => 'processing',
+        'shipped' => 'shipped',
+        'delivered' => 'delivered',
+        'cancelled' => 'cancelled',
+        'failed' => 'failed',
+        'expire' => 'expired'
+    ];
+
+    return $classes[strtolower($status)] ?? 'default';
+}
+
+function getStatusColor($status)
+{
+    $colors = [
+        'pending' => '#ffc107',      // Kuning
+        'settlement' => '#28a745',   // Hijau
+        'processing' => '#17a2b8',   // Biru
+        'shipped' => '#6f42c1',      // Ungu
+        'delivered' => '#28a745',    // Hijau tua
+        'cancelled' => '#dc3545',    // Merah
+        'failed' => '#dc3545',       // Merah
+        'expire' => '#6c757d'        // Abu-abu
+    ];
+
+    return $colors[strtolower($status)] ?? '#6c757d';
+}
+
 function getOrdersByID($userId, $status = null)
 {
     global $db;
@@ -1106,29 +1155,181 @@ function CheckTransactionPendingOver24Hours($id)
 {
     global $db;
 
-    // Query untuk memeriksa transaksi yang sudah lebih dari 24 jam
-    $sql = "SELECT order_id FROM orders WHERE user_id = :user_id AND transaction_status = 'pending' AND TIMESTAMPDIFF(HOUR, created_at, NOW()) > 24";
+    try {
+        // Set timezone untuk konsistensi
+        date_default_timezone_set('Asia/Jakarta'); // WIB
 
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
-    $stmt->execute();
+        // Query untuk memeriksa transaksi pending yang sudah lebih dari 24 jam
+        $sql = "SELECT order_id, created_at, 
+                       TIMESTAMPDIFF(SECOND, created_at, NOW()) as seconds_elapsed
+                FROM orders 
+                WHERE user_id = :user_id 
+                AND transaction_status = 'pending' 
+                AND TIMESTAMPDIFF(HOUR, created_at, NOW()) >= 24";
 
-    // Hitung jumlah baris yang terpengaruh
-    $pendingTransaction = $stmt->rowCount();
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
+        $stmt->execute();
 
-    if ($pendingTransaction > 0) {
-        $update_query = "UPDATE orders SET transaction_status = 'cancelled' WHERE user_id = :user_id AND transaction_status ='pending'AND TIMESTAMPDIFF(HOUR, created_at, NOW()) > 24";
+        $expiredOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $updateTransactions = 0;
 
-        $update_stmt = $db->prepare($update_query);
-        $update_stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
-        // Eksekusi query untuk mengupdate status transaksi
-        $update_stmt->execute();
+        if (count($expiredOrders) > 0) {
+            // Log expired orders sebelum update
+            foreach ($expiredOrders as $order) {
+                error_log("Order {$order['order_id']} expired after {$order['seconds_elapsed']} seconds");
+            }
 
-        $updateTransactions = $update_stmt->rowCount(); // Menghitung jumlah transaksi yang diupdate
-    } else {
-        $updateTransactions = 0; // Tidak ada transaksi yang diupdate
+            // Update status transaksi yang sudah expired menjadi cancelled
+            $update_query = "UPDATE orders 
+                           SET transaction_status = 'cancelled', 
+                               updated_at = NOW(),
+                               cancelled_reason = 'Auto cancelled - Payment timeout (24 hours)'
+                           WHERE user_id = :user_id 
+                           AND transaction_status = 'pending' 
+                           AND TIMESTAMPDIFF(HOUR, created_at, NOW()) >= 24";
+
+            $update_stmt = $db->prepare($update_query);
+            $update_stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
+            $update_stmt->execute();
+
+            $updateTransactions = $update_stmt->rowCount();
+
+            error_log("Auto cancelled {$updateTransactions} expired orders for user {$id}");
+        }
+
+        return $updateTransactions;
+
+    } catch (PDOException $e) {
+        error_log("Error in CheckTransactionPendingOver24Hours: " . $e->getMessage());
+        return 0;
     }
-    return $updateTransactions; // Mengembalikan jumlah transaksi yang diupdate
+}
+
+// Fungsi untuk batch check semua transaksi (untuk cron job)
+function CheckAllTransactionsPendingOver24Hours()
+{
+    global $db;
+
+    try {
+        date_default_timezone_set('Asia/Jakarta');
+
+        // Ambil data expired orders sebelum update untuk logging
+        $select_query = "SELECT order_id, user_id, created_at,
+                                TIMESTAMPDIFF(SECOND, created_at, NOW()) as seconds_elapsed
+                         FROM orders 
+                         WHERE transaction_status = 'pending' 
+                         AND TIMESTAMPDIFF(HOUR, created_at, NOW()) >= 24";
+
+        $select_stmt = $db->prepare($select_query);
+        $select_stmt->execute();
+        $expiredOrders = $select_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (count($expiredOrders) > 0) {
+            // Update expired orders
+            $update_query = "UPDATE orders 
+                           SET transaction_status = 'cancelled', 
+                               updated_at = NOW(),
+                               cancelled_reason = 'Auto cancelled - Payment timeout (24 hours)'
+                           WHERE transaction_status = 'pending' 
+                           AND TIMESTAMPDIFF(HOUR, created_at, NOW()) >= 24";
+
+            $stmt = $db->prepare($update_query);
+            $stmt->execute();
+
+            $updateCount = $stmt->rowCount();
+
+            // Detailed logging
+            foreach ($expiredOrders as $order) {
+                error_log("Global: Order {$order['order_id']} (User: {$order['user_id']}) expired after {$order['seconds_elapsed']} seconds");
+            }
+
+            error_log("Auto cancelled {$updateCount} expired orders globally");
+            return $updateCount;
+        }
+
+        return 0;
+
+    } catch (PDOException $e) {
+        error_log("Error in CheckAllTransactionsPendingOver24Hours: " . $e->getMessage());
+        return 0;
+    }
+}
+
+// Fungsi untuk menghitung waktu tersisa dengan timezone consistency
+function getTimeRemaining($created_at)
+{
+    // Set timezone untuk konsistensi
+    date_default_timezone_set('Asia/Jakarta');
+
+    // Parse created_at dengan timezone yang benar
+    $created_time = strtotime($created_at);
+    $expire_time = $created_time + (24 * 60 * 60); // 24 jam sejak transaksi dibuat
+    $current_time = time(); // Current Unix timestamp in local timezone
+
+    $time_remaining = $expire_time - $current_time;
+
+    // Log untuk debugging (hanya jika diperlukan)
+    // if (defined('DEBUG_COUNTDOWN') && 'DEBUG_COUNTDOWN') {
+    //     error_log("Countdown Debug - Created: {$created_at}, Created Unix: {$created_time}, Expire Unix: {$expire_time}, Current Unix: {$current_time}, Remaining: {$time_remaining}");
+    // }
+
+    return max(0, $time_remaining);
+}
+
+// Fungsi untuk format waktu tersisa
+function formatTimeRemaining($seconds)
+{
+    if ($seconds <= 0) {
+        return "00:00:00";
+    }
+
+    $hours = floor($seconds / 3600);
+    $minutes = floor(($seconds % 3600) / 60);
+    $seconds = $seconds % 60;
+
+    return sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
+}
+
+// Fungsi untuk check apakah transaksi sudah expired
+function isTransactionExpired($created_at)
+{
+    return getTimeRemaining($created_at) <= 0;
+}
+
+// Fungsi untuk mendapatkan expire timestamp (untuk JavaScript)
+function getExpireTimestamp($created_at)
+{
+    date_default_timezone_set('Asia/Jakarta');
+    $created_time = strtotime($created_at);
+    return $created_time + (24 * 60 * 60);
+}
+
+// Fungsi helper untuk format tanggal Indonesia
+function formatIndonesianDate($datetime)
+{
+    date_default_timezone_set('Asia/Jakarta');
+    $months = [
+        1 => 'Januari',
+        2 => 'Februari',
+        3 => 'Maret',
+        4 => 'April',
+        5 => 'Mei',
+        6 => 'Juni',
+        7 => 'Juli',
+        8 => 'Agustus',
+        9 => 'September',
+        10 => 'Oktober',
+        11 => 'November',
+        12 => 'Desember'
+    ];
+
+    $date = date_create($datetime);
+    $day = $date->format('d');
+    $month = $months[(int) $date->format('n')];
+    $year = $date->format('Y');
+
+    return "{$day} {$month} {$year}";
 }
 
 function updateResi($orderID, $nomor_resi)
@@ -1175,6 +1376,8 @@ function updateResi($orderID, $nomor_resi)
         exit;
     }
 }
+
+
 // ADMIN FUNCTIONS DASHBOARD
 function getPenjualanChart()
 {

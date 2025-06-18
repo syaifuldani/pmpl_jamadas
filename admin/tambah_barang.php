@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                         </div>
-                    </div>                    <!-- Harga Produk dan Stok -->
+                    </div> <!-- Harga Produk dan Stok -->
                     <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="price-field">
                             <label for="product-price">
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                         </div>
-                        
+
                         <div class="stock-field">
                             <label for="product-stock">
                                 <i class="fas fa-warehouse"></i> Stok Produk

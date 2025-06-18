@@ -4,7 +4,7 @@ require '../config/connection.php'; // Menghubungkan dengan file connection.php
 require '../config/function.php';   // Jika diperlukan, untuk fungsi tambahan
 
 // Cek apakah pengguna sudah login
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -115,44 +115,45 @@ if (isset($_GET['delete_id'])) {
 
                 <div class="table-wrapper">
                     <table class="table" id="customerTable">
-                    <thead>
-                        <tr>
+                        <thead>
+                            <tr>
                                 <th><i class="fas fa-hashtag"></i> No</th>
                                 <th><i class="fas fa-user"></i> Nama Lengkap</th>
                                 <th><i class="fas fa-image"></i> Foto Profil</th>
                                 <th><i class="fas fa-envelope"></i> Email</th>
                                 <th><i class="fas fa-phone"></i> Nomor Telepon</th>
                                 <th><i class="fas fa-cogs"></i> Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                            </tr>
+                        </thead>
+                        <tbody>
                             <?php if (!empty($customers)): ?>
-                        <?php foreach ($customers as $customer): ?>
-                            <tr>
-                                <td><?= ++$n; ?></td>
-                                <td><?= htmlspecialchars($customer['nama_lengkap']); ?></td>
-                                <td>
+                                <?php foreach ($customers as $customer): ?>
+                                    <tr>
+                                        <td><?= ++$n; ?></td>
+                                        <td><?= htmlspecialchars($customer['nama_lengkap']); ?></td>
+                                        <td>
                                             <div class="profile-image">
                                                 <?php if (!empty($customer['profile_image'])): ?>
-                                                    <img src="../images/<?= htmlspecialchars($customer['profile_image']); ?>" 
-                                                         alt="Profile Image">
+                                                    <img src="../images/<?= htmlspecialchars($customer['profile_image']); ?>"
+                                                        alt="Profile Image">
                                                 <?php else: ?>
                                                     <i class="fas fa-user"></i>
                                                 <?php endif; ?>
                                             </div>
-                                </td>
-                                <td><?= htmlspecialchars($customer['email']); ?></td>
-                                <td><?= !empty($customer['nomor_telepon']) ? htmlspecialchars($customer['nomor_telepon']) : '-'; ?></td>
-                                <td>
+                                        </td>
+                                        <td><?= htmlspecialchars($customer['email']); ?></td>
+                                        <td><?= !empty($customer['nomor_telepon']) ? htmlspecialchars($customer['nomor_telepon']) : '-'; ?>
+                                        </td>
+                                        <td>
                                             <div class="aksi">
-                                                <button onclick="confirmDelete('?delete_id=<?= $customer['user_id']; ?>')" 
-                                                        class="btn-delete">
+                                                <button onclick="confirmDelete('?delete_id=<?= $customer['user_id']; ?>')"
+                                                    class="btn-delete">
                                                     <i class="fas fa-trash-alt"></i> Hapus
                                                 </button>
                                             </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="6" class="no-data">
@@ -161,8 +162,8 @@ if (isset($_GET['delete_id'])) {
                                     </td>
                                 </tr>
                             <?php endif; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div class="pagination">
@@ -195,15 +196,15 @@ if (isset($_GET['delete_id'])) {
     </div>
     <script src="https://kit.fontawesome.com/your-font-awesome-kit-id.js" crossorigin="anonymous"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');
             const customerTable = document.getElementById('customerTable');
             const rows = customerTable.getElementsByTagName('tr');
 
-            searchInput.addEventListener('input', function(e) {
+            searchInput.addEventListener('input', function (e) {
                 e.preventDefault(); // Mencegah refresh halaman
                 const searchTerm = this.value.toLowerCase();
-                
+
                 // Mulai dari index 1 untuk melewati header tabel
                 for (let i = 1; i < rows.length; i++) {
                     const row = rows[i];
@@ -213,8 +214,8 @@ if (isset($_GET['delete_id'])) {
                     // Cari di kolom nama dan email
                     const namaCell = cells[1]; // Index kolom nama
                     const emailCell = cells[3]; // Index kolom email
-                    
-                    if (namaCell.textContent.toLowerCase().includes(searchTerm) || 
+
+                    if (namaCell.textContent.toLowerCase().includes(searchTerm) ||
                         emailCell.textContent.toLowerCase().includes(searchTerm)) {
                         found = true;
                     }

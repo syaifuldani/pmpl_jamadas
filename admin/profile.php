@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -248,6 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <i class="fas fa-user-circle"></i>
             Profil Admin
         </h1>
+
         <div class="content-wrapper">
             <div class="profile-info">
                 <!-- <div class="profile-pic">
@@ -327,15 +328,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             });
         <?php endif; ?>
 
-        document.querySelector('.profile-pic').addEventListener('click', function() {
+        document.querySelector('.profile-pic').addEventListener('click', function () {
             document.querySelector('#imageUpload').click();
         });
 
-        document.querySelector('#imageUpload').addEventListener('change', function() {
+        document.querySelector('#imageUpload').addEventListener('change', function () {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     document.querySelector('#profileImage').src = e.target.result;
                 };
                 reader.readAsDataURL(file);

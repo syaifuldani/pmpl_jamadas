@@ -2,7 +2,7 @@
 session_start();
 
 // Cek apakah pengguna sudah login
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
     // Jika tidak ada session login, redirect ke halaman login
     header("Location: login_admin.php");
     exit();
@@ -26,14 +26,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_chart_data') {
     foreach ($salesData as $item) {
         $formattedSalesData[] = [
             'period' => $item['period'],
-            'total' => (int)$item['total']
+            'total' => (int) $item['total']
         ];
     }
 
     foreach ($revenueData as $item) {
         $formattedRevenueData[] = [
             'period' => $item['period'],
-            'total_pendapatan' => (float)$item['total_pendapatan']
+            'total_pendapatan' => (float) $item['total_pendapatan']
         ];
     }
 
@@ -82,7 +82,7 @@ $low_stock_products = getLowStockProducts(5);
     <div class="container">
         <?php require "template/sidebar.php"; ?>
         <main id="content-to-download" class="main-content">
-            <?php require "template/header.php"; ?>            <!-- Dashboard Cards -->
+            <?php require "template/header.php"; ?> <!-- Dashboard Cards -->
             <section class="dashboard-cards">
                 <div class="card">
                     <h3>Total Pesanan Dibatalkan</h3>
@@ -212,49 +212,50 @@ $low_stock_products = getLowStockProducts(5);
                                 <td><?= htmlspecialchars($item['transaction_status']) ?></td>
                             </tr>
                         <?php endforeach; ?>
-                    </tbody>                </table>
+                    </tbody>
+                </table>
             </section>
 
             <!-- Low Stock Products Section -->
             <?php if (!empty($low_stock_products)): ?>
-            <section class="recent-orders">
-                <div class="header">
-                    <h3><i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> Produk Stok Menipis</h3>
-                    <small><?= count($low_stock_products) ?> produk perlu diperhatikan</small>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nama Produk</th>
-                            <th>Kategori</th>
-                            <th>Sub Kategori</th>
-                            <th>Stok Saat Ini</th>
-                            <th>Harga</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($low_stock_products as $product): ?>
+                <section class="recent-orders">
+                    <div class="header">
+                        <h3><i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> Produk Stok Menipis</h3>
+                        <small><?= count($low_stock_products) ?> produk perlu diperhatikan</small>
+                    </div>
+                    <table>
+                        <thead>
                             <tr>
-                                <td><?= htmlspecialchars($product['nama_produk']) ?></td>
-                                <td><?= htmlspecialchars($product['kategori']) ?></td>
-                                <td><?= htmlspecialchars($product['sub_kategori']) ?></td>
-                                <td>
-                                    <span class="stock-badge <?= $product['stok'] == 0 ? 'out-of-stock' : 'low-stock' ?>">
-                                        <?= $product['stok'] ?>
-                                    </span>
-                                </td>
-                                <td>Rp.<?= number_format($product['harga_produk'], 0, ',', '.') ?></td>
-                                <td>
-                                    <a href="edit_barang.php?id=<?= $product['product_id'] ?>" class="btn-edit">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                </td>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Sub Kategori</th>
+                                <th>Stok Saat Ini</th>
+                                <th>Harga</th>
+                                <th>Aksi</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </section>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($low_stock_products as $product): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($product['nama_produk']) ?></td>
+                                    <td><?= htmlspecialchars($product['kategori']) ?></td>
+                                    <td><?= htmlspecialchars($product['sub_kategori']) ?></td>
+                                    <td>
+                                        <span class="stock-badge <?= $product['stok'] == 0 ? 'out-of-stock' : 'low-stock' ?>">
+                                            <?= $product['stok'] ?>
+                                        </span>
+                                    </td>
+                                    <td>Rp.<?= number_format($product['harga_produk'], 0, ',', '.') ?></td>
+                                    <td>
+                                        <a href="edit_barang.php?id=<?= $product['product_id'] ?>" class="btn-edit">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </section>
             <?php endif; ?>
         </main>
     </div>
@@ -324,7 +325,7 @@ $low_stock_products = getLowStockProducts(5);
         }
 
         // Initialize charts with default data
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Get initial data from PHP
             const bulan = <?php echo json_encode(array_column($penjualan_chart, 'bulan')); ?>;
             const totalPenjualan = <?php echo json_encode(array_column($penjualan_chart, 'total')); ?>;
@@ -400,7 +401,7 @@ $low_stock_products = getLowStockProducts(5);
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function(value) {
+                                callback: function (value) {
                                     return 'Rp ' + value.toLocaleString('id-ID');
                                 }
                             }
@@ -408,7 +409,7 @@ $low_stock_products = getLowStockProducts(5);
                     },
                     tooltips: {
                         callbacks: {
-                            label: function(tooltipItem, data) {
+                            label: function (tooltipItem, data) {
                                 return data.datasets[tooltipItem.datasetIndex].label + ': Rp ' + tooltipItem.yLabel.toLocaleString('id-ID');
                             }
                         }
@@ -417,7 +418,7 @@ $low_stock_products = getLowStockProducts(5);
             });
 
             // Add event listener for period filter
-            document.getElementById('period-filter').addEventListener('change', function() {
+            document.getElementById('period-filter').addEventListener('change', function () {
                 const selectedPeriod = this.value;
                 updateCharts(selectedPeriod);
             });
@@ -426,8 +427,8 @@ $low_stock_products = getLowStockProducts(5);
 
     <script>
         // Fungsi untuk mengunduh halaman sebagai PDF
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('download-pdf').addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('download-pdf').addEventListener('click', function () {
                 const element = document.getElementById(
                     'content-to-download'); // Tentukan elemen khusus untuk diunduh
                 const options = {

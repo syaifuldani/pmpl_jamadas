@@ -125,17 +125,58 @@ if ($targetOrderId) {
             <!-- Orders Container -->
             <div class="orders-container">
                 <?php foreach ($orders as $order): ?>
-                    <div class="order-card" data-status="<?= $order['transaction_status'] ?>" id="order-<?= htmlspecialchars($order['order_id']) ?>">
+                    <div class="order-card" data-status="<?= $order['transaction_status'] ?>"
+                        id="order-<?= htmlspecialchars($order['order_id']) ?>">
                         <div class="order-header">
                             <div class="order-date">
                                 <i class="fas fa-calendar"></i>
-                                <?= date('d F Y', strtotime($order['created_at'])) ?>
+                                <?= formatIndonesianDate($order['created_at']) ?>
                             </div>
-                            <div class="order-status <?= strtolower($order['transaction_status']) ?>">
-                                <span
-                                    class="order-status status-<?= !empty($order['transaction_status']) ? strtolower($order['transaction_status']) : 'pending' ?>">
-                                    <?= getStatusLabel($order['transaction_status']) ?>
-                                </span>
+                            <div class="order-status-container">
+                                <div class="order-status <?= strtolower($order['transaction_status']) ?>">
+                                    <span
+                                        class="order-status status-<?= !empty($order['transaction_status']) ? strtolower($order['transaction_status']) : 'pending' ?>">
+                                        <?= getStatusLabel($order['transaction_status']) ?>
+                                    </span>
+                                </div>
+
+                                <?php if ($order['transaction_status'] == 'pending'): ?>
+                                    <?php
+                                    // Jalankan pengecekan expired transaction sebelum menampilkan countdown
+                                    $expiredCount = CheckTransactionPendingOver24Hours($order['user_id']);
+
+                                    // Jika ada transaksi yang di-update, reload halaman untuk sinkronisasi
+                                    if ($expiredCount > 0) {
+                                        echo '<script>setTimeout(() => location.reload(), 1000);</script>';
+                                    }
+
+                                    // Hitung waktu tersisa setelah pengecekan
+                                    $timeRemaining = getTimeRemaining($order['created_at']);
+                                    $isExpired = isTransactionExpired($order['created_at']);
+                                    $isWarning = $timeRemaining > 0 && $timeRemaining <= 3600; // Warning jika < 1 jam
+                                    $expireTimestamp = getExpireTimestamp($order['created_at']);
+                                    ?>
+
+                                    <?php if ($isExpired): ?>
+                                        <div class="countdown-timer expired">
+                                            <div class="countdown-label">MENUNGGU PEMBAYARAN</div>
+                                            <div class="countdown-text expired-text">00:00:00</div>
+                                            <div class="countdown-status">Waktu Habis</div>
+                                        </div>
+                                        <script>
+                                            // Auto reload untuk update status ke cancelled
+                                            setTimeout(() => location.reload(), 2000);
+                                        </script>
+                                    <?php else: ?>
+                                        <div class="countdown-timer <?= $isWarning ? 'warning' : '' ?>"
+                                            data-expire-time="<?= $expireTimestamp ?>"
+                                            data-created-time="<?= strtotime($order['created_at']) ?>"
+                                            data-order-id="<?= $order['order_id'] ?>">
+                                            <div class="countdown-label">MENUNGGU PEMBAYARAN</div>
+                                            <div class="countdown-text"><?= formatTimeRemaining($timeRemaining) ?></div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -202,11 +243,14 @@ if ($targetOrderId) {
                                 }
 
                                 if ($hasReviewed): ?>
-                                    <a href="productdetail.php?id=<?= htmlspecialchars($order['items'][0]['product_id']) ?>" class="btn-review view-review">
+                                    <a href="productdetail.php?id=<?= htmlspecialchars($order['items'][0]['product_id']) ?>"
+                                        class="btn-review view-review">
                                         Lihat Ulasan
                                     </a>
                                 <?php else: ?>
-                                    <button class="btn-review" onclick="openReviewModal('<?= $order['order_id'] ?>', '<?= $order['items'][0]['product_id'] ?>')" type="button">
+                                    <button class="btn-review"
+                                        onclick="openReviewModal('<?= $order['order_id'] ?>', '<?= $order['items'][0]['product_id'] ?>')"
+                                        type="button">
                                         Berikan Ulasan
                                     </button>
                                 <?php endif; ?>
@@ -296,9 +340,9 @@ if ($targetOrderId) {
                 formData.append('status', 'delivered');
 
                 fetch('../config/updateStatusAfterDelivered.php', {
-                        method: 'POST',
-                        body: formData
-                    })
+                    method: 'POST',
+                    body: formData
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'success') {
@@ -355,9 +399,9 @@ if ($targetOrderId) {
             submitButton.textContent = 'Mengirim...';
 
             fetch('../config/submit_review.php', {
-                    method: 'POST',
-                    body: formData
-                })
+                method: 'POST',
+                body: formData
+            })
                 .then(async response => {
                     // Log the raw response
                     const responseText = await response.text();
@@ -379,7 +423,9 @@ if ($targetOrderId) {
                         closeReviewModal();
 
                         // Change the review button to a link
-                        const reviewBtn = document.querySelector(`button[onclick="openReviewModal('${formData.get('order_id')}', '${formData.get('product_id')}')"]`);
+                        const reviewBtn = document.querySelector(
+                            `button[onclick="openReviewModal('${formData.get('order_id')}', '${formData.get('product_id')}')"]`
+                        );
                         if (reviewBtn) {
                             const productId = formData.get('product_id');
                             const newLink = document.createElement('a');
@@ -407,7 +453,7 @@ if ($targetOrderId) {
         }
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('reviewModal');
             if (event.target == modal) {
                 closeReviewModal();
@@ -416,11 +462,12 @@ if ($targetOrderId) {
     </script>
     <!-- Tambahkan di bagian head -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="../resources/js/CountdownTime.js"></script>
     <script src="../resources/js/LihatDetailPesananCust.js"></script>
     <script src="../resources/js/ExistingOrder.js"></script>
     <script src="../resources/js/CetakNota.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const targetOrderId = '<?= $targetOrderId ?>';
             const targetOrderStatus = '<?= $targetOrderStatus ?>';
 

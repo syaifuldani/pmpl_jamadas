@@ -6,10 +6,12 @@ require_once '../config/connection.php';
 require_once '../config/function.php';
 
 // Cek apakah user adalah admin
-if (!isset($_SESSION['user_id']) && $_SESSION['user_id'] != 'admin') {
-    header('Location: login_admin.php');
-    exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['jenis_pengguna'] != 'admin') {
+    // Jika tidak ada session login, redirect ke halaman login
+    header("Location: login_admin.php");
+    exit();
 }
+
 // var_dump($_SESSION['user_id']);
 // Ambil order_id dari parameter URL
 $order_id = $_GET['order_id'] ?? null;
@@ -109,191 +111,210 @@ try {
 
             <div class="order-detail-container">
                 <?php if ($order): ?>
-                    <div class="order-header">
-                        <div class="header-left">
-                            <a href="../admin/orderlist.php" class="back-button">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
-                            <h2>Detail Order #<?= htmlspecialchars($order['order_id']) ?></h2>
-                        </div>
-                        <div class="header-right">
-                            <span class="order-date">
-                                <i class="far fa-calendar-alt"></i>
-                                <?= date('d F Y H:i', strtotime($order['created_at'])) ?>
-                            </span>
-                            <span class="order-status <?= strtolower($order['transaction_status']) ?>">
-                                <?= ucfirst($order['transaction_status']) ?>
-                            </span>
-                        </div>
+                <div class="order-header">
+                    <div class="header-left">
+                        <a href="../admin/orderlist.php" class="back-button">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                        <h2>Detail Order #<?= htmlspecialchars($order['order_id']) ?></h2>
                     </div>
-
-                    <div class="order-info-grid">
-                        <div class="info-card">
-                            <div class="card-header">
-                                <i class="fas fa-user"></i>
-                                <h3>Informasi Pelanggan</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="info-item">
-                                    <span class="info-label">Username:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['nama_lengkap'] ?? '-') ?></span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">Nama Penerima:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['nama_penerima'] ?? '-') ?></span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">No. Telepon:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['nomor_penerima'] ?? '-') ?></span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">Email:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['email'] ?? '-') ?></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="info-card">
-                            <div class="card-header">
-                                <i class="fas fa-truck"></i>
-                                <h3>Informasi Pengiriman</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="info-item">
-                                    <span class="info-label">Alamat:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['alamat_penerima'] ?? '-') ?></span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">Kota:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['kota'] ?? '-') ?></span>
-                                </div>
-                                <div class="info-item">
-                                    <span class="info-label">Kode Pos:</span>
-                                    <span class="info-value"><?= htmlspecialchars($order['kodepos'] ?? '-') ?></span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="header-right">
+                        <span class="order-date">
+                            <i class="far fa-calendar-alt"></i>
+                            <?= date('d F Y H:i', strtotime($order['created_at'])) ?>
+                        </span>
+                        <span class="status-badge <?= getStatusClass($order['transaction_status']); ?>">
+                            <i class="fas <?= getStatusIcon($order['transaction_status']); ?>"></i>
+                            <?= getStatusLabel($order['transaction_status']); ?>
+                        </span>
                     </div>
+                </div>
 
-                    <div class="products-card">
+                <div class="order-info-grid">
+                    <div class="info-card">
                         <div class="card-header">
-                            <i class="fas fa-shopping-cart"></i>
-                            <h3>Detail Produk</h3>
+                            <i class="fas fa-user"></i>
+                            <h3>Informasi Pelanggan</h3>
                         </div>
                         <div class="card-body">
-                            <table class="products-table">
-                                <thead>
-                                    <tr>
-                                        <th>Produk</th>
-                                        <th>Harga</th>
-                                        <th>Jumlah</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($items as $item): ?>
-                                        <tr>
-                                            <td>
-                                                <div class="product-info">
-                                                    <?php if (!empty($item['gambar_satu'])): ?>
-                                                        <img src="data:image/jpeg;base64,<?= base64_encode($item['gambar_satu']) ?>"
-                                                            class="product-image"
-                                                            alt="<?= htmlspecialchars($item['nama_produk']) ?>">
-                                                    <?php else: ?>
-                                                        <div class="no-image">
-                                                            <i class="fas fa-image"></i>
-                                                        </div>
-                                                    <?php endif; ?>
-                                                    <span class="product-name"><?= htmlspecialchars($item['nama_produk']) ?></span>
-                                                </div>
-                                            </td>
-                                            <td>Rp <?= number_format($item['harga_order'], 0, ',', '.') ?></td>
-                                            <td><?= $item['jumlah_order'] ?></td>
-                                            <td>Rp <?= number_format($item['harga_order'] * $item['jumlah_order'], 0, ',', '.') ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    <tr class="total-row">
-                                        <td colspan="3">Total Pembayaran:</td>
-                                        <td>Rp <?= number_format($order['total_harga'], 0, ',', '.') ?></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="info-item">
+                                <span class="info-label">Username:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['nama_lengkap'] ?? '-') ?></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Nama Penerima:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['nama_penerima'] ?? '-') ?></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">No. Telepon:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['nomor_penerima'] ?? '-') ?></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['email'] ?? '-') ?></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="action-cards">
-                        <div class="action-card">
-                            <div class="card-header">
-                                <i class="fas fa-sync-alt"></i>
-                                <h3>Update Status Pesanan</h3>
+                    <div class="info-card">
+                        <div class="card-header">
+                            <i class="fas fa-truck"></i>
+                            <h3>Informasi Pengiriman</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-item">
+                                <span class="info-label">Alamat:</span>
+                                <span
+                                    class="info-value"><?= htmlspecialchars($order['alamat_penerima'] ?? '-') ?></span>
                             </div>
-                            <div class="card-body">
-                                <form class="status-form" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?order_id=<?= $order['order_id'] ?>">
-                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
-                                    <select name="status" class="status-select">
-                                        <option value="pending" <?= $order['transaction_status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                        <option value="processing" <?= $order['transaction_status'] == 'processing' ? 'selected' : '' ?>>Dikemas</option>
-                                        <option value="shipped" <?= $order['transaction_status'] == 'shipped' ? 'selected' : '' ?>>Dikirim</option>
-                                        <option value="delivered" <?= $order['transaction_status'] == 'delivered' ? 'selected' : '' ?>>Terkirim</option>
-                                        <option value="cancelled" <?= $order['transaction_status'] == 'cancelled' ? 'selected' : '' ?>>Dibatalkan</option>
-                                    </select>
-                                    <button type="submit" name="update_status" class="update-btn">
-                                        <i class="fas fa-save"></i> Update Status
+                            <div class="info-item">
+                                <span class="info-label">Kota:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['kota'] ?? '-') ?></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Kode Pos:</span>
+                                <span class="info-value"><?= htmlspecialchars($order['kodepos'] ?? '-') ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="products-card">
+                    <div class="card-header">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Detail Produk</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                <tr>
+                                    <td>
+                                        <div class="product-info">
+                                            <?php if (!empty($item['gambar_satu'])): ?>
+                                            <img src="data:image/jpeg;base64,<?= base64_encode($item['gambar_satu']) ?>"
+                                                class="product-image"
+                                                alt="<?= htmlspecialchars($item['nama_produk']) ?>">
+                                            <?php else: ?>
+                                            <div class="no-image">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            <?php endif; ?>
+                                            <span
+                                                class="product-name"><?= htmlspecialchars($item['nama_produk']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td>Rp <?= number_format($item['harga_order'], 0, ',', '.') ?></td>
+                                    <td><?= $item['jumlah_order'] ?></td>
+                                    <td>Rp
+                                        <?= number_format($item['harga_order'] * $item['jumlah_order'], 0, ',', '.') ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <tr class="total-row">
+                                    <td colspan="3">Total Pembayaran:</td>
+                                    <td>Rp <?= number_format($order['total_harga'], 0, ',', '.') ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="action-cards">
+                    <div class="action-card">
+                        <div class="card-header">
+                            <i class="fas fa-sync-alt"></i>
+                            <h3>Update Status Pesanan</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="status-form" method="POST"
+                                action="<?= $_SERVER['PHP_SELF'] ?>?order_id=<?= $order['order_id'] ?>">
+                                <input type="hidden" name="order_id"
+                                    value="<?= htmlspecialchars($order['order_id']) ?>">
+                                <select name="status" class="status-select">
+                                    <option value="pending"
+                                        <?= $order['transaction_status'] == 'pending' ? 'selected' : '' ?>>Pending
+                                    </option>
+                                    <option value="processing"
+                                        <?= $order['transaction_status'] == 'processing' ? 'selected' : '' ?>>Dikemas
+                                    </option>
+                                    <option value="shipped"
+                                        <?= $order['transaction_status'] == 'shipped' ? 'selected' : '' ?>>Dikirim
+                                    </option>
+                                    <option value="delivered"
+                                        <?= $order['transaction_status'] == 'delivered' ? 'selected' : '' ?>>Terkirim
+                                    </option>
+                                    <option value="cancelled"
+                                        <?= $order['transaction_status'] == 'cancelled' ? 'selected' : '' ?>>Dibatalkan
+                                    </option>
+                                </select>
+                                <button type="submit" name="update_status" class="update-btn">
+                                    <i class="fas fa-save"></i> Update Status
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="card-header">
+                            <i class="fas fa-barcode"></i>
+                            <h3>Input Nomor Resi</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="resi-form" method="POST"
+                                action="<?= $_SERVER['PHP_SELF'] ?>?order_id=<?= $order['order_id'] ?>">
+                                <input type="hidden" name="order_id"
+                                    value="<?= htmlspecialchars($order['order_id']) ?>">
+                                <div class="input-group">
+                                    <input type="text" name="nomor_resi" class="resi-input"
+                                        placeholder="Masukkan nomor resi"
+                                        value="<?= isset($shipments[0]['nomor_resi']) ? htmlspecialchars($shipments[0]['nomor_resi']) : '' ?>">
+                                    <button type="submit" name="update_resi" class="resi-btn">
+                                        <i class="fas fa-save"></i> Simpan Resi
                                     </button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="action-card">
-                            <div class="card-header">
-                                <i class="fas fa-barcode"></i>
-                                <h3>Input Nomor Resi</h3>
-                            </div>
-                            <div class="card-body">
-                                <form class="resi-form" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?order_id=<?= $order['order_id'] ?>">
-                                    <input type="hidden" name="order_id" value="<?= htmlspecialchars($order['order_id']) ?>">
-                                    <div class="input-group">
-                                        <input type="text" name="nomor_resi" class="resi-input"
-                                            placeholder="Masukkan nomor resi"
-                                            value="<?= isset($shipments[0]['nomor_resi']) ? htmlspecialchars($shipments[0]['nomor_resi']) : '' ?>">
-                                        <button type="submit" name="update_resi" class="resi-btn">
-                                            <i class="fas fa-save"></i> Simpan Resi
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                </div>
                 <?php else: ?>
-                    <div class="no-data">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Order tidak ditemukan</p>
-                    </div>
+                <div class="no-data">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Order tidak ditemukan</p>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
     <?php if (isset($_SESSION['success'])): ?>
-        <script>
-            showAlert('<?= $_SESSION['success'] ?>', 'success');
-        </script>
-        <?php unset($_SESSION['success']); ?>
+    <script>
+    showAlert('<?= $_SESSION['success'] ?>', 'success');
+    </script>
+    <?php unset($_SESSION['success']); ?>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
-        <script>
-            showAlert('<?= $_SESSION['error'] ?>', 'error');
-        </script>
-        <?php unset($_SESSION['error']); ?>
+    <script>
+    showAlert('<?= $_SESSION['error'] ?>', 'error');
+    </script>
+    <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
     <script>
-        document.querySelector('.status-form').addEventListener('submit', function(e) {
-            if (!confirm('Apakah Anda yakin ingin mengubah status pesanan ini?')) {
-                e.preventDefault();
-            }
-        });
+    document.querySelector('.status-form').addEventListener('submit', function(e) {
+        if (!confirm('Apakah Anda yakin ingin mengubah status pesanan ini?')) {
+            e.preventDefault();
+        }
+    });
     </script>
 </body>
 
