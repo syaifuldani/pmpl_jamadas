@@ -59,6 +59,10 @@ $penjualan_terbanyak = getPenjualanTerbanyak();
 $pesanan_terbaru = getPesananTerbaru();
 $penjualan_chart = getPenjualanChart();
 $total_pendapatan_per_bulan = getTotalRevenueByMonth();
+
+// Get stock data
+$stock_stats = getStockStatistics();
+$low_stock_products = getLowStockProducts(5);
 ?>
 
 <!DOCTYPE html>
@@ -78,8 +82,7 @@ $total_pendapatan_per_bulan = getTotalRevenueByMonth();
     <div class="container">
         <?php require "template/sidebar.php"; ?>
         <main id="content-to-download" class="main-content">
-            <?php require "template/header.php"; ?>
-            <!-- Dashboard Cards -->
+            <?php require "template/header.php"; ?>            <!-- Dashboard Cards -->
             <section class="dashboard-cards">
                 <div class="card">
                     <h3>Total Pesanan Dibatalkan</h3>
@@ -92,6 +95,13 @@ $total_pendapatan_per_bulan = getTotalRevenueByMonth();
                 <div class="card">
                     <h3>Total Pengguna</h3>
                     <p><?= htmlspecialchars($total_pengguna) ?></p>
+                </div>
+                <div class="card <?= $stock_stats['low_stock'] > 0 ? 'warning' : '' ?>">
+                    <h3>Stok Menipis</h3>
+                    <p><?= htmlspecialchars($stock_stats['low_stock']) ?> Produk</p>
+                    <?php if ($stock_stats['low_stock'] > 0): ?>
+                        <small style="color: #856404;">⚠️ Perlu perhatian</small>
+                    <?php endif; ?>
                 </div>
             </section>
 
@@ -202,9 +212,50 @@ $total_pendapatan_per_bulan = getTotalRevenueByMonth();
                                 <td><?= htmlspecialchars($item['transaction_status']) ?></td>
                             </tr>
                         <?php endforeach; ?>
+                    </tbody>                </table>
+            </section>
+
+            <!-- Low Stock Products Section -->
+            <?php if (!empty($low_stock_products)): ?>
+            <section class="recent-orders">
+                <div class="header">
+                    <h3><i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> Produk Stok Menipis</h3>
+                    <small><?= count($low_stock_products) ?> produk perlu diperhatikan</small>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Sub Kategori</th>
+                            <th>Stok Saat Ini</th>
+                            <th>Harga</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($low_stock_products as $product): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($product['nama_produk']) ?></td>
+                                <td><?= htmlspecialchars($product['kategori']) ?></td>
+                                <td><?= htmlspecialchars($product['sub_kategori']) ?></td>
+                                <td>
+                                    <span class="stock-badge <?= $product['stok'] == 0 ? 'out-of-stock' : 'low-stock' ?>">
+                                        <?= $product['stok'] ?>
+                                    </span>
+                                </td>
+                                <td>Rp.<?= number_format($product['harga_produk'], 0, ',', '.') ?></td>
+                                <td>
+                                    <a href="edit_barang.php?id=<?= $product['product_id'] ?>" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </section>
+            <?php endif; ?>
         </main>
     </div>
 

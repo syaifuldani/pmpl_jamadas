@@ -474,12 +474,58 @@ if (isset($_POST['query'])) {
     .detail-button:hover {
         background-color: #77dd77;
         color: white;
-    }
-
-    .detail-button p {
+    }    .detail-button p {
         margin: 0;
         font-size: 14px;
         font-weight: 500;
+    }
+
+    .stock-info-card {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .stock-text {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .stock-count {
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .stock-count.normal-stock {
+        color: #155724;
+        background-color: #d4edda;
+    }
+
+    .stock-count.low-stock {
+        color: #721c24;
+        background-color: #f8d7da;
+    }
+
+    .stock-status {
+        font-size: 10px;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+
+    .stock-status.low-stock {
+        color: #856404;
+        background-color: #fff3cd;
+    }
+
+    .stock-status.out-of-stock {
+        color: #721c24;
+        background-color: #f8d7da;
     }
 
     @media (max-width: 768px) {
@@ -661,10 +707,20 @@ if (isset($_POST['query'])) {
                             alt="<?= htmlspecialchars($produk['nama_produk']) ?>">
                         <div class="description">
                             <p><?= htmlspecialchars($produk['deskripsi']) ?></p>
-                        </div>
-                        <div class="product-info">
+                        </div>                        <div class="product-info">
                             <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
                             <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
+                            <div class="stock-info-card">
+                                <span class="stock-text">Stok: </span>
+                                <span class="stock-count <?= ($produk['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                    <?= ($produk['stok'] ?? 0); ?>
+                                </span>
+                                <?php if (($produk['stok'] ?? 0) == 0): ?>
+                                    <span class="stock-status out-of-stock">Habis</span>
+                                <?php elseif (($produk['stok'] ?? 0) <= 5): ?>
+                                    <span class="stock-status low-stock">Terbatas</span>
+                                <?php endif; ?>
+                            </div>
                             <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
                                 <p>Lihat Detail</p>
                             </a>

@@ -337,6 +337,19 @@ function getRandomProducts($limit = 2)
 function addToCart($product_id, $user_id, $quantity = 1, $total_price = 0.00)
 {
     try {
+        // Cek stok produk terlebih dahulu
+        $stockQuery = "SELECT nama_produk, stok FROM products WHERE product_id = :product_id";
+        $stockStmt = $GLOBALS['db']->prepare($stockQuery);
+        $stockStmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stockStmt->execute();
+        $product = $stockStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$product) {
+            return false; // Produk tidak ditemukan
+        }
+
+        $availableStock = $product['stok'];
+
         // Cek apakah produk sudah ada di keranjang
         $checkQuery = "SELECT cart_id, jumlah FROM carts WHERE product_id = :product_id AND user_id = :user_id";
         $checkStmt = $GLOBALS['db']->prepare($checkQuery);
@@ -347,8 +360,16 @@ function addToCart($product_id, $user_id, $quantity = 1, $total_price = 0.00)
         $existingItem = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
         if ($existingItem) {
-            // Jika produk sudah ada, update kuantitasnya
+            // Jika produk sudah ada, cek apakah quantity baru tidak melebihi stok
             $newQuantity = $existingItem['jumlah'] + $quantity;
+            
+            if ($newQuantity > $availableStock) {
+                // Jika melebihi stok, set session error message
+                $_SESSION['cart_status'] = 'error';
+                $_SESSION['cart_message'] = "Stok tidak mencukupi! Stok tersedia: {$availableStock}, yang diminta: {$newQuantity}";
+                return false;
+            }
+
             $newTotalPrice = $newQuantity * ($total_price / $quantity); // Hitung ulang total harga
 
             $updateQuery = "UPDATE carts SET jumlah = :jumlah, total_harga = :total_harga WHERE cart_id = :cart_id";
@@ -359,6 +380,14 @@ function addToCart($product_id, $user_id, $quantity = 1, $total_price = 0.00)
 
             return $updateStmt->execute();
         } else {
+            // Jika produk belum ada, cek apakah quantity tidak melebihi stok
+            if ($quantity > $availableStock) {
+                // Jika melebihi stok, set session error message
+                $_SESSION['cart_status'] = 'error';
+                $_SESSION['cart_message'] = "Stok tidak mencukupi! Stok tersedia: {$availableStock}, yang diminta: {$quantity}";
+                return false;
+            }
+
             // Jika produk belum ada, tambahkan sebagai data baru
             $insertQuery = "INSERT INTO carts (product_id, user_id, jumlah, total_harga) VALUES (:product_id, :user_id, :jumlah, :total_harga)";
             $insertStmt = $GLOBALS['db']->prepare($insertQuery);
@@ -380,9 +409,8 @@ function getCartItems($userId)
     // Inisialisasi array untuk menyimpan item keranjang
     $cartItems = [];
 
-    try {
-        // Query untuk mengambil data item keranjang dari database
-        $sql = "SELECT c.cart_id, p.nama_produk, p.gambar_satu, c.jumlah, p.harga_produk, c.product_id, p.gambar_dua, p.gambar_tiga
+    try {        // Query untuk mengambil data item keranjang dari database
+        $sql = "SELECT c.cart_id, p.nama_produk, p.gambar_satu, c.jumlah, p.harga_produk, c.product_id, p.gambar_dua, p.gambar_tiga, p.stok
                 FROM carts c
                 JOIN products p ON c.product_id = p.product_id
                 WHERE c.user_id = :user_id";
@@ -425,12 +453,23 @@ function updateCartItem($userId, $quantities)
 
         if (empty($quantities) || !is_array($quantities)) {
             throw new Exception('Data keranjang tidak valid');
-        }
-
-        $GLOBALS['db']->beginTransaction();
+        }        $GLOBALS['db']->beginTransaction();
 
         foreach ($quantities as $productId => $quantity) {
             $quantity = max(1, (int) $quantity);
+
+            // Cek stok produk
+            $stockStmt = $GLOBALS['db']->prepare("SELECT nama_produk, stok FROM products WHERE product_id = :product_id");
+            $stockStmt->execute([':product_id' => $productId]);
+            $product = $stockStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$product) {
+                throw new Exception("Produk tidak ditemukan");
+            }
+
+            if ($quantity > $product['stok']) {
+                throw new Exception("Stok tidak mencukupi untuk {$product['nama_produk']}! Stok tersedia: {$product['stok']}");
+            }
 
             $stmt = $GLOBALS['db']->prepare("
                 UPDATE carts 
@@ -754,17 +793,21 @@ function addItemsToProduct($data)
     $kategori = isset($data['category']) ? trim($data['category']) : '';
     $subkategori = isset($data['subcategory']) ? trim($data['subcategory']) : '';
     $harga_product = trim($data['product_price']);
+    $stok = isset($data['product_stock']) ? (int)trim($data['product_stock']) : 0;
 
     // Daftar kategori yang diizinkan
     $allowed_categories = [
         'Perawatan Kecantikan dan Tubuh',
         'Reproduksi Wanita',
         'Vitalitas Pria'
-    ];
-
-    // Validasi input
+    ];    // Validasi input
     if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
         $errors['field'] = 'Semua field wajib diisi!';
+    }
+
+    // Validasi stok
+    if ($stok < 0) {
+        $errors['stock'] = 'Stok tidak boleh negatif!';
     }
 
     // Validasi kategori
@@ -805,13 +848,9 @@ function addItemsToProduct($data)
     // Jika ada error pada proses upload gambar, hentikan eksekusi
     if (!empty($errors)) {
         return $errors;
-    }
-
-    // Simpan data ke database
-    $sql = "INSERT INTO products (nama_produk, deskripsi, manfaat_produk, komposisi_produk, harga_produk, gambar_satu, gambar_dua, gambar_tiga, kategori, sub_kategori) 
-        VALUES (:nama_produk, :deskripsi, :manfaat_produk, :komposisi_produk, :harga_product, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori, :subkategori)";
-
-
+    }    // Simpan data ke database
+    $sql = "INSERT INTO products (nama_produk, deskripsi, manfaat_produk, komposisi_produk, harga_produk, stok, gambar_satu, gambar_dua, gambar_tiga, kategori, sub_kategori) 
+        VALUES (:nama_produk, :deskripsi, :manfaat_produk, :komposisi_produk, :harga_product, :stok, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori, :subkategori)";
     try {
         $stmt = $GLOBALS["db"]->prepare($sql);
         $stmt->bindParam(':nama_produk', $nama_produk, PDO::PARAM_STR);
@@ -819,6 +858,7 @@ function addItemsToProduct($data)
         $stmt->bindParam(':manfaat_produk', $manfaat, PDO::PARAM_STR);
         $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
         $stmt->bindParam(':harga_product', $harga_product, PDO::PARAM_STR);
+        $stmt->bindParam(':stok', $stok, PDO::PARAM_INT);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_dua', $gambar_dua, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_tiga', $gambar_tiga, PDO::PARAM_LOB);
@@ -1607,3 +1647,121 @@ function getTotalUsers()
 }
 
 // END RATING-BASED SEARCH FUNCTIONS
+
+// ----------------------------------------------------------------
+// STOCK MANAGEMENT FUNCTIONS
+// ----------------------------------------------------------------
+
+/**
+ * Get products with low stock
+ */
+function getLowStockProducts($threshold = 5)
+{
+    try {
+        $sql = "SELECT product_id, nama_produk, stok, harga_produk, kategori, sub_kategori 
+                FROM products 
+                WHERE stok <= :threshold 
+                ORDER BY stok ASC, nama_produk ASC";
+        
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->bindParam(':threshold', $threshold, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error getting low stock products: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Get stock statistics
+ */
+function getStockStatistics()
+{
+    try {
+        $stats = [];
+        
+        // Total products
+        $sql = "SELECT COUNT(*) as total_products FROM products";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->execute();
+        $stats['total_products'] = $stmt->fetchColumn();
+        
+        // Out of stock products
+        $sql = "SELECT COUNT(*) as out_of_stock FROM products WHERE stok = 0";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->execute();
+        $stats['out_of_stock'] = $stmt->fetchColumn();
+        
+        // Low stock products (≤ 5)
+        $sql = "SELECT COUNT(*) as low_stock FROM products WHERE stok <= 5 AND stok > 0";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->execute();
+        $stats['low_stock'] = $stmt->fetchColumn();
+        
+        // Total stock value
+        $sql = "SELECT SUM(stok * harga_produk) as total_stock_value FROM products";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->execute();
+        $stats['total_stock_value'] = $stmt->fetchColumn() ?: 0;
+        
+        return $stats;
+    } catch (PDOException $e) {
+        error_log("Error getting stock statistics: " . $e->getMessage());
+        return [
+            'total_products' => 0,
+            'out_of_stock' => 0,
+            'low_stock' => 0,
+            'total_stock_value' => 0
+        ];
+    }
+}
+
+/**
+ * Update product stock
+ */
+function updateProductStock($product_id, $new_stock)
+{
+    try {
+        $sql = "UPDATE products SET stok = :new_stock WHERE product_id = :product_id";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->bindParam(':new_stock', $new_stock, PDO::PARAM_INT);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        error_log("Error updating product stock: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Check if product has sufficient stock
+ */
+function checkProductStock($product_id, $required_quantity)
+{
+    try {
+        $sql = "SELECT stok FROM products WHERE product_id = :product_id";
+        $stmt = $GLOBALS['db']->prepare($sql);
+        $stmt->bindParam(':product_id', $product_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $current_stock = $stmt->fetchColumn();
+        
+        return [
+            'available' => $current_stock >= $required_quantity,
+            'current_stock' => $current_stock,
+            'required' => $required_quantity
+        ];
+    } catch (PDOException $e) {
+        error_log("Error checking product stock: " . $e->getMessage());
+        return [
+            'available' => false,
+            'current_stock' => 0,
+            'required' => $required_quantity
+        ];
+    }
+}
+
+// END STOCK MANAGEMENT FUNCTIONS

@@ -202,15 +202,59 @@ try {
             gap: 8px;
             margin-top: 15px;
             transition: background 0.3s ease;
-        }
-
-        .order-btn:hover {
+        }        .order-btn:hover {
             background: #45a049;
         }
 
-        .cart-icon {
+        .order-btn.disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .order-btn.disabled:hover {
+            background: #6c757d;
+        }.cart-icon {
             width: 18px;
             height: 18px;
+        }
+
+        .stock-info {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .stock-label {
+            font-weight: 600;
+            color: #495057;
+            margin-right: 8px;
+        }
+
+        .stock-value {
+            font-weight: 700;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .stock-value.normal-stock {
+            color: #155724;
+            background-color: #d4edda;
+        }
+
+        .stock-value.low-stock {
+            color: #721c24;
+            background-color: #f8d7da;
+        }
+
+        .stock-warning {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -261,10 +305,21 @@ try {
                                     <span class="category-badge"><?= htmlspecialchars($product['kategori']); ?></span>
                                     <span class="subcategory-badge"><?= htmlspecialchars($product['sub_kategori']); ?></span>
                                 </div>
-                            <?php endif; ?>
-
-                            <!-- Harga produk -->
+                            <?php endif; ?>                            <!-- Harga produk -->
                             <p class="price">Rp. <?= number_format($product['harga_produk'], 0, ',', '.'); ?></p>
+
+                            <!-- Stok produk -->
+                            <div class="stock-info">
+                                <span class="stock-label">Stok tersedia:</span>
+                                <span class="stock-value <?= ($product['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                    <?= ($product['stok'] ?? 0); ?> unit
+                                </span>
+                                <?php if (($product['stok'] ?? 0) <= 5 && ($product['stok'] ?? 0) > 0): ?>
+                                    <span class="stock-warning">⚠️ Stok terbatas!</span>
+                                <?php elseif (($product['stok'] ?? 0) == 0): ?>
+                                    <span class="stock-warning">❌ Stok habis!</span>
+                                <?php endif; ?>
+                            </div>
 
                             <div class="description">
                                 <h4>Deskripsi Produk</h4>
@@ -304,16 +359,21 @@ try {
 
                                 <?php if (isset($_SESSION['user_id'])): ?>
                                     <input type="hidden" name="user_id"
-                                        value="<?= htmlspecialchars($_SESSION['user_id']); ?>">
-
-                                    <button type="button" onclick="decreaseQuantity()">-</button>
-                                    <input type="number" name="quantity" id="quantityInput" value="1">
+                                        value="<?= htmlspecialchars($_SESSION['user_id']); ?>">                                    <button type="button" onclick="decreaseQuantity()">-</button>
+                                    <input type="number" name="quantity" id="quantityInput" value="1" min="1" max="<?= ($product['stok'] ?? 0); ?>">
                                     <button type="button" onclick="increaseQuantity()">+</button>
 
-                                    <button type="submit" class="order-btn">
-                                        <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
-                                        Pesan Sekarang
-                                    </button>
+                                    <?php if (($product['stok'] ?? 0) > 0): ?>
+                                        <button type="submit" class="order-btn">
+                                            <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
+                                            Pesan Sekarang
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="button" class="order-btn disabled" disabled>
+                                            <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
+                                            Stok Habis
+                                        </button>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <a href="login.php" class="order-btn">
                                         <img src="../resources/img/icons/cart.png" class="cart-icon" alt="">
@@ -449,17 +509,25 @@ try {
     <script src="../resources/js/thumnail.js"></script>
     <script src="../resources/js/zoomimage.js"></script>
     <script src="../resources/js/overlay.js"></script>
-    <script>
-        // Fungsi untuk quantity buttons
+    <script>        // Fungsi untuk quantity buttons
         function increaseQuantity() {
             const input = document.getElementById('quantityInput');
-            input.value = parseInt(input.value) + 1;
+            const maxStock = parseInt(input.getAttribute('max'));
+            const currentValue = parseInt(input.value);
+            
+            if (currentValue < maxStock) {
+                input.value = currentValue + 1;
+            } else {
+                alert('Jumlah tidak boleh melebihi stok yang tersedia (' + maxStock + ' unit)');
+            }
         }
 
         function decreaseQuantity() {
             const input = document.getElementById('quantityInput');
-            if (parseInt(input.value) > 1) {
-                input.value = parseInt(input.value) - 1;
+            const currentValue = parseInt(input.value);
+            
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
             }
         }
 
