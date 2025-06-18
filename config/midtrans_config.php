@@ -151,7 +151,6 @@ class PaymentHandler
                 'gross_amount' => (int) $final_total
             ],
             'enabled_payments' => [
-                'credit_card',
                 'bank_transfer',
                 'gopay',
                 'shopeepay',
@@ -435,7 +434,6 @@ class PaymentHandler
                     'gross_amount' => (int) $final_total
                 ],
                 'enabled_payments' => [
-                    'credit_card',
                     'bank_transfer',
                     'gopay',
                     'shopeepay',

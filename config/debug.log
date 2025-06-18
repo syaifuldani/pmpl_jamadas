@@ -1,0 +1,14 @@
+POST Data: Array
+(
+)
+
+Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'jamadasdb.stock_logs' doesn't exist
+POST Data: Array
+(
+)
+
+Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'jamadasdb.stock_logs' doesn't exist
+POST Data: Array
+(
+)
+

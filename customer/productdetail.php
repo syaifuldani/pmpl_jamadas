@@ -212,6 +212,44 @@ try {
             width: 18px;
             height: 18px;
         }
+
+        .stock-info {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .stock-label {
+            font-weight: 600;
+            color: #495057;
+            margin-right: 8px;
+        }
+
+        .stock-value {
+            font-weight: 700;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .stock-value.normal-stock {
+            color: #155724;
+            background-color: #d4edda;
+        }
+
+        .stock-value.low-stock {
+            color: #721c24;
+            background-color: #f8d7da;
+        }
+
+        .stock-warning {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -265,6 +303,20 @@ try {
 
                             <!-- Harga produk -->
                             <p class="price">Rp. <?= number_format($product['harga_produk'], 0, ',', '.'); ?></p>
+
+                            <!-- Stok produk -->
+                            <div class="stock-info">
+                                <span class="stock-label">Stok tersedia:</span>
+                                <span
+                                    class="stock-value <?= ($product['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                    <?= ($product['stok'] ?? 0); ?> unit
+                                </span>
+                                <?php if (($product['stok'] ?? 0) <= 5 && ($product['stok'] ?? 0) > 0): ?>
+                                    <span class="stock-warning">⚠️ Stok terbatas!</span>
+                                <?php elseif (($product['stok'] ?? 0) == 0): ?>
+                                    <span class="stock-warning">❌ Stok habis!</span>
+                                <?php endif; ?>
+                            </div>
 
                             <div class="description">
                                 <h4>Deskripsi Produk</h4>
@@ -327,7 +379,7 @@ try {
                             <?php
                             if (!empty($products) && !isset($products['error'])):
                                 foreach ($products as $product):
-                            ?>
+                                    ?>
                                     <div class="product-card">
                                         <img class="product" src="<?= htmlspecialchars($product['gambar_satu']); ?>"
                                             alt="<?= htmlspecialchars($product['nama_produk']); ?>">
@@ -336,13 +388,16 @@ try {
                                         </div>
                                         <div class="product-info">
                                             <p class="product-name"><?= htmlspecialchars($product['nama_produk']); ?></p>
-                                            <p class="product-price">Rp. <?= htmlspecialchars(number_format($product['harga_produk'], 0, ',', '.')); ?></p>
-                                            <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>" class="detail-button">
+                                            <p class="product-price">Rp.
+                                                <?= htmlspecialchars(number_format($product['harga_produk'], 0, ',', '.')); ?>
+                                            </p>
+                                            <a href="productdetail.php?id=<?= htmlspecialchars($product['product_id']); ?>"
+                                                class="detail-button">
                                                 <p>Lihat Detail</p>
                                             </a>
                                         </div>
                                     </div>
-                                <?php
+                                    <?php
                                 endforeach;
                             else:
                                 ?>
@@ -503,11 +558,11 @@ try {
 
     <script>
         // Pastikan chat toggle berfungsi setelah clear cache
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Product detail page chat initializing...');
 
             // Tunggu sebentar untuk memastikan semua script ter-load
-            setTimeout(function() {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
 
                 if (chatToggle) {
@@ -517,7 +572,7 @@ try {
                     chatToggle.removeEventListener('click', toggleChat);
 
                     // Tambahkan event listener baru
-                    chatToggle.addEventListener('click', function(e) {
+                    chatToggle.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Chat toggle clicked!');
@@ -543,7 +598,7 @@ try {
                 // Setup chat input event listener
                 const chatInput = document.getElementById('chat-input');
                 if (chatInput) {
-                    chatInput.addEventListener('keypress', function(e) {
+                    chatInput.addEventListener('keypress', function (e) {
                         if (e.key === 'Enter') {
                             sendMessage();
                         }
@@ -557,12 +612,12 @@ try {
         });
 
         // Tambahkan fallback jika semua gagal
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+        window.addEventListener('load', function () {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
                 if (chatToggle && !chatToggle.onclick) {
                     console.log('Adding fallback onclick handler');
-                    chatToggle.onclick = function() {
+                    chatToggle.onclick = function () {
                         console.log('Fallback chat toggle activated');
                         const chatContainer = document.querySelector('.chat-container');
                         if (chatContainer) {

@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
                                 <option value="Perawatan Kecantikan dan Tubuh">Perawatan Kecantikan dan Tubuh</option>
                                 <option value="Reproduksi Wanita">Reproduksi Wanita</option>
+                                <option value="Vitalitas Pria">Vitalitas Pria</option>
                                 <option value="Kesehatan Pencernaan">Kesehatan Pencernaan</option>
                                 <option value="Kesehatan Umum & Imunitas">Kesehatan Umum & Imunitas</option>
                                 <option value="Kesehatan Tulang & Sendi">Kesehatan Tulang & Sendi</option>
@@ -158,6 +159,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span
                                 class="error-message"><?= isset($responseAddItems['subcategory']) ? $responseAddItems['subcategory'] : ''; ?></span>
                         </div>
+                    </div>
+
+                    <!-- Harga Produk -->
+                    <div class="form-group price-group">
+                        <div class="price-field">
+                            <label for="product-price">
+                                <i class="fas fa-tag"></i> Stok Produk
+                            </label>
+                            <input type="text" id="product-price" name="product_stock"
+                                placeholder="Masukkan stok produk">
+                        </div>
+                        <span
+                            class="error-message"><?= isset($responseAddItems['number']) ? $responseAddItems['number'] : ''; ?></span>
                     </div>
 
                     <!-- Harga Produk -->

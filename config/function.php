@@ -753,17 +753,26 @@ function addItemsToProduct($data)
     $komposisi = trim($data['komposisi']);
     $kategori = isset($data['category']) ? trim($data['category']) : '';
     $subkategori = isset($data['subcategory']) ? trim($data['subcategory']) : '';
+    $stok_product = trim($data['product_stock']);
     $harga_product = trim($data['product_price']);
 
     // Daftar kategori yang diizinkan
     $allowed_categories = [
         'Perawatan Kecantikan dan Tubuh',
         'Reproduksi Wanita',
-        'Vitalitas Pria'
+        'Vitalitas Pria',
+        'Kesehatan Pencernaan',
+        'Kesehatan Umum & Imunitas',
+        'Kesehatan Tulang & Sendi',
+        'Kesehatan Anak',
+        'Kesehatan Lansia',
+        'Kesehatan Mata',
+        'Kesehatan Jantung',
+        'Kesehatan Mental & Relaksasi'
     ];
 
     // Validasi input
-    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
+    if (empty($nama_produk) || empty($deskripsi) || empty($kategori) || empty($subkategori) || empty($stok_product) || empty($harga_product) || empty($manfaat) || empty($komposisi)) {
         $errors['field'] = 'Semua field wajib diisi!';
     }
 
@@ -779,7 +788,7 @@ function addItemsToProduct($data)
 
     // Validasi harga_product adalah angka
     if (!is_numeric($harga_product)) {
-        $errors['number'] = 'Harga Produk harus berupa angka!';
+        $errors['number'] = 'Harga Produk/Stok harus berupa angka!';
     }
 
     // Handle upload gambar
@@ -808,8 +817,8 @@ function addItemsToProduct($data)
     }
 
     // Simpan data ke database
-    $sql = "INSERT INTO products (nama_produk, deskripsi, manfaat_produk, komposisi_produk, harga_produk, gambar_satu, gambar_dua, gambar_tiga, kategori, sub_kategori) 
-        VALUES (:nama_produk, :deskripsi, :manfaat_produk, :komposisi_produk, :harga_product, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori, :subkategori)";
+    $sql = "INSERT INTO products (nama_produk, deskripsi, manfaat_produk, komposisi_produk,stok, harga_produk, gambar_satu, gambar_dua, gambar_tiga, kategori, sub_kategori) 
+        VALUES (:nama_produk, :deskripsi, :manfaat_produk, :komposisi_produk,:stok, :harga_product, :gambar_satu, :gambar_dua, :gambar_tiga, :kategori, :subkategori)";
 
 
     try {
@@ -818,6 +827,7 @@ function addItemsToProduct($data)
         $stmt->bindParam(':deskripsi', $deskripsi, PDO::PARAM_STR);
         $stmt->bindParam(':manfaat_produk', $manfaat, PDO::PARAM_STR);
         $stmt->bindParam(':komposisi_produk', $komposisi, PDO::PARAM_STR);
+        $stmt->bindParam(':stok', $stok_product, PDO::PARAM_STR);
         $stmt->bindParam(':harga_product', $harga_product, PDO::PARAM_STR);
         $stmt->bindParam(':gambar_satu', $gambar_satu, PDO::PARAM_LOB);
         $stmt->bindParam(':gambar_dua', $gambar_dua, PDO::PARAM_LOB);

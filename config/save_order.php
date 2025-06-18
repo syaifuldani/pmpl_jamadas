@@ -3,6 +3,13 @@ session_start();
 require_once '../config/connection.php';
 require_once '../config/midtrans_config.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Log semua request
+file_put_contents('debug.log', "POST Data: " . print_r($_POST, true) . "\n", FILE_APPEND);
+
+
 header('Content-Type: application/json');
 
 try {
@@ -176,6 +183,7 @@ try {
         throw $e;
     }
 } catch (Exception $e) {
+    file_put_contents('debug.log', "Error: " . $e->getMessage() . "\n", FILE_APPEND);
     http_response_code(500);
     echo json_encode([
         'status' => 'error',

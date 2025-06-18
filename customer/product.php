@@ -482,6 +482,54 @@ if (isset($_POST['query'])) {
         font-weight: 500;
     }
 
+    .stock-info-card {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+    }
+
+    .stock-text {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .stock-count {
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .stock-count.normal-stock {
+        color: #155724;
+        background-color: #d4edda;
+    }
+
+    .stock-count.low-stock {
+        color: #721c24;
+        background-color: #f8d7da;
+    }
+
+    .stock-status {
+        font-size: 10px;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+
+    .stock-status.low-stock {
+        color: #856404;
+        background-color: #fff3cd;
+    }
+
+    .stock-status.out-of-stock {
+        color: #721c24;
+        background-color: #f8d7da;
+    }
+
     @media (max-width: 768px) {
         .product-card {
             padding: 8px;
@@ -665,20 +713,32 @@ if (isset($_POST['query'])) {
                         <div class="product-info">
                             <p class="product-name"><?= htmlspecialchars($produk['nama_produk']) ?></p>
                             <p class="product-price">Rp. <?= number_format($produk['harga_produk'], 0, ',', '.') ?></p>
-                            <a href="productdetail.php?id=<?= $produk['product_id'] ?>" class="detail-button">
+                            <div class="stock-info-card">
+                                <span class="stock-text">Stok: </span>
+                                <span class="stock-count <?= ($produk['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                    <?= ($produk['stok'] ?? 0); ?>
+                                </span>
+                                <?php if (($produk['stok'] ?? 0) == 0): ?>
+                                    <span class="stock-status out-of-stock">Habis</span>
+                                <?php elseif (($produk['stok'] ?? 0) <= 5): ?>
+                                    <span class="stock-status low-stock">Terbatas</span>
+                                <?php endif; ?>
+                            </div>
+                            <a href="productdetail.php?id=<?= htmlspecialchars($produk['product_id']) ?>" class="detail-button">
                                 <p>Lihat Detail</p>
                             </a>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>    </div>
+        </div>
+    </div>
 
     <!-- Chatbot -->
     <div class="chat-toggle" id="chatToggleBtn">
         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat" width="30" height="30">
     </div>
-    
+
     <div class="chat-container">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Bot Avatar">
@@ -689,32 +749,33 @@ if (isset($_POST['query'])) {
             <input type="text" placeholder="Tanyakan tentang jamu..." id="chat-input">
             <button onclick="sendMessage()">Kirim</button>
         </div>
-    </div>    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
+    </div>
+    <script src="../resources/js/burgersidebar.js?v=<?= time() ?>"></script>
     <script src="../resources/js/livesearch.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat.js?v=<?= time() ?>"></script>
     <script src="../resources/js/chat-debug.js?v=<?= time() ?>"></script>
-    
+
     <script>
         // Pastikan chat toggle berfungsi setelah clear cache
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Product page chat initializing...');
-            
+
             // Tunggu sebentar untuk memastikan semua script ter-load
-            setTimeout(function() {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
-                
+
                 if (chatToggle) {
                     console.log('Chat toggle button found');
-                    
+
                     // Hapus event listener yang mungkin sudah ada
                     chatToggle.removeEventListener('click', toggleChat);
-                    
+
                     // Tambahkan event listener baru
-                    chatToggle.addEventListener('click', function(e) {
+                    chatToggle.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Chat toggle clicked!');
-                        
+
                         // Pastikan function toggleChat tersedia
                         if (typeof toggleChat === 'function') {
                             toggleChat();
@@ -727,21 +788,21 @@ if (isset($_POST['query'])) {
                             }
                         }
                     });
-                    
+
                     console.log('Chat toggle event listener attached');
                 } else {
                     console.error('Chat toggle button not found');
                 }
             }, 500);
         });
-        
+
         // Tambahkan fallback jika semua gagal
-        window.addEventListener('load', function() {
-            setTimeout(function() {
+        window.addEventListener('load', function () {
+            setTimeout(function () {
                 const chatToggle = document.getElementById('chatToggleBtn');
                 if (chatToggle && !chatToggle.onclick) {
                     console.log('Adding fallback onclick handler');
-                    chatToggle.onclick = function() {
+                    chatToggle.onclick = function () {
                         console.log('Fallback chat toggle activated');
                         const chatContainer = document.querySelector('.chat-container');
                         if (chatContainer) {
