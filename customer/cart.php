@@ -157,10 +157,10 @@ if (isset($_POST['query'])) {
                     <!-- Form untuk update keranjang -->
                     <form action="" method="POST" onsubmit="return false;">
                         <table>
-                            <thead>
-                                <tr>
+                            <thead>                                <tr>
                                     <th>Product</th>
                                     <th>Harga Per Kertas</th>
+                                    <th>Stok</th>
                                     <th>Jumlah</th>
                                     <th>Sub Total</th>
                                     <th></th>
@@ -176,20 +176,29 @@ if (isset($_POST['query'])) {
                                                         src="<?= $item['gambar_satu']; ?>" width="50" />
                                                     <p><?= $item['nama_produk']; ?></p>
                                                 </div>
+                                            </td>                                            <td class="price">Rp.<?= number_format($item['harga_produk'], 2, ',', '.'); ?></td>
+                                            <td class="stock">
+                                                <span class="stock-badge <?= ($item['stok'] ?? 0) <= 5 ? 'low-stock' : 'normal-stock'; ?>">
+                                                    <?= ($item['stok'] ?? 0); ?> unit
+                                                </span>
                                             </td>
-                                            <td class="price">Rp.<?= number_format($item['harga_produk'], 2, ',', '.'); ?></td>
                                             <td>
                                                 <div class="quantity-control">
                                                     <button type="button"
-                                                        onclick="decreaseQuantity(<?= $item['cart_id']; ?>)">-</button>
+                                                        onclick="decreaseQuantity(<?= $item['cart_id']; ?>)" 
+                                                        <?= ($item['stok'] ?? 0) == 0 ? 'disabled' : ''; ?>>-</button>
                                                     <input type="text"
                                                         name="quantities[<?= htmlspecialchars($item['product_id']); ?>]"
                                                         value="<?= htmlspecialchars($item['jumlah']); ?>" min="1"
+                                                        max="<?= ($item['stok'] ?? 0); ?>"
                                                         id="quantityInput-<?= $item['cart_id']; ?>"
                                                         data-product-id="<?= htmlspecialchars($item['product_id']); ?>"
-                                                        onchange="handleManualQuantityChange(<?= $item['cart_id']; ?>)">
+                                                        data-stock="<?= ($item['stok'] ?? 0); ?>"
+                                                        onchange="handleManualQuantityChange(<?= $item['cart_id']; ?>)"
+                                                        <?= ($item['stok'] ?? 0) == 0 ? 'disabled' : ''; ?>>
                                                     <button type="button"
-                                                        onclick="increaseQuantity(<?= $item['cart_id']; ?>)">+</button>
+                                                        onclick="increaseQuantity(<?= $item['cart_id']; ?>)"
+                                                        <?= ($item['stok'] ?? 0) == 0 ? 'disabled' : ''; ?>>+</button>
                                                 </div>
                                             </td>
                                             <td class="subtotal">
@@ -408,10 +417,16 @@ if (isset($_POST['query'])) {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan saat memperbarui keranjang.');
             }
-        }
-
-        function increaseQuantity(cartId) {
-            updateQuantity(cartId, 1);
+        }        function increaseQuantity(cartId) {
+            const quantityInput = document.getElementById(`quantityInput-${cartId}`);
+            const currentQuantity = parseInt(quantityInput.value);
+            const maxStock = parseInt(quantityInput.getAttribute('data-stock'));
+            
+            if (currentQuantity < maxStock) {
+                updateQuantity(cartId, 1);
+            } else {
+                alert('Tidak dapat menambah kuantitas. Stok tersedia: ' + maxStock + ' unit');
+            }
         }
 
         function decreaseQuantity(cartId) {
@@ -421,11 +436,16 @@ if (isset($_POST['query'])) {
         // Fungsi untuk menangani perubahan kuantitas manual
         function handleManualQuantityChange(cartId) {
             const quantityInput = document.getElementById(`quantityInput-${cartId}`);
+            const maxStock = parseInt(quantityInput.getAttribute('data-stock'));
             let newQuantity = parseInt(quantityInput.value);
 
             if (isNaN(newQuantity) || newQuantity < 1) {
                 newQuantity = 1;
-                quantityInput.value = 1; // Setel kembali ke 1 jika input tidak valid
+                quantityInput.value = 1;
+            } else if (newQuantity > maxStock) {
+                newQuantity = maxStock;
+                quantityInput.value = maxStock;
+                alert('Kuantitas tidak boleh melebihi stok yang tersedia (' + maxStock + ' unit)');
             }
             updateQuantity(cartId, 0); // Panggil updateQuantity dengan perubahan 0 untuk memicu AJAX
         }
